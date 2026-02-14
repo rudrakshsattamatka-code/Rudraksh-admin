@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Admin Login</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 400px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 14px; background: #4CAF50; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        .message { text-align: center; color: red; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Login</h2>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <p class="message" id="message"></p>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCXL6EiiLg_3lILCOSA_iFgeL8Y2nPEEnw",
+            authDomain: "rudraksh-premium.firebaseapp.com",
+            projectId: "rudraksh-premium",
+            storageBucket: "rudraksh-premium.firebasestorage.app",
+            messagingSenderId: "99880475040",
+            appId: "1:99880475040:web:c64c708e9bec7fed0a6cc5"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            auth.signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    checkAdmin();
+                })
+                .catch(error => {
+                    document.getElementById('message').innerText = error.message;
+                });
+        }
+
+        async function checkAdmin() {
+            const user = auth.currentUser;
+            if (!user) return;
+            const tokenResult = await user.getIdTokenResult();
+            if (tokenResult.claims.admin) {
+                window.location.href = 'admin-dashboard.html';
+            } else {
+                alert('Access denied. Not an admin.');
+                auth.signOut();
+                window.location.href = 'login.html';
+            }
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) checkAdmin();
+        });
+    </script>
+</body>
+</html>
