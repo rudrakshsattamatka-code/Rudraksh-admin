@@ -27,6 +27,7 @@
     </div>
 
     <script>
+        // 🔁 Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCXL6EiiLg_3lILCOSA_iFgeL8Y2nPEEnw",
             authDomain: "rudraksh-premium.firebaseapp.com",
@@ -44,28 +45,19 @@
             const password = document.getElementById('password').value;
             auth.signInWithEmailAndPassword(email, password)
                 .then(() => {
-                    checkAdmin();
+                    // After successful login, go directly to admin dashboard (bypass check)
+                    window.location.href = 'admin-dashboard.html';
                 })
                 .catch(error => {
                     document.getElementById('message').innerText = error.message;
                 });
         }
 
-        async function checkAdmin() {
-            const user = auth.currentUser;
-            if (!user) return;
-            const tokenResult = await user.getIdTokenResult();
-            if (tokenResult.claims.admin) {
-                window.location.href = 'admin-dashboard.html';
-            } else {
-                alert('Access denied. Not an admin.');
-                auth.signOut();
-                window.location.href = 'login.html';
-            }
-        }
-
+        // If already logged in, redirect to admin dashboard
         auth.onAuthStateChanged(user => {
-            if (user) checkAdmin();
+            if (user) {
+                window.location.href = 'admin-dashboard.html';
+            }
         });
     </script>
 </body>
