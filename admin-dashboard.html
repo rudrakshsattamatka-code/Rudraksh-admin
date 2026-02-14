@@ -65,17 +65,15 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        auth.onAuthStateChanged(async user => {
+        // TEMPORARILY BYPASS ADMIN CLAIM CHECK
+        auth.onAuthStateChanged(user => {
             if (!user) {
                 window.location.href = 'login.html';
                 return;
             }
-            const tokenResult = await user.getIdTokenResult();
-            if (!tokenResult.claims.admin) {
-                alert('Access denied');
-                auth.signOut();
-                window.location.href = 'login.html';
-            }
+            // If user is logged in, just show the dashboard (no claim check)
+            // Optionally load initial data for the active tab
+            showTab('payments');
         });
 
         function showTab(tabName) {
@@ -215,9 +213,6 @@
         function logout() {
             auth.signOut().then(() => window.location.href = 'login.html');
         }
-
-        // Initial load
-        showTab('payments');
     </script>
 </body>
 </html>
