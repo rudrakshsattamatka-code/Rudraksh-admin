@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Matka · professional login</title>
+  <title>Matka · animated login · light</title>
   <!-- Font Awesome 6 (free) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Font: Inter (ultra modern, clean) -->
+  <!-- Google Font: Inter (clean, professional) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -18,8 +18,8 @@
     }
 
     body {
-      background-color: #0A0A0F;
-      background-image: radial-gradient(circle at 25% 0%, #1F1A2E 0%, #0A0A0F 70%);
+      /* light orange background – subtle gradient */
+      background: linear-gradient(145deg, #FFEED9 0%, #FFDDB5 100%);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
@@ -27,25 +27,65 @@
       justify-content: center;
       padding: 1rem;
       line-height: 1.5;
-      color: #EAEAEA;
+      color: #2E2B23; /* dark brownish for contrast */
+    }
+
+    /* -------------------- animations -------------------- */
+    @keyframes cardFadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes logoPop {
+      0% {
+        opacity: 0;
+        transform: scale(0.7);
+      }
+      60% {
+        transform: scale(1.08);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes gentlePulse {
+      0% {
+        box-shadow: 0 12px 20px -12px #D4AF37, 0 4px 12px rgba(0,0,0,0.2);
+      }
+      50% {
+        box-shadow: 0 18px 28px -10px #D4AF37, 0 6px 18px rgba(0,0,0,0.3);
+      }
+      100% {
+        box-shadow: 0 12px 20px -12px #D4AF37, 0 4px 12px rgba(0,0,0,0.2);
+      }
     }
 
     .login-card {
       max-width: 460px;
       width: 100%;
-      background: rgba(18, 18, 26, 0.9);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(212, 175, 55, 0.15);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 175, 55, 0.2);
+      background: rgba(255, 250, 240, 0.95);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      box-shadow: 0 25px 40px -18px #B27D3A, 0 10px 20px -8px rgba(0,0,0,0.2);
       border-radius: 36px;
       padding: 2.5rem 2rem;
       transition: all 0.2s ease;
+      /* entrance animation */
+      animation: cardFadeUp 0.8s cubic-bezier(0.12, 0.71, 0.33, 1) forwards;
     }
 
-    /* gold accent colour – same palette throughout */
+    /* gold accents */
     .gold {
-      color: #D4AF37;
+      color: #B88D2E;
     }
 
     .welcome-title {
@@ -53,39 +93,31 @@
       font-weight: 600;
       letter-spacing: -0.02em;
       text-align: center;
-      background: linear-gradient(135deg, #F5E6B2, #D4AF37 70%);
+      background: linear-gradient(135deg, #B27D3A, #8B5F1F);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 0.75rem;
     }
 
+    /* logo container — image based, fully editable */
     .logo-container {
       display: flex;
       justify-content: center;
       margin: 0.5rem 0 1.25rem 0;
+      animation: logoPop 0.7s ease-out 0.15s both; /* delayed pop */
     }
 
-    .logo-circle {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(145deg, #2C2738, #15121F);
-      border: 2px solid rgba(212, 175, 55, 0.5);
+    /* EDIT YOUR LOGO URL HERE — replace src value with your image link */
+    .logo-image {
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.8), 0 0 0 1px #D4AF37 inset;
-    }
-
-    .logo-circle span {
-      font-size: 2.5rem;
-      font-weight: 700;
-      background: linear-gradient(145deg, #D4AF37, #F5E29D);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 2px 4px black);
+      background: #FFFFFF;
+      border: 3px solid #D4AF37;
+      box-shadow: 0 8px 18px -6px rgba(180, 130, 40, 0.5);
+      object-fit: cover;        /* ensures image fills circle nicely */
+      display: block;
     }
 
     .tagline-main {
@@ -93,7 +125,7 @@
       font-weight: 500;
       font-size: 1.1rem;
       letter-spacing: 0.5px;
-      color: #C6B68B;
+      color: #8B6F3C;
       text-transform: uppercase;
       margin-bottom: 0.3rem;
     }
@@ -102,8 +134,8 @@
       text-align: center;
       font-weight: 400;
       font-size: 0.95rem;
-      color: #9E8E6B;
-      border-bottom: 1px dashed rgba(212, 175, 55, 0.3);
+      color: #A3875A;
+      border-bottom: 1px dashed rgba(184, 141, 46, 0.4);
       padding-bottom: 1.4rem;
       margin-bottom: 1.5rem;
     }
@@ -114,7 +146,7 @@
       font-weight: 600;
       letter-spacing: 0.03em;
       text-transform: uppercase;
-      color: #A59B81;
+      color: #7A623A;
       margin-bottom: 0.35rem;
       margin-left: 0.5rem;
     }
@@ -138,25 +170,25 @@
 
     .input-wrapper input {
       width: 100%;
-      background: #1A1725;
-      border: 1px solid #342F40;
+      background: #FFFCF5;
+      border: 1px solid #E9D5B0;
       border-radius: 44px;
       padding: 1rem 1rem 1rem 3.2rem;
       font-size: 1rem;
       font-family: 'Inter', sans-serif;
-      color: white;
+      color: #2E2B23;
       outline: none;
       transition: border 0.15s, box-shadow 0.15s;
-      box-shadow: inset 0 4px 8px rgba(0,0,0,0.6);
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
     }
 
     .input-wrapper input:focus {
       border-color: #D4AF37;
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2), inset 0 2px 5px black;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.3), inset 0 2px 5px #FFF1D6;
     }
 
     .input-wrapper input::placeholder {
-      color: #5F5770;
+      color: #B8A37E;
       font-weight: 300;
       font-size: 0.95rem;
     }
@@ -170,49 +202,34 @@
       font-weight: 700;
       font-size: 1.2rem;
       letter-spacing: 1px;
-      color: #0F0E15;
+      color: #1F1A10;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 12px 20px -12px #D4AF37, 0 4px 12px rgba(0,0,0,0.5);
+      box-shadow: 0 12px 20px -12px #D4AF37, 0 4px 12px rgba(0,0,0,0.2);
       transition: all 0.15s ease;
       margin: 0.75rem 0 1.2rem 0;
-      border: 1px solid rgba(255,245,190,0.5);
+      border: 1px solid rgba(255,245,190,0.7);
+      /* gentle pulse animation loop, but only after entrance */
+      animation: gentlePulse 3s infinite ease-in-out 1.2s;
     }
 
     .login-btn:hover {
       background: linear-gradient(135deg, #E6C451, #D4AF37);
-      box-shadow: 0 16px 24px -10px #f3d371, 0 4px 18px black;
+      box-shadow: 0 18px 28px -10px #f3d371, 0 6px 18px rgba(0,0,0,0.2);
       transform: scale(1.01);
       color: #050505;
+      animation: none; /* stop pulse on hover for cleaner feel */
     }
 
-    .create-account-link {
-      text-align: center;
-      margin: 0.5rem 0 1.5rem 0;
-    }
-
-    .create-account-link a {
-      color: #BDA55A;
-      font-weight: 600;
-      font-size: 0.95rem;
-      text-decoration: none;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.4);
-      padding-bottom: 0.15rem;
-      transition: color 0.2s, border-color 0.2s;
-    }
-
-    .create-account-link a:hover {
-      color: #E6D29F;
-      border-bottom-color: #E6D29F;
-    }
-
+    /* contact block – refined */
     .contact-block {
-      background: rgba(10, 8, 15, 0.7);
-      border-radius: 30px;
+      background: rgba(245, 235, 215, 0.7);
+      border-radius: 40px;
       padding: 1.2rem 1rem;
       margin: 1.5rem 0 1.2rem;
-      border: 1px solid #342D43;
+      border: 1px solid #D4AF37;
       text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
     .contact-line {
@@ -222,32 +239,48 @@
       gap: 0.7rem;
       flex-wrap: wrap;
       font-weight: 500;
-      color: #C9BC9B;
+      color: #5E4A28;
     }
 
     .contact-line i {
       color: #D4AF37;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       width: 1.8rem;
     }
 
-    .contact-line span {
-      color: #FFFFFF;
+    /* WhatsApp link – professional, opens WhatsApp on click */
+    .whatsapp-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1F1A10;
+      color: #FFE5B4;
+      padding: 0.4rem 1.2rem;
+      border-radius: 60px;
+      text-decoration: none;
       font-weight: 600;
-      letter-spacing: 0.3px;
-      background: #1F1B2B;
-      padding: 0.2rem 1rem;
-      border-radius: 40px;
-      border: 1px solid #4A3F5A;
+      font-size: 0.95rem;
+      border: 1px solid #D4AF37;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .whatsapp-link i {
+      color: #25D366; /* whatsapp green */
+      font-size: 1.2rem;
+    }
+
+    .whatsapp-link:hover {
+      background: #2F281C;
+      transform: scale(1.02);
     }
 
     .or-call {
-      margin-top: 0.5rem;
+      margin-top: 0.8rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      color: #B1A27E;
+      color: #7A623A;
       font-size: 0.95rem;
     }
 
@@ -256,27 +289,27 @@
     }
 
     .or-call strong {
-      color: #E0D2AF;
-      font-weight: 600;
+      color: #4F3F21;
+      font-weight: 700;
     }
 
     .disclaimer {
       margin-top: 2rem;
       padding-top: 1rem;
-      border-top: 1px solid rgba(212, 175, 55, 0.2);
+      border-top: 1px solid rgba(212, 175, 55, 0.4);
       font-size: 0.68rem;
       line-height: 1.5;
-      color: #7F7795;
+      color: #6F6149;
       text-align: justify;
       max-height: 160px;
       overflow-y: auto;
       padding-right: 0.3rem;
       scrollbar-width: thin;
-      scrollbar-color: #D4AF37 #232030;
+      scrollbar-color: #D4AF37 #EADEC6;
     }
 
     .disclaimer strong {
-      color: #C9B577;
+      color: #8B6F3C;
       font-weight: 700;
       letter-spacing: 0.3px;
     }
@@ -286,7 +319,7 @@
     }
 
     .disclaimer::-webkit-scrollbar-track {
-      background: #232030;
+      background: #EADEC6;
       border-radius: 10px;
     }
 
@@ -295,19 +328,14 @@
       border-radius: 10px;
     }
 
-    /* ultra professional fine details */
-    .fa-whatsapp, .fa-phone-alt {
-      filter: drop-shadow(0 2px 3px black);
-    }
-
-    /* keep everything crisp on small screen */
+    /* small screen adjustments */
     @media (max-width: 400px) {
       .login-card {
         padding: 1.75rem 1.25rem;
       }
       .contact-line {
         flex-direction: column;
-        gap: 0.3rem;
+        gap: 0.5rem;
       }
     }
   </style>
@@ -317,11 +345,10 @@
     <!-- WELCOME -->
     <div class="welcome-title">WELCOME</div>
 
-    <!-- logo image (abstract golden M) -->
+    <!-- logo image: REPLACE 'src' WITH YOUR IMAGE URL -->
     <div class="logo-container">
-      <div class="logo-circle">
-        <span>M</span>
-      </div>
+      <img class="logo-image" src="https://via.placeholder.com/90x90/FFF5E6/D4AF37?text=LOGO" alt="logo">
+      <!-- ↑ replace the URL with your own image link (e.g., .png, .jpg) -->
     </div>
 
     <!-- taglines -->
@@ -345,16 +372,16 @@
       <button type="submit" class="login-btn">LOGIN</button>
     </form>
 
-    <!-- create account -->
-    <div class="create-account-link">
-      <a href="#">CREATE ACCOUNT</a>
-    </div>
+    <!-- CREATE ACCOUNT REMOVED (as requested) -->
 
-    <!-- contact whatsapp / call (exact numbers) -->
+    <!-- contact whatsapp / call with clickable WhatsApp link -->
     <div class="contact-block">
       <div class="contact-line">
         <i class="fab fa-whatsapp"></i>
-        <span>CONTACT on WhatsApp</span>
+        <!-- WhatsApp link – opens directly on click -->
+        <a href="https://wa.me/917353547650" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
+          <i class="fab fa-whatsapp"></i> CONTACT on WhatsApp
+        </a>
         <span>+917353547650</span>
       </div>
       <div class="or-call">
@@ -364,10 +391,12 @@
       </div>
     </div>
 
-    <!-- full disclaimer exactly from reference, formatted -->
+    <!-- full disclaimer (exact content) -->
     <div class="disclaimer">
       <strong>-DISCLAIMER:-</strong> Visiting this site and browsing it is strictly recommended at your own risk. Every information available here is only according to informational purpose and based on astrology and number calculations. We are no associated or affiliated with any illegal Matka business. We make sure we follow all rules and regulations of the regions where you are accessing the website. There are also chances that the website may be banned in your area and after that if you are using it, you are solely dependable and responsible for any damage, loss or legal action taken. If you are the one who does not like our disclaimer it is advised that you leave our website immediately. Copying of any information/contents posted on the website is strictly prohibited and against the law.
     </div>
   </div>
+
+  <!-- (No extra JS needed; animations are pure CSS) -->
 </body>
 </html>
