@@ -11,11 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(145deg, #fff2db 0%, #ffe6c9 100%);
@@ -41,16 +37,12 @@
       animation: fadeIn 0.4s ease;
       display: none;
     }
-    .page.active {
-      display: block;
-    }
+    .page.active { display: block; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .gold {
-      color: #D4AF37;
-    }
+    .gold { color: #D4AF37; }
     h2 {
       font-size: 1.8rem;
       font-weight: 600;
@@ -74,7 +66,7 @@
       background: #fff;
       box-shadow: 0 8px 16px -6px rgba(0,0,0,0.2);
     }
-    /* Two big images container */
+    /* Big images container - used on subscription page */
     .big-images {
       display: flex;
       flex-direction: column;
@@ -343,92 +335,96 @@
       </div>
     </div>
     <!-- end login page -->
-      <!-- DASHBOARD PAGE -->
-  <div id="dashboard-page" class="page">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2 style="margin:0;">Dashboard</h2>
-      <div><span id="live-date"></span><br><span id="live-time" style="font-weight:600;"></span></div>
-    </div>
-    <div class="logo">
-      <img src="https://via.placeholder.com/60x60/FFF5E6/D4AF37?text=M" alt="Logo">
-    </div>
+    <!-- DASHBOARD PAGE -->
+<div id="dashboard-page" class="page">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2 style="margin:0;">Dashboard</h2>
+    <div><span id="live-date"></span><br><span id="live-time" style="font-weight:600;"></span></div>
+  </div>
+  <div class="logo">
+    <img src="https://via.placeholder.com/60x60/FFF5E6/D4AF37?text=M" alt="Logo">
+  </div>
 
-    <!-- Two big images (replace src with your image URLs later) -->
-    <div class="big-images">
-      <div class="big-image">
-        <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1" alt="Image 1">
-      </div>
-      <div class="big-image">
-        <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2" alt="Image 2">
-      </div>
+  <!-- Two big images (optional on dashboard, can keep or remove) -->
+  <div class="big-images">
+    <div class="big-image">
+      <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1" alt="Image 1">
     </div>
-
-    <div class="market-list">
-      <div class="market-item" data-market="sridevi">Sridevi <span class="market-time">10:00 AM</span></div>
-      <div class="market-item" data-market="timebazar">Time Bazar <span class="market-time">12:00 PM</span></div>
-      <div class="market-item" data-market="milanday">Milan Day <span class="market-time">2:00 PM</span></div>
-      <div class="market-item" data-market="kalyan">Kalyan <span class="market-time">2:30 PM</span></div>
-      <div class="market-item" data-market="sridevinight">Sridevi Night <span class="market-time">6:00 PM</span></div>
-      <div class="market-item" data-market="milannight">Milan Night <span class="market-time">8:00 PM</span></div>
-      <div class="market-item" data-market="mainbazar">Main Bazar <span class="market-time">8:30 PM</span></div>
-    </div>
-
-    <div class="notice">
-      <strong>📢 NOTICE BOARD</strong><br>
-      gsgsivdhdjissjhehehs<br>
-      hdsgywighdjsksososooss<br>
-      dveuowgdhjdjidjdjjjdjd<br>
-      gdurhdhdsjsjsjsj<br>
-      gsuwo vxgiwi vdhiw bdhek
-    </div>
-
-    <button class="btn btn-small" id="goto-subscription">SUBSCRIPTION</button>
-    <div class="nav-bar">
-      <button class="nav-btn" id="refresh-dash"><i class="fas fa-sync-alt"></i> REFRESH</button>
-      <button class="nav-btn" id="logout"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+    <div class="big-image">
+      <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2" alt="Image 2">
     </div>
   </div>
 
-  <!-- MARKETS PAGE -->
-  <div id="markets-page" class="page">
-    <h2>📊 MARKETS</h2>
-    <div class="market-list">
-      <div class="market-item" data-market="kalyan">KALYAN <span class="market-time">2:30 PM</span></div>
-      <div class="market-item" data-market="sridevi">SRIDEVI <span class="market-time">10:00 AM</span></div>
-      <div class="market-item" data-market="timebazar">TIME BAZAR <span class="market-time">12:00 PM</span></div>
-      <div class="market-item" data-market="milanday">MILAN DAY <span class="market-time">2:00 PM</span></div>
-      <div class="market-item" data-market="sridevinight">SRIDEVI NIGHT <span class="market-time">6:00 PM</span></div>
-      <div class="market-item" data-market="milannight">MILAN NIGHT <span class="market-time">8:00 PM</span></div>
-      <div class="market-item" data-market="mainbazar">MAIN BAZAR <span class="market-time">8:30 PM</span></div>
-    </div>
-    <div class="notice">
-      <strong>📢 NOTICE BOARD</strong><br>
-      gsgsivdhdjissjhehehs<br>
-      hdsgywighdjsksososooss<br>
-      dveuowgdhjdjidjdjjjdjd<br>
-      gdurhdhdsjsjsjsj<br>
-      gsuwo vxgiwi vdhiw bdhek
-    </div>
-    <div class="nav-bar">
-      <button class="nav-btn" id="back-to-dash"><i class="fas fa-arrow-left"></i> BACK</button>
-      <button class="nav-btn" id="refresh-markets"><i class="fas fa-sync-alt"></i> REFRESH</button>
-    </div>
+  <div class="market-list">
+    <div class="market-item" data-market="sridevi">Sridevi <span class="market-time">10:00 AM</span></div>
+    <div class="market-item" data-market="timebazar">Time Bazar <span class="market-time">12:00 PM</span></div>
+    <div class="market-item" data-market="milanday">Milan Day <span class="market-time">2:00 PM</span></div>
+    <div class="market-item" data-market="kalyan">Kalyan <span class="market-time">2:30 PM</span></div>
+    <div class="market-item" data-market="sridevinight">Sridevi Night <span class="market-time">6:00 PM</span></div>
+    <div class="market-item" data-market="milannight">Milan Night <span class="market-time">8:00 PM</span></div>
+    <div class="market-item" data-market="mainbazar">Main Bazar <span class="market-time">8:30 PM</span></div>
   </div>
 
-  <!-- MARKET DETAIL PAGE -->
-  <div id="detail-page" class="page">
-    <h2 id="detail-title">KALYAN</h2>
-    <div class="detail-grid" id="detail-grid">
-      <!-- Filled dynamically by JavaScript -->
-    </div>
-    <div class="nav-bar">
-      <button class="nav-btn" id="back-to-markets"><i class="fas fa-arrow-left"></i> BACK</button>
-      <button class="nav-btn" id="refresh-detail"><i class="fas fa-sync-alt"></i> REFRESH</button>
-    </div>
+  <div class="notice">
+    <strong>📢 NOTICE BOARD</strong><br>
+    gsgsivdhdjissjhehehs<br>
+    hdsgywighdjsksososooss<br>
+    dveuowgdhjdjidjdjjjdjd<br>
+    gdurhdhdsjsjsjsj<br>
+    gsuwo vxgiwi vdhiw bdhek
   </div>
 
-  <!-- SUBSCRIPTION PAGE -->
+  <button class="btn btn-small" id="goto-subscription">SUBSCRIPTION</button>
+  <div class="nav-bar">
+    <button class="nav-btn" id="refresh-dash"><i class="fas fa-sync-alt"></i> REFRESH</button>
+    <button class="nav-btn" id="logout"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+  </div>
+</div>
+
+<!-- MARKETS PAGE -->
+<div id="markets-page" class="page">
+  <h2>📊 MARKETS</h2>
+  <div class="market-list">
+    <div class="market-item" data-market="kalyan">KALYAN <span class="market-time">2:30 PM</span></div>
+    <div class="market-item" data-market="sridevi">SRIDEVI <span class="market-time">10:00 AM</span></div>
+    <div class="market-item" data-market="timebazar">TIME BAZAR <span class="market-time">12:00 PM</span></div>
+    <div class="market-item" data-market="milanday">MILAN DAY <span class="market-time">2:00 PM</span></div>
+    <div class="market-item" data-market="sridevinight">SRIDEVI NIGHT <span class="market-time">6:00 PM</span></div>
+    <div class="market-item" data-market="milannight">MILAN NIGHT <span class="market-time">8:00 PM</span></div>
+    <div class="market-item" data-market="mainbazar">MAIN BAZAR <span class="market-time">8:30 PM</span></div>
+  </div>
+  <div class="notice">
+    <strong>📢 NOTICE BOARD</strong><br>
+    gsgsivdhdjissjhehehs<br>
+    hdsgywighdjsksososooss<br>
+    dveuowgdhjdjidjdjjjdjd<br>
+    gdurhdhdsjsjsjsj<br>
+    gsuwo vxgiwi vdhiw bdhek
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="back-to-dash"><i class="fas fa-arrow-left"></i> BACK</button>
+    <button class="nav-btn" id="refresh-markets"><i class="fas fa-sync-alt"></i> REFRESH</button>
+  </div>
+</div>
+
+<!-- MARKET DETAIL PAGE -->
+<div id="detail-page" class="page">
+  <h2 id="detail-title">KALYAN</h2>
+  <div class="detail-grid" id="detail-grid">
+    <!-- filled by JavaScript -->
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="back-to-markets"><i class="fas fa-arrow-left"></i> BACK</button>
+    <button class="nav-btn" id="refresh-detail"><i class="fas fa-sync-alt"></i> REFRESH</button>
+  </div>
+</div>
+  <!-- SUBSCRIPTION PAGE (with top and bottom images) -->
   <div id="subscription-page" class="page">
+    <!-- Top image -->
+    <div class="big-image" style="margin-bottom: 20px;">
+      <img src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=TOP+IMAGE" alt="Top Image">
+    </div>
+
     <h2>SUBSCRIPTION</h2>
     <div style="text-align:center; margin:20px 0;">
       <div class="plan-box">
@@ -443,10 +439,16 @@
       <div class="contact-card" style="margin-top:20px;">
         <div>📲 SEND PAYMENT SCREENSHOT</div>
         <div style="font-size:0.85rem;">and wait few minutes to verify</div>
-        <a href="https://wa.me/917353547650" class="whatsapp-link" id="payment-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp +917353547650</a>
+        <a href="#" class="whatsapp-link" id="payment-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp +917353547650</a>
         <div>Or Telegram: <a href="#" style="color:#D4AF37;">t.me/Rudraksh</a></div>
       </div>
     </div>
+
+    <!-- Bottom image -->
+    <div class="big-image" style="margin-top: 20px;">
+      <img src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE" alt="Bottom Image">
+    </div>
+
     <div class="nav-bar">
       <button class="nav-btn" id="back-from-sub"><i class="fas fa-arrow-left"></i> BACK</button>
       <button class="nav-btn" id="paid-btn">I HAVE PAID</button>
@@ -454,212 +456,146 @@
   </div>
 </div>
 <!-- end #app -->
-  <!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<script>
-  // 🔁 YOUR FIREBASE CONFIG
-  const firebaseConfig = {
-    apiKey: "AIzaSyCXL6EiiLg_3lILCOSA_iFgeL8Y2nPEEnw",
-    authDomain: "rudraksh-premium.firebaseapp.com",
-    projectId: "rudraksh-premium",
-    storageBucket: "rudraksh-premium.firebasestorage.app",
-    messagingSenderId: "99880475040",
-    appId: "1:99880475040:web:c64c708e9bec7fed0a6cc5"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  <script>
+    // 🔁 YOUR FIREBASE CONFIG (already correct)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXL6EiiLg_3lILCOSA_iFgeL8Y2nPEEnw",
+      authDomain: "rudraksh-premium.firebaseapp.com",
+      projectId: "rudraksh-premium",
+      storageBucket: "rudraksh-premium.firebasestorage.app",
+      messagingSenderId: "99880475040",
+      appId: "1:99880475040:web:c64c708e9bec7fed0a6cc5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-  // ---------- CONFIGURATION: EDIT EVERYTHING BELOW ----------
-  const config = {
-    // WhatsApp number for payment notifications (your number)
-    adminWhatsApp: "+917353547650",  // Replace with your number
+    // ---------- CONFIGURATION: EDIT EVERYTHING BELOW ----------
+    const config = {
+      adminWhatsApp: "+917353547650",  // Your WhatsApp number for payment notifications
 
-    // Market data – you can edit names, timings, labels, and numbers
-    markets: {
-      kalyan: {
-        name: "KALYAN",
-        time: "2:30 PM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
+      // Market data – edit names, times, labels, numbers freely
+      markets: {
+        kalyan: {
+          name: "KALYAN",
+          time: "2:30 PM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "5* 3* 6* 2*", support: "5* 3*", jodi: "53 35 62 26", pannel: "123* 145* 245* 356*" }
         },
-        numbers: {
-          otc: "5* 3* 6* 2*",
-          support: "5* 3*",
-          jodi: "53 35 62 26",
-          pannel: "123* 145* 245* 356*"
+        sridevi: {
+          name: "SRIDEVI",
+          time: "10:00 AM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "2* 7* 4* 9*", support: "2* 7*", jodi: "27 72 49 94", pannel: "234* 257* 279* 290*" }
+        },
+        timebazar: {
+          name: "TIME BAZAR",
+          time: "12:00 PM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "1* 4* 8* 3*", support: "1* 4*", jodi: "14 41 83 38", pannel: "123* 148* 183* 134*" }
+        },
+        milanday: {
+          name: "MILAN DAY",
+          time: "2:00 PM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "6* 1* 5* 8*", support: "6* 1*", jodi: "61 16 58 85", pannel: "167* 168* 156* 158*" }
+        },
+        sridevinight: {
+          name: "SRIDEVI NIGHT",
+          time: "6:00 PM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "9* 2* 7* 4*", support: "9* 2*", jodi: "92 29 74 47", pannel: "279* 294* 247* 249*" }
+        },
+        milannight: {
+          name: "MILAN NIGHT",
+          time: "8:00 PM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "3* 6* 2* 5*", support: "3* 6*", jodi: "36 63 25 52", pannel: "356* 325* 362* 352*" }
+        },
+        mainbazar: {
+          name: "MAIN BAZAR",
+          time: "8:30 PM",
+          labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
+          numbers: { otc: "4* 8* 1* 7*", support: "4* 8*", jodi: "48 84 17 71", pannel: "148* 147* 178* 187*" }
         }
       },
-      sridevi: {
-        name: "SRIDEVI",
-        time: "10:00 AM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
-        },
-        numbers: {
-          otc: "2* 7* 4* 9*",
-          support: "2* 7*",
-          jodi: "27 72 49 94",
-          pannel: "234* 257* 279* 290*"
+
+      noticeBoard: "gsgsivdhdjissjhehehs\nhdsgywighdjsksososooss\ndveuowgdhjdjidjdjjjdjd\ngdurhdhdsjsjsjsj\ngsuwo vxgiwi vdhiw bdhek",
+
+      // Images for subscription page (top and bottom)
+      subTopImage: "https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=TOP+IMAGE",
+      subBottomImage: "https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE"
+    };
+
+    // Apply config to DOM
+    function applyConfig() {
+      // Update market times in lists
+      document.querySelectorAll('.market-item[data-market]').forEach(el => {
+        const key = el.getAttribute('data-market');
+        if (config.markets[key]) {
+          const timeSpan = el.querySelector('.market-time');
+          if (timeSpan) timeSpan.innerText = config.markets[key].time;
         }
-      },
-      timebazar: {
-        name: "TIME BAZAR",
-        time: "12:00 PM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
-        },
-        numbers: {
-          otc: "1* 4* 8* 3*",
-          support: "1* 4*",
-          jodi: "14 41 83 38",
-          pannel: "123* 148* 183* 134*"
-        }
-      },
-      milanday: {
-        name: "MILAN DAY",
-        time: "2:00 PM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
-        },
-        numbers: {
-          otc: "6* 1* 5* 8*",
-          support: "6* 1*",
-          jodi: "61 16 58 85",
-          pannel: "167* 168* 156* 158*"
-        }
-      },
-      sridevinight: {
-        name: "SRIDEVI NIGHT",
-        time: "6:00 PM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
-        },
-        numbers: {
-          otc: "9* 2* 7* 4*",
-          support: "9* 2*",
-          jodi: "92 29 74 47",
-          pannel: "279* 294* 247* 249*"
-        }
-      },
-      milannight: {
-        name: "MILAN NIGHT",
-        time: "8:00 PM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
-        },
-        numbers: {
-          otc: "3* 6* 2* 5*",
-          support: "3* 6*",
-          jodi: "36 63 25 52",
-          pannel: "356* 325* 362* 352*"
-        }
-      },
-      mainbazar: {
-        name: "MAIN BAZAR",
-        time: "8:30 PM",
-        labels: {
-          otc: "O.T.C",
-          support: "SUPPORT",
-          jodi: "JODI",
-          pannel: "PANNEL"
-        },
-        numbers: {
-          otc: "4* 8* 1* 7*",
-          support: "4* 8*",
-          jodi: "48 84 17 71",
-          pannel: "148* 147* 178* 187*"
-        }
+      });
+
+      // Update notice boards
+      document.querySelectorAll('.notice').forEach(el => {
+        el.innerHTML = `<strong>📢 NOTICE BOARD</strong><br>${config.noticeBoard.replace(/\n/g, '<br>')}`;
+      });
+
+      // Update subscription page images
+      const subPage = document.getElementById('subscription-page');
+      if (subPage) {
+        const topImg = subPage.querySelector('.big-image:first-child img');
+        const bottomImg = subPage.querySelector('.big-image:last-child img');
+        if (topImg) topImg.src = config.subTopImage;
+        if (bottomImg) bottomImg.src = config.subBottomImage;
       }
-    },
+    }
 
-    // Notice board content (you can edit)
-    noticeBoard: "gsgsivdhdjissjhehehs\nhdsgywighdjsksososooss\ndveuowgdhjdjidjdjjjdjd\ngdurhdhdsjsjsjsj\ngsuwo vxgiwi vdhiw bdhek",
+    // Helper: show page
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+    }
 
-    // Two big images (replace URLs later)
-    bigImage1: "https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1",
-    bigImage2: "https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2"
-  };
+    // Helper: load market detail
+    function loadMarketDetail(marketKey) {
+      const market = config.markets[marketKey];
+      if (!market) return;
+      document.getElementById('detail-title').innerText = market.name;
+      const grid = document.getElementById('detail-grid');
+      grid.innerHTML = '';
+      const items = ['otc', 'support', 'jodi', 'pannel'];
+      items.forEach(key => {
+        const card = document.createElement('div');
+        card.className = 'detail-card';
+        card.innerHTML = `<h4>${market.labels[key]}</h4><div class="detail-numbers">${market.numbers[key]}</div>`;
+        grid.appendChild(card);
+      });
+    }
 
-  // Helper: update market times in lists
-  function updateMarketTimes() {
-    document.querySelectorAll('.market-item[data-market]').forEach(el => {
-      const marketKey = el.getAttribute('data-market');
-      if (config.markets[marketKey]) {
-        const timeSpan = el.querySelector('.market-time');
-        if (timeSpan) timeSpan.innerText = config.markets[marketKey].time;
-      }
-    });
-  }
+    // Live date/time
+    function updateDateTime() {
+      const now = new Date();
+      const dateEl = document.getElementById('live-date');
+      const timeEl = document.getElementById('live-time');
+      if (dateEl) dateEl.innerText = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      if (timeEl) timeEl.innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    setInterval(updateDateTime, 1000);
 
-  // Helper: show page
-  function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-  }
-
-  // Helper: load market detail
-  function loadMarketDetail(marketKey) {
-    const market = config.markets[marketKey];
-    if (!market) return;
-    document.getElementById('detail-title').innerText = market.name;
-    const grid = document.getElementById('detail-grid');
-    grid.innerHTML = ''; // clear
-    const items = ['otc', 'support', 'jodi', 'pannel'];
-    items.forEach(key => {
-      const card = document.createElement('div');
-      card.className = 'detail-card';
-      card.innerHTML = `<h4>${market.labels[key]}</h4><div class="detail-numbers">${market.numbers[key]}</div>`;
-      grid.appendChild(card);
-    });
-  }
-
-  // Helper: update notice boards
-  function updateNoticeBoards() {
-    document.querySelectorAll('.notice').forEach(el => {
-      el.innerHTML = `<strong>📢 NOTICE BOARD</strong><br>${config.noticeBoard.replace(/\n/g, '<br>')}`;
-    });
-  }
-
-  // Helper: update big images
-  function updateBigImages() {
-    const containers = document.querySelectorAll('.big-images');
-    containers.forEach(container => {
-      container.innerHTML = `
-        <div class="big-image"><img src="${config.bigImage1}" alt="Image 1"></div>
-        <div class="big-image"><img src="${config.bigImage2}" alt="Image 2"></div>
-      `;
-    });
-  }
-      // ---------- Firebase Login & Auth ----------
+    // ---------- All Event Listeners (must run after DOM ready) ----------
     document.addEventListener('DOMContentLoaded', function() {
-      // Initialize content from config
-      updateMarketTimes();
-      updateNoticeBoards();
-      updateBigImages();
+      applyConfig();
+      updateDateTime();
 
-      // Login button
+      // Login
       document.getElementById('login-btn').addEventListener('click', (e) => {
         e.preventDefault();
         const mobile = document.getElementById('mobile').value.trim();
@@ -688,11 +624,10 @@
       // Logout
       document.getElementById('logout').addEventListener('click', () => auth.signOut());
 
-      // Paid button – send WhatsApp message to admin
+      // Paid button – send WhatsApp to admin
       document.getElementById('paid-btn').addEventListener('click', () => {
         const user = auth.currentUser;
         if (!user) return alert('You must be logged in');
-        // Get selected plan
         let selectedPlan = '1 day';
         if (document.getElementById('plan-1week').classList.contains('selected')) {
           selectedPlan = '1 week';
@@ -701,15 +636,14 @@
         } else {
           return alert('Please select a plan');
         }
-        // Get user mobile from Firestore
         db.collection('users').doc(user.uid).get()
           .then(doc => {
-            if (!doc.exists) throw new Error('User document not found');
+            if (!doc.exists) throw new Error('User not found');
             const mobile = doc.data().mobile;
             const message = `PAYMENT REQUEST%0AUser: ${mobile}%0APlan: ${selectedPlan}%0AUID: ${user.uid}%0APlease verify and update subscription.`;
             const whatsappUrl = `https://wa.me/${config.adminWhatsApp.replace(/\D/g, '')}?text=${message}`;
             window.open(whatsappUrl, '_blank');
-            alert('WhatsApp opened. Send the payment screenshot to admin. After verification, your subscription will be activated.');
+            alert('WhatsApp opened. Send payment screenshot to admin.');
           })
           .catch(err => alert('Error: ' + err.message));
       });
@@ -730,17 +664,16 @@
       document.getElementById('back-to-dash').addEventListener('click', () => showPage('dashboard-page'));
       document.getElementById('back-to-markets').addEventListener('click', () => showPage('markets-page'));
 
-      // Refresh buttons (just simulate)
+      // Refresh buttons
       document.getElementById('refresh-dash').addEventListener('click', () => { updateDateTime(); alert('Dashboard refreshed'); });
       document.getElementById('refresh-markets').addEventListener('click', () => alert('Markets refreshed'));
       document.getElementById('refresh-detail').addEventListener('click', () => alert('Detail refreshed'));
 
-      // Market item clicks
+      // Market item clicks – go to detail only if subscribed
       document.querySelectorAll('.market-item').forEach(el => {
         el.addEventListener('click', (e) => {
           const marketKey = e.currentTarget.getAttribute('data-market');
           if (!marketKey) return;
-          // Check if user is subscribed (client‑side check, but server‑side will be enforced by Firestore)
           const user = auth.currentUser;
           if (!user) return showPage('login-page');
           db.collection('users').doc(user.uid).get()
@@ -749,22 +682,13 @@
                 loadMarketDetail(marketKey);
                 showPage('detail-page');
               } else {
-                alert('Your subscription is not active. Please contact admin.');
+                alert('Subscription not active. Please contact admin.');
                 showPage('subscription-page');
               }
             })
             .catch(() => showPage('subscription-page'));
         });
       });
-
-      // Live date/time
-      function updateDateTime() {
-        const now = new Date();
-        document.getElementById('live-date').innerText = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-        document.getElementById('live-time').innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      }
-      setInterval(updateDateTime, 1000);
-      updateDateTime();
 
       // Auth state observer
       auth.onAuthStateChanged(user => {
