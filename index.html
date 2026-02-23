@@ -74,6 +74,25 @@
       background: #fff;
       box-shadow: 0 8px 16px -6px rgba(0,0,0,0.2);
     }
+    /* Two big images container */
+    .big-images {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin: 20px 0;
+    }
+    .big-image {
+      width: 100%;
+      border-radius: 30px;
+      border: 3px solid #D4AF37;
+      overflow: hidden;
+      background: #fff8ed;
+    }
+    .big-image img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
     .input-group {
       margin-bottom: 20px;
     }
@@ -334,6 +353,16 @@
       <img src="https://via.placeholder.com/60x60/FFF5E6/D4AF37?text=M" alt="Logo">
     </div>
 
+    <!-- Two big images (replace src with your image URLs later) -->
+    <div class="big-images">
+      <div class="big-image">
+        <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1" alt="Image 1">
+      </div>
+      <div class="big-image">
+        <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2" alt="Image 2">
+      </div>
+    </div>
+
     <div class="market-list">
       <div class="market-item" data-market="sridevi">Sridevi <span class="market-time">10:00 AM</span></div>
       <div class="market-item" data-market="timebazar">Time Bazar <span class="market-time">12:00 PM</span></div>
@@ -389,11 +418,8 @@
   <!-- MARKET DETAIL PAGE -->
   <div id="detail-page" class="page">
     <h2 id="detail-title">KALYAN</h2>
-    <div class="detail-grid">
-      <div class="detail-card"><h4>O.T.C</h4><div class="detail-numbers">5* 3* 6* 2*</div></div>
-      <div class="detail-card"><h4>SUPPORT</h4><div class="detail-numbers">5* 3*</div></div>
-      <div class="detail-card"><h4>JODI</h4><div class="detail-numbers">53 35 62 26</div></div>
-      <div class="detail-card"><h4>PANNEL</h4><div class="detail-numbers">123* 145* 245* 356*</div></div>
+    <div class="detail-grid" id="detail-grid">
+      <!-- Filled dynamically by JavaScript -->
     </div>
     <div class="nav-bar">
       <button class="nav-btn" id="back-to-markets"><i class="fas fa-arrow-left"></i> BACK</button>
@@ -417,13 +443,13 @@
       <div class="contact-card" style="margin-top:20px;">
         <div>📲 SEND PAYMENT SCREENSHOT</div>
         <div style="font-size:0.85rem;">and wait few minutes to verify</div>
-        <a href="https://wa.me/917353547650" class="whatsapp-link"><i class="fab fa-whatsapp"></i> WhatsApp +917353547650</a>
+        <a href="https://wa.me/917353547650" class="whatsapp-link" id="payment-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp +917353547650</a>
         <div>Or Telegram: <a href="#" style="color:#D4AF37;">t.me/Rudraksh</a></div>
       </div>
     </div>
     <div class="nav-bar">
       <button class="nav-btn" id="back-from-sub"><i class="fas fa-arrow-left"></i> BACK</button>
-      <button class="nav-btn" id="paid-btn">PAID</button>
+      <button class="nav-btn" id="paid-btn">I HAVE PAID</button>
     </div>
   </div>
 </div>
@@ -434,7 +460,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // 🔁 YOUR FIREBASE CONFIG (copied exactly)
+  // 🔁 YOUR FIREBASE CONFIG
   const firebaseConfig = {
     apiKey: "AIzaSyCXL6EiiLg_3lILCOSA_iFgeL8Y2nPEEnw",
     authDomain: "rudraksh-premium.firebaseapp.com",
@@ -447,214 +473,316 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // ---------- Helper: show page ----------
+  // ---------- CONFIGURATION: EDIT EVERYTHING BELOW ----------
+  const config = {
+    // WhatsApp number for payment notifications (your number)
+    adminWhatsApp: "+917353547650",  // Replace with your number
+
+    // Market data – you can edit names, timings, labels, and numbers
+    markets: {
+      kalyan: {
+        name: "KALYAN",
+        time: "2:30 PM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "5* 3* 6* 2*",
+          support: "5* 3*",
+          jodi: "53 35 62 26",
+          pannel: "123* 145* 245* 356*"
+        }
+      },
+      sridevi: {
+        name: "SRIDEVI",
+        time: "10:00 AM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "2* 7* 4* 9*",
+          support: "2* 7*",
+          jodi: "27 72 49 94",
+          pannel: "234* 257* 279* 290*"
+        }
+      },
+      timebazar: {
+        name: "TIME BAZAR",
+        time: "12:00 PM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "1* 4* 8* 3*",
+          support: "1* 4*",
+          jodi: "14 41 83 38",
+          pannel: "123* 148* 183* 134*"
+        }
+      },
+      milanday: {
+        name: "MILAN DAY",
+        time: "2:00 PM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "6* 1* 5* 8*",
+          support: "6* 1*",
+          jodi: "61 16 58 85",
+          pannel: "167* 168* 156* 158*"
+        }
+      },
+      sridevinight: {
+        name: "SRIDEVI NIGHT",
+        time: "6:00 PM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "9* 2* 7* 4*",
+          support: "9* 2*",
+          jodi: "92 29 74 47",
+          pannel: "279* 294* 247* 249*"
+        }
+      },
+      milannight: {
+        name: "MILAN NIGHT",
+        time: "8:00 PM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "3* 6* 2* 5*",
+          support: "3* 6*",
+          jodi: "36 63 25 52",
+          pannel: "356* 325* 362* 352*"
+        }
+      },
+      mainbazar: {
+        name: "MAIN BAZAR",
+        time: "8:30 PM",
+        labels: {
+          otc: "O.T.C",
+          support: "SUPPORT",
+          jodi: "JODI",
+          pannel: "PANNEL"
+        },
+        numbers: {
+          otc: "4* 8* 1* 7*",
+          support: "4* 8*",
+          jodi: "48 84 17 71",
+          pannel: "148* 147* 178* 187*"
+        }
+      }
+    },
+
+    // Notice board content (you can edit)
+    noticeBoard: "gsgsivdhdjissjhehehs\nhdsgywighdjsksososooss\ndveuowgdhjdjidjdjjjdjd\ngdurhdhdsjsjsjsj\ngsuwo vxgiwi vdhiw bdhek",
+
+    // Two big images (replace URLs later)
+    bigImage1: "https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1",
+    bigImage2: "https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2"
+  };
+
+  // Helper: update market times in lists
+  function updateMarketTimes() {
+    document.querySelectorAll('.market-item[data-market]').forEach(el => {
+      const marketKey = el.getAttribute('data-market');
+      if (config.markets[marketKey]) {
+        const timeSpan = el.querySelector('.market-time');
+        if (timeSpan) timeSpan.innerText = config.markets[marketKey].time;
+      }
+    });
+  }
+
+  // Helper: show page
   function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
   }
 
-  // ---------- Live date & time ----------
-  function updateDateTime() {
-    const now = new Date();
-    document.getElementById('live-date').innerText = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-    document.getElementById('live-time').innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  // Helper: load market detail
+  function loadMarketDetail(marketKey) {
+    const market = config.markets[marketKey];
+    if (!market) return;
+    document.getElementById('detail-title').innerText = market.name;
+    const grid = document.getElementById('detail-grid');
+    grid.innerHTML = ''; // clear
+    const items = ['otc', 'support', 'jodi', 'pannel'];
+    items.forEach(key => {
+      const card = document.createElement('div');
+      card.className = 'detail-card';
+      card.innerHTML = `<h4>${market.labels[key]}</h4><div class="detail-numbers">${market.numbers[key]}</div>`;
+      grid.appendChild(card);
+    });
   }
-  setInterval(updateDateTime, 1000);
 
-  // ---------- Navigation elements (will be filled after DOM ready) ----------
-  // We'll define them inside DOMContentLoaded
-  document.addEventListener('DOMContentLoaded', function() {
-    // Login button
-    document.getElementById('login-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      const mobile = document.getElementById('mobile').value.trim();
-      const password = document.getElementById('password').value.trim();
-      if (!mobile || !password) return alert('Enter mobile and password');
-      const email = mobile + '@matka.com'; // treat mobile as email
-      auth.signInWithEmailAndPassword(email, password)
-        .catch(err => {
-          // If user doesn't exist, try to create (for demo)
-          if (err.code === 'auth/user-not-found') {
-            auth.createUserWithEmailAndPassword(email, password)
-              .then((cred) => {
-                // Create user document in Firestore with subscriptionActive: false
-                return db.collection('users').doc(cred.user.uid).set({
-                  mobile: mobile,
-                  subscriptionActive: false,
-                  createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-              })
-              .then(() => {
-                // After creation, sign in automatically, but we'll let onAuthStateChanged handle redirect
-              })
-              .catch(err2 => alert('Error creating account: ' + err2.message));
-          } else {
-            alert('Login failed: ' + err.message);
-          }
-        });
+  // Helper: update notice boards
+  function updateNoticeBoards() {
+    document.querySelectorAll('.notice').forEach(el => {
+      el.innerHTML = `<strong>📢 NOTICE BOARD</strong><br>${config.noticeBoard.replace(/\n/g, '<br>')}`;
     });
+  }
 
-    // Logout
-    document.getElementById('logout').addEventListener('click', () => {
-      auth.signOut();
+  // Helper: update big images
+  function updateBigImages() {
+    const containers = document.querySelectorAll('.big-images');
+    containers.forEach(container => {
+      container.innerHTML = `
+        <div class="big-image"><img src="${config.bigImage1}" alt="Image 1"></div>
+        <div class="big-image"><img src="${config.bigImage2}" alt="Image 2"></div>
+      `;
     });
-
-    // Refresh buttons (just simulate)
-    document.getElementById('refresh-dash').addEventListener('click', () => { updateDateTime(); alert('Dashboard refreshed'); });
-    document.getElementById('refresh-markets').addEventListener('click', () => alert('Markets refreshed'));
-    document.getElementById('refresh-detail').addEventListener('click', () => alert('Detail refreshed'));
-
-    // Back buttons
-    document.getElementById('back-to-dash').addEventListener('click', () => showPage('dashboard-page'));
-    document.getElementById('back-to-markets').addEventListener('click', () => showPage('markets-page'));
-    document.getElementById('back-from-sub').addEventListener('click', () => showPage('dashboard-page'));
-
-    // Go to subscription from dashboard
-    document.getElementById('goto-subscription').addEventListener('click', () => showPage('subscription-page'));
-
-    // Market items click -> go to detail page (but will be protected by subscription check)
-    document.querySelectorAll('.market-item').forEach(el => {
-      el.addEventListener('click', (e) => {
-        const market = e.currentTarget.getAttribute('data-market') || 'kalyan';
-        document.getElementById('detail-title').innerText = market.toUpperCase().replace('NIGHT', ' NIGHT');
-        // We'll check subscription inside a separate function later
-        attemptGoToDetail();
-      });
-    });
-
-    // Plan selection
-    document.getElementById('plan-1day').addEventListener('click', function() {
-      document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
-      this.classList.add('selected');
-    });
-    document.getElementById('plan-1week').addEventListener('click', function() {
-      document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
-      this.classList.add('selected');
-    });
-
-    // Paid button (simulate payment verification)
-    document.getElementById('paid-btn').addEventListener('click', () => {
-      const user = auth.currentUser;
-      if (!user) return alert('You must be logged in');
-      // In a real app, you'd verify payment first. Here we just set subscriptionActive = true
-      db.collection('users').doc(user.uid).update({
-        subscriptionActive: true
-      }).then(() => {
-        alert('Payment verified! Subscription activated.');
-        showPage('dashboard-page');
-      }).catch(err => alert('Error: ' + err.message));
-    });
-  }); // end DOMContentLoaded
-      // ---------- Global variables to track subscription ----------
-    let currentUserSubscription = false;
-
-    // Function to check subscription and redirect if needed
-    function checkSubscriptionAndRedirect(uid) {
-      db.collection('users').doc(uid).get()
-        .then(doc => {
-          if (doc.exists) {
-            currentUserSubscription = doc.data().subscriptionActive || false;
-          } else {
-            // If no document, create one with subscription false
-            db.collection('users').doc(uid).set({
-              mobile: auth.currentUser.email.split('@')[0], // extract mobile
-              subscriptionActive: false,
-              createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            currentUserSubscription = false;
-          }
-          // If no subscription, go to subscription page; otherwise stay (or go to dashboard)
-          if (!currentUserSubscription) {
-            showPage('subscription-page');
-          } else {
-            // if already on subscription page, maybe redirect to dashboard
-            if (document.getElementById('subscription-page').classList.contains('active')) {
-              showPage('dashboard-page');
-            }
-          }
-        })
-        .catch(err => console.error('Error checking subscription', err));
-    }
-
-    // Function to attempt going to detail page – only if subscribed
-    function attemptGoToDetail() {
-      if (currentUserSubscription) {
-        showPage('detail-page');
-      } else {
-        alert('You need an active subscription to view market details.');
-        showPage('subscription-page');
-      }
-    }
-
-    // Override market item click to use attemptGoToDetail
-    // (We already added listener, but we need to replace with this check)
-    // We'll re-attach inside auth state to ensure it uses latest subscription status
-    function attachMarketListeners() {
-      document.querySelectorAll('.market-item').forEach(el => {
-        el.removeEventListener('click', attemptGoToDetail); // remove old if any
-        el.addEventListener('click', (e) => {
-          const market = e.currentTarget.getAttribute('data-market') || 'kalyan';
-          document.getElementById('detail-title').innerText = market.toUpperCase().replace('NIGHT', ' NIGHT');
-          if (currentUserSubscription) {
-            showPage('detail-page');
-          } else {
-            alert('You need an active subscription to view market details.');
-            showPage('subscription-page');
-          }
-        });
-      });
-    }
-
-    // Auth state observer
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        // User logged in – check subscription
-        checkSubscriptionAndRedirect(user.uid);
-        // Attach market listeners again (in case DOM changed)
-        attachMarketListeners();
-        // Start live time if not already (already set interval)
-      } else {
-        // No user – show login page
-        showPage('login-page');
-        currentUserSubscription = false;
-      }
-    });
-
-    // Also, protect dashboard and markets pages from being accessed directly (via URL or back)
-    // We can override showPage to enforce subscription for protected pages
-    const originalShowPage = showPage;
-    window.showPage = function(pageId) {
-      const protectedPages = ['dashboard-page', 'markets-page', 'detail-page'];
-      if (protectedPages.includes(pageId) && !currentUserSubscription) {
-        alert('Subscription required');
-        originalShowPage('subscription-page');
-      } else {
-        originalShowPage(pageId);
-      }
-    };
-
-    // But we also need to handle manual navigation via back buttons etc.
-    // We'll override the back button listeners to use the new showPage
-    // (Already defined, but we can re-assign after overriding)
+  }
+      // ---------- Firebase Login & Auth ----------
     document.addEventListener('DOMContentLoaded', function() {
-      // Re-assign back buttons to use the overridden showPage
+      // Initialize content from config
+      updateMarketTimes();
+      updateNoticeBoards();
+      updateBigImages();
+
+      // Login button
+      document.getElementById('login-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        const mobile = document.getElementById('mobile').value.trim();
+        const password = document.getElementById('password').value.trim();
+        if (!mobile || !password) return alert('Enter mobile and password');
+        const email = mobile + '@matka.com';
+        auth.signInWithEmailAndPassword(email, password)
+          .catch(err => {
+            if (err.code === 'auth/user-not-found') {
+              auth.createUserWithEmailAndPassword(email, password)
+                .then(cred => {
+                  return db.collection('users').doc(cred.user.uid).set({
+                    mobile: mobile,
+                    subscriptionActive: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                  });
+                })
+                .then(() => alert('Account created! Please wait for admin to activate subscription.'))
+                .catch(err2 => alert('Creation error: ' + err2.message));
+            } else {
+              alert('Login error: ' + err.message);
+            }
+          });
+      });
+
+      // Logout
+      document.getElementById('logout').addEventListener('click', () => auth.signOut());
+
+      // Paid button – send WhatsApp message to admin
+      document.getElementById('paid-btn').addEventListener('click', () => {
+        const user = auth.currentUser;
+        if (!user) return alert('You must be logged in');
+        // Get selected plan
+        let selectedPlan = '1 day';
+        if (document.getElementById('plan-1week').classList.contains('selected')) {
+          selectedPlan = '1 week';
+        } else if (document.getElementById('plan-1day').classList.contains('selected')) {
+          selectedPlan = '1 day';
+        } else {
+          return alert('Please select a plan');
+        }
+        // Get user mobile from Firestore
+        db.collection('users').doc(user.uid).get()
+          .then(doc => {
+            if (!doc.exists) throw new Error('User document not found');
+            const mobile = doc.data().mobile;
+            const message = `PAYMENT REQUEST%0AUser: ${mobile}%0APlan: ${selectedPlan}%0AUID: ${user.uid}%0APlease verify and update subscription.`;
+            const whatsappUrl = `https://wa.me/${config.adminWhatsApp.replace(/\D/g, '')}?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+            alert('WhatsApp opened. Send the payment screenshot to admin. After verification, your subscription will be activated.');
+          })
+          .catch(err => alert('Error: ' + err.message));
+      });
+
+      // Plan selection
+      document.getElementById('plan-1day').addEventListener('click', function() {
+        document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+      document.getElementById('plan-1week').addEventListener('click', function() {
+        document.querySelectorAll('.plan').forEach(p => p.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+
+      // Navigation
+      document.getElementById('goto-subscription').addEventListener('click', () => showPage('subscription-page'));
+      document.getElementById('back-from-sub').addEventListener('click', () => showPage('dashboard-page'));
       document.getElementById('back-to-dash').addEventListener('click', () => showPage('dashboard-page'));
       document.getElementById('back-to-markets').addEventListener('click', () => showPage('markets-page'));
-      document.getElementById('back-from-sub').addEventListener('click', () => showPage('dashboard-page'));
-      document.getElementById('goto-subscription').addEventListener('click', () => showPage('subscription-page'));
-    });
 
-    // Also add a markets button to dashboard for convenience (optional)
-    // We'll create it dynamically if not present
-    const dashNav = document.querySelector('#dashboard-page .nav-bar');
-    if (dashNav && !document.querySelector('#markets-btn')) {
-      const marketsBtn = document.createElement('button');
-      marketsBtn.className = 'nav-btn';
-      marketsBtn.id = 'markets-btn';
-      marketsBtn.innerHTML = '<i class="fas fa-list"></i> MARKETS';
-      marketsBtn.addEventListener('click', () => showPage('markets-page'));
-      dashNav.insertBefore(marketsBtn, dashNav.firstChild);
-    }
+      // Refresh buttons (just simulate)
+      document.getElementById('refresh-dash').addEventListener('click', () => { updateDateTime(); alert('Dashboard refreshed'); });
+      document.getElementById('refresh-markets').addEventListener('click', () => alert('Markets refreshed'));
+      document.getElementById('refresh-detail').addEventListener('click', () => alert('Detail refreshed'));
+
+      // Market item clicks
+      document.querySelectorAll('.market-item').forEach(el => {
+        el.addEventListener('click', (e) => {
+          const marketKey = e.currentTarget.getAttribute('data-market');
+          if (!marketKey) return;
+          // Check if user is subscribed (client‑side check, but server‑side will be enforced by Firestore)
+          const user = auth.currentUser;
+          if (!user) return showPage('login-page');
+          db.collection('users').doc(user.uid).get()
+            .then(doc => {
+              if (doc.exists && doc.data().subscriptionActive) {
+                loadMarketDetail(marketKey);
+                showPage('detail-page');
+              } else {
+                alert('Your subscription is not active. Please contact admin.');
+                showPage('subscription-page');
+              }
+            })
+            .catch(() => showPage('subscription-page'));
+        });
+      });
+
+      // Live date/time
+      function updateDateTime() {
+        const now = new Date();
+        document.getElementById('live-date').innerText = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+        document.getElementById('live-time').innerText = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      }
+      setInterval(updateDateTime, 1000);
+      updateDateTime();
+
+      // Auth state observer
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          db.collection('users').doc(user.uid).get()
+            .then(doc => {
+              if (doc.exists && doc.data().subscriptionActive) {
+                showPage('dashboard-page');
+              } else {
+                showPage('subscription-page');
+              }
+            })
+            .catch(() => showPage('subscription-page'));
+        } else {
+          showPage('login-page');
+        }
+      });
+    }); // end DOMContentLoaded
   </script>
 </body>
 </html>
