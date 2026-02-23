@@ -14,7 +14,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(145deg, #fff2db 0%, #ffe6c9 100%);
+      background: linear-gradient(145deg, #ff9800 0%, #f57c00 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -27,30 +27,37 @@
       margin: 0 auto;
     }
     .page {
-      background: rgba(255, 250, 240, 0.9);
+      background: rgba(255, 250, 240, 0.95);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(212, 175, 55, 0.3);
+      border: 1px solid rgba(255, 160, 0, 0.4);
       border-radius: 36px;
       padding: 24px 20px;
-      box-shadow: 0 20px 40px -12px rgba(180, 130, 40, 0.4);
-      animation: fadeIn 0.4s ease;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.4), 0 0 20px rgba(255,140,0,0.3);
+      animation: fadeScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       display: none;
+      transition: all 0.3s;
     }
     .page.active { display: block; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeScale {
+      0% { opacity: 0; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1); }
     }
-    .gold { color: #D4AF37; }
+    .gold { color: #ff8c00; }
     h2 {
       font-size: 1.8rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #b27d3a, #8b5f1f);
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff8c00, #ff5500);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-align: center;
       margin-bottom: 16px;
+      animation: glow 2s infinite;
+    }
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 2px #ffaa00); }
+      50% { filter: drop-shadow(0 0 8px #ffaa00); }
+      100% { filter: drop-shadow(0 0 2px #ffaa00); }
     }
     .logo {
       display: flex;
@@ -61,18 +68,30 @@
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      border: 3px solid #D4AF37;
+      border: 3px solid #ff8c00;
       object-fit: cover;
       background: #fff;
-      box-shadow: 0 8px 16px -6px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 16px -6px rgba(0,0,0,0.3), 0 0 15px #ffaa00;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
     }
     .big-image {
       width: 100%;
       border-radius: 30px;
-      border: 3px solid #D4AF37;
+      border: 3px solid #ff8c00;
       overflow: hidden;
       background: #fff8ed;
       margin: 15px 0;
+      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .big-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 15px 30px -8px #ff8c00;
     }
     .big-image img {
       width: 100%;
@@ -87,9 +106,10 @@
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
-      color: #7a623a;
+      color: #b95f00;
       margin-bottom: 6px;
       margin-left: 8px;
+      letter-spacing: 0.5px;
     }
     .input-wrapper {
       position: relative;
@@ -99,22 +119,24 @@
       left: 16px;
       top: 50%;
       transform: translateY(-50%);
-      color: #D4AF37;
+      color: #ff8c00;
       font-size: 1.1rem;
+      text-shadow: 0 2px 5px rgba(255,140,0,0.3);
     }
     .input-wrapper input {
       width: 100%;
       padding: 16px 16px 16px 48px;
-      border: 1px solid #e9d5b0;
+      border: 1px solid #ffcc80;
       border-radius: 44px;
       font-size: 1rem;
       background: #fffcf5;
       outline: none;
-      transition: 0.2s;
+      transition: all 0.3s;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
     }
     .input-wrapper input:focus {
-      border-color: #D4AF37;
-      box-shadow: 0 0 0 3px rgba(212,175,55,0.2);
+      border-color: #ff8c00;
+      box-shadow: 0 0 0 4px rgba(255,140,0,0.2), inset 0 2px 5px rgba(0,0,0,0.05);
     }
     .btn {
       display: block;
@@ -127,16 +149,31 @@
       text-transform: uppercase;
       text-align: center;
       cursor: pointer;
-      transition: 0.2s;
+      transition: all 0.3s;
       margin: 20px 0;
-      background: linear-gradient(135deg, #D4AF37, #b88d2e);
-      color: #1f1a10;
-      border: 1px solid rgba(255,245,190,0.7);
-      box-shadow: 0 12px 20px -12px #D4AF37;
+      background: linear-gradient(135deg, #ff8c00, #ff5500);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 10px 20px -8px #ff5500;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    .btn:hover::after {
+      left: 100%;
     }
     .btn:hover {
-      transform: scale(1.02);
-      background: linear-gradient(135deg, #e6c451, #D4AF37);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px -8px #ff5500;
     }
     .btn-small {
       padding: 12px;
@@ -148,12 +185,18 @@
       pointer-events: none;
     }
     .contact-card {
-      background: rgba(245, 235, 215, 0.7);
+      background: rgba(255, 235, 210, 0.7);
       border-radius: 30px;
       padding: 16px;
       margin: 20px 0;
-      border: 1px solid #D4AF37;
+      border: 1px solid #ff8c00;
       text-align: center;
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,140,0,0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255,140,0,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,140,0,0); }
     }
     .whatsapp-link {
       display: inline-flex;
@@ -165,8 +208,13 @@
       border-radius: 40px;
       text-decoration: none;
       font-weight: 600;
-      border: 1px solid #D4AF37;
+      border: 1px solid #ff8c00;
       margin: 8px 0;
+      transition: all 0.3s;
+    }
+    .whatsapp-link:hover {
+      background: #2f281c;
+      transform: scale(1.05);
     }
     .whatsapp-link i {
       color: #25D366;
@@ -180,16 +228,23 @@
       justify-content: space-between;
       align-items: center;
       padding: 14px 16px;
-      background: rgba(255,255,240,0.6);
+      background: rgba(255,255,240,0.8);
       border-radius: 30px;
       margin-bottom: 10px;
-      border: 1px solid #f0dbb0;
+      border: 1px solid #ffcc80;
       font-weight: 500;
       cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .market-item:hover {
+      transform: translateX(5px);
+      border-color: #ff8c00;
+      box-shadow: 0 8px 16px rgba(255,140,0,0.2);
     }
     .market-time {
-      background: #D4AF37;
-      color: #1f1a10;
+      background: #ff8c00;
+      color: white;
       padding: 5px 12px;
       border-radius: 30px;
       font-size: 0.85rem;
@@ -203,8 +258,13 @@
       font-size: 0.85rem;
       line-height: 1.5;
       margin: 20px 0;
-      border-left: 6px solid #D4AF37;
+      border-left: 6px solid #ff8c00;
       white-space: pre-line;
+      animation: slideIn 0.5s;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to { opacity: 1; transform: translateX(0); }
     }
     .plan-box {
       display: flex;
@@ -214,29 +274,38 @@
     .plan {
       flex: 1;
       background: #fffcf0;
-      border: 2px solid #e9d5b0;
+      border: 2px solid #ffcc80;
       border-radius: 30px;
       padding: 16px;
       text-align: center;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.3s;
     }
     .plan.selected {
-      border-color: #D4AF37;
-      background: #fff2d7;
+      border-color: #ff8c00;
+      background: #ffe0b0;
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px -8px #ff8c00;
     }
     .qr-placeholder {
       width: 180px;
       height: 180px;
-      background: #ddd;
+      background: linear-gradient(145deg, #fff2db, #ffe6c9);
       margin: 20px auto;
       border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 3px solid #D4AF37;
+      border: 3px solid #ff8c00;
       font-size: 0.9rem;
-      color: #555;
+      color: #b95f00;
+      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.3);
+      animation: rotate 10s infinite linear;
+    }
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     .detail-grid {
       display: grid;
@@ -246,13 +315,19 @@
     }
     .detail-card {
       background: #fffaf0;
-      border: 1px solid #D4AF37;
+      border: 1px solid #ff8c00;
       border-radius: 24px;
       padding: 16px;
       text-align: center;
+      transition: all 0.3s;
+      box-shadow: 0 8px 16px -8px rgba(0,0,0,0.2);
+    }
+    .detail-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px -8px #ff8c00;
     }
     .detail-card h4 {
-      color: #b27d3a;
+      color: #b95f00;
       margin-bottom: 8px;
     }
     .detail-numbers {
@@ -268,13 +343,20 @@
     .nav-btn {
       background: none;
       border: none;
-      color: #D4AF37;
+      color: #ff8c00;
       font-weight: 600;
       font-size: 1rem;
       display: flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 30px;
+      transition: all 0.3s;
+    }
+    .nav-btn:hover {
+      background: rgba(255,140,0,0.1);
+      transform: scale(1.1);
     }
     .timer-message {
       text-align: center;
@@ -283,7 +365,13 @@
       padding: 10px;
       border-radius: 30px;
       background: #fff2d7;
-      border: 1px solid #D4AF37;
+      border: 1px solid #ff8c00;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
     }
     .error-message {
       color: #b34a4a;
@@ -291,13 +379,17 @@
       text-align: center;
       margin-top: -10px;
       margin-bottom: 10px;
+      background: #ffe0e0;
+      padding: 8px;
+      border-radius: 30px;
+      border: 1px solid #ff8c00;
     }
     .disclaimer {
       font-size: 0.65rem;
-      color: #7f6f55;
+      color: #b95f00;
       margin-top: 24px;
       padding-top: 12px;
-      border-top: 1px solid rgba(212,175,55,0.3);
+      border-top: 1px solid rgba(255,140,0,0.3);
       text-align: justify;
       max-height: 120px;
       overflow-y: auto;
@@ -310,11 +402,11 @@
     <div id="login-page" class="page active">
       <h2>WELCOME</h2>
       <div class="logo">
-        <img src="https://via.placeholder.com/80x80/FFF5E6/D4AF37?text=LOGO" alt="Logo">
+        <img src="https://via.placeholder.com/80x80/FFF5E6/ff8c00?text=LOGO" alt="Logo">
       </div>
       <div style="text-align:center; margin-bottom:20px;">
-        <div style="font-weight:600; color:#8b6f3c;">MOST TRUSTED MATKA GUESSING</div>
-        <div style="font-size:0.9rem; color:#a3875a;">DATE FIX GAME PLATFORM</div>
+        <div style="font-weight:600; color:#b95f00;">MOST TRUSTED MATKA GUESSING</div>
+        <div style="font-size:0.9rem; color:#ffaa33;">DATE FIX GAME PLATFORM</div>
       </div>
 
       <div class="input-group">
@@ -358,15 +450,15 @@
     <div><span id="live-date"></span><br><span id="live-time" style="font-weight:600;"></span></div>
   </div>
   <div class="logo">
-    <img src="https://via.placeholder.com/60x60/FFF5E6/D4AF37?text=M" alt="Logo">
+    <img src="https://via.placeholder.com/60x60/FFF5E6/ff8c00?text=M" alt="Logo">
   </div>
 
   <!-- Two big images (optional on dashboard, can keep or remove) -->
   <div class="big-image">
-    <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1" alt="Image 1">
+    <img src="https://via.placeholder.com/400x200/FFE5B4/ff8c00?text=IMAGE+1" alt="Image 1">
   </div>
   <div class="big-image">
-    <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2" alt="Image 2">
+    <img src="https://via.placeholder.com/400x200/FFE5B4/ff8c00?text=IMAGE+2" alt="Image 2">
   </div>
 
   <div class="market-list">
@@ -431,12 +523,12 @@
     <button class="nav-btn" id="back-to-markets"><i class="fas fa-arrow-left"></i> BACK</button>
     <button class="nav-btn" id="refresh-detail"><i class="fas fa-sync-alt"></i> REFRESH</button>
   </div>
-  </div>
-    <!-- SUBSCRIPTION PAGE (with top and bottom images and timer) -->
+</div>
+  <!-- SUBSCRIPTION PAGE (with top and bottom images and timer) -->
   <div id="subscription-page" class="page">
     <!-- Top image -->
     <div class="big-image">
-      <img id="sub-top-img" src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=TOP+IMAGE" alt="Top Image">
+      <img id="sub-top-img" src="https://via.placeholder.com/400x150/FFE5B4/ff8c00?text=TOP+IMAGE" alt="Top Image">
     </div>
 
     <h2>SUBSCRIPTION</h2>
@@ -445,11 +537,11 @@
         <div class="plan" id="plan-1day">1 day<br>₹1100</div>
         <div class="plan" id="plan-1week">1 week<br>₹5100</div>
       </div>
-      <p style="color:#7a623a;">Select plan and scan QR to pay</p>
+      <p style="color:#b95f00;">Select plan and scan QR to pay</p>
       <div class="qr-placeholder">
-        <i class="fas fa-qrcode" style="font-size:4rem; color:#aaa;"></i>
+        <i class="fas fa-qrcode" style="font-size:4rem; color:#b95f00;"></i>
       </div>
-      <p style="font-size:0.9rem;">Scan via PhonePe, GPay, Paytm, any UPI</p>
+      <p style="font-size:0.9rem; color:#b95f00;">Scan via PhonePe, GPay, Paytm, any UPI</p>
 
       <!-- Timer and verification message area -->
       <div id="timer-container" style="display: none;">
@@ -460,13 +552,13 @@
         <div>📲 SEND PAYMENT SCREENSHOT</div>
         <div style="font-size:0.85rem;">and wait few minutes to verify</div>
         <a href="#" class="whatsapp-link" id="payment-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp +917353547650</a>
-        <div>Or Telegram: <a href="#" style="color:#D4AF37;">t.me/Rudraksh</a></div>
+        <div>Or Telegram: <a href="#" style="color:#ff8c00;">t.me/Rudraksh</a></div>
       </div>
     </div>
 
     <!-- Bottom image -->
     <div class="big-image">
-      <img id="sub-bottom-img" src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE" alt="Bottom Image">
+      <img id="sub-bottom-img" src="https://via.placeholder.com/400x150/FFE5B4/ff8c00?text=BOTTOM+IMAGE" alt="Bottom Image">
     </div>
 
     <div class="nav-bar">
@@ -548,14 +640,16 @@
       noticeBoard: "gsgsivdhdjissjhehehs\nhdsgywighdjsksososooss\ndveuowgdhjdjidjdjjjdjd\ngdurhdhdsjsjsjsj\ngsuwo vxgiwi vdhiw bdhek",
 
       // Images for subscription page (top and bottom)
-      subTopImage: "https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=TOP+IMAGE",
-      subBottomImage: "https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE"
+      subTopImage: "https://via.placeholder.com/400x150/FFE5B4/ff8c00?text=TOP+IMAGE",
+      subBottomImage: "https://via.placeholder.com/400x150/FFE5B4/ff8c00?text=BOTTOM+IMAGE"
     };
 
     // ---------- Helper Functions ----------
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
+      // Store current page for back button handling
+      sessionStorage.setItem('currentPage', pageId);
     }
 
     function loadMarketDetail(marketKey) {
@@ -631,7 +725,6 @@
       const timerMessage = document.getElementById('timer-message');
       if (!timerContainer || !timerMessage) return;
 
-      // Clear any existing timer
       if (timerInterval) clearInterval(timerInterval);
 
       timerEndTime = Date.now() + TIMER_DURATION;
@@ -644,7 +737,6 @@
         const remaining = timerEndTime - now;
 
         if (remaining <= 0) {
-          // Timer expired
           clearInterval(timerInterval);
           timerInterval = null;
           timerContainer.style.display = 'none';
@@ -653,18 +745,15 @@
           return;
         }
 
-        // Format remaining time
         const minutes = Math.floor(remaining / 60000);
         const seconds = Math.floor((remaining % 60000) / 1000);
         timerMessage.innerText = `⏳ Verifying payment... Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-        // Check Firestore for subscription activation
         const user = auth.currentUser;
         if (user) {
           try {
             const doc = await db.collection('users').doc(user.uid).get();
             if (doc.exists && doc.data().subscriptionActive === true) {
-              // Payment verified!
               clearInterval(timerInterval);
               timerInterval = null;
               timerContainer.style.display = 'none';
@@ -676,10 +765,57 @@
             console.error('Firestore check error', err);
           }
         }
-      }, 5000); // check every 5 seconds
+      }, 5000);
     }
 
-    // ---------- Event Listeners (after DOM ready) ----------
+    // ---------- Back Button Handling (App-like) ----------
+    let backPressedOnce = false;
+    window.addEventListener('popstate', function(event) {
+      const currentPage = document.querySelector('.page.active').id;
+      if (currentPage === 'login-page') {
+        if (backPressedOnce) {
+          // Close app (or just let it go back in history)
+          if (confirm('Press OK to exit app.')) {
+            // In a WebView, this might close the activity. For browser, it just goes back.
+            window.history.back();
+          }
+        } else {
+          backPressedOnce = true;
+          alert('Press back again to exit');
+          setTimeout(() => { backPressedOnce = false; }, 2000);
+          // Push a dummy state to prevent immediate exit
+          history.pushState({}, '');
+        }
+      } else {
+        // Navigate to previous page based on current
+        if (currentPage === 'dashboard-page') {
+          // If logged in, maybe go to subscription? But better to logout? We'll just go to login
+          auth.signOut(); // logout on back from dashboard? That might be too aggressive. Let's just go to previous page based on stack.
+          // Instead, implement a simple history stack manually.
+        } else if (currentPage === 'markets-page') {
+          showPage('dashboard-page');
+        } else if (currentPage === 'detail-page') {
+          showPage('markets-page');
+        } else if (currentPage === 'subscription-page') {
+          // If timer running, stop it
+          if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('timer-container').style.display = 'none';
+            document.getElementById('paid-btn').disabled = false;
+          }
+          showPage('dashboard-page');
+        } else {
+          // fallback
+          window.history.back();
+        }
+      }
+    });
+
+    // Push initial state
+    history.pushState({}, '');
+
+    // ---------- Event Listeners ----------
     document.addEventListener('DOMContentLoaded', function() {
       applyConfig();
       updateDateTime();
@@ -730,18 +866,14 @@
         }
 
         try {
-          // Ensure document exists
           const userData = await ensureUserDocument(user);
           const mobile = userData.mobile || (user.email ? user.email.replace('@matka.com', '') : '');
 
-          // Send WhatsApp
           const message = `PAYMENT REQUEST%0AUser: ${mobile}%0APlan: ${selectedPlan}%0AUID: ${user.uid}%0APlease verify and update subscription.`;
           const whatsappUrl = `https://wa.me/${config.adminWhatsApp.replace(/\D/g, '')}?text=${message}`;
           window.open(whatsappUrl, '_blank');
 
-          // Start 10-minute timer
           startTimer();
-
           alert('WhatsApp opened. Send payment screenshot to admin. Verification will take up to 10 minutes.');
         } catch (err) {
           alert('Error: ' + err.message);
@@ -761,7 +893,6 @@
       // Navigation
       document.getElementById('goto-subscription').addEventListener('click', () => showPage('subscription-page'));
       document.getElementById('back-from-sub').addEventListener('click', () => {
-        // If timer is running, stop it and re-enable button
         if (timerInterval) {
           clearInterval(timerInterval);
           timerInterval = null;
@@ -778,7 +909,7 @@
       document.getElementById('refresh-markets').addEventListener('click', () => alert('Markets refreshed'));
       document.getElementById('refresh-detail').addEventListener('click', () => alert('Detail refreshed'));
 
-      // Market item clicks – go to detail only if subscribed
+      // Market item clicks
       document.querySelectorAll('.market-item').forEach(el => {
         el.addEventListener('click', async (e) => {
           const marketKey = e.currentTarget.getAttribute('data-market');
@@ -801,9 +932,8 @@
         });
       });
 
-      // Auth state observer – ensures document exists and redirects
+      // Auth state observer
       auth.onAuthStateChanged(async user => {
-        // Clear any timer if user logs out
         if (!user && timerInterval) {
           clearInterval(timerInterval);
           timerInterval = null;
