@@ -66,19 +66,13 @@
       background: #fff;
       box-shadow: 0 8px 16px -6px rgba(0,0,0,0.2);
     }
-    /* Big images container - used on subscription page */
-    .big-images {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin: 20px 0;
-    }
     .big-image {
       width: 100%;
       border-radius: 30px;
       border: 3px solid #D4AF37;
       overflow: hidden;
       background: #fff8ed;
+      margin: 15px 0;
     }
     .big-image img {
       width: 100%;
@@ -148,6 +142,10 @@
       padding: 12px;
       font-size: 1rem;
       margin: 10px 0;
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      pointer-events: none;
     }
     .contact-card {
       background: rgba(245, 235, 215, 0.7);
@@ -278,6 +276,22 @@
       gap: 6px;
       cursor: pointer;
     }
+    .timer-message {
+      text-align: center;
+      font-size: 1rem;
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 30px;
+      background: #fff2d7;
+      border: 1px solid #D4AF37;
+    }
+    .error-message {
+      color: #b34a4a;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
     .disclaimer {
       font-size: 0.65rem;
       color: #7f6f55;
@@ -318,6 +332,8 @@
         </div>
       </div>
 
+      <div id="login-error" class="error-message" style="display: none;"></div>
+
       <button class="btn" id="login-btn">LOGIN</button>
 
       <div class="contact-card">
@@ -346,13 +362,11 @@
   </div>
 
   <!-- Two big images (optional on dashboard, can keep or remove) -->
-  <div class="big-images">
-    <div class="big-image">
-      <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1" alt="Image 1">
-    </div>
-    <div class="big-image">
-      <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2" alt="Image 2">
-    </div>
+  <div class="big-image">
+    <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+1" alt="Image 1">
+  </div>
+  <div class="big-image">
+    <img src="https://via.placeholder.com/400x200/FFE5B4/D4AF37?text=IMAGE+2" alt="Image 2">
   </div>
 
   <div class="market-list">
@@ -417,12 +431,12 @@
     <button class="nav-btn" id="back-to-markets"><i class="fas fa-arrow-left"></i> BACK</button>
     <button class="nav-btn" id="refresh-detail"><i class="fas fa-sync-alt"></i> REFRESH</button>
   </div>
-</div>
-  <!-- SUBSCRIPTION PAGE (with top and bottom images) -->
+  </div>
+    <!-- SUBSCRIPTION PAGE (with top and bottom images and timer) -->
   <div id="subscription-page" class="page">
     <!-- Top image -->
-    <div class="big-image" style="margin-bottom: 20px;">
-      <img src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=TOP+IMAGE" alt="Top Image">
+    <div class="big-image">
+      <img id="sub-top-img" src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=TOP+IMAGE" alt="Top Image">
     </div>
 
     <h2>SUBSCRIPTION</h2>
@@ -436,6 +450,12 @@
         <i class="fas fa-qrcode" style="font-size:4rem; color:#aaa;"></i>
       </div>
       <p style="font-size:0.9rem;">Scan via PhonePe, GPay, Paytm, any UPI</p>
+
+      <!-- Timer and verification message area -->
+      <div id="timer-container" style="display: none;">
+        <div class="timer-message" id="timer-message"></div>
+      </div>
+
       <div class="contact-card" style="margin-top:20px;">
         <div>📲 SEND PAYMENT SCREENSHOT</div>
         <div style="font-size:0.85rem;">and wait few minutes to verify</div>
@@ -445,8 +465,8 @@
     </div>
 
     <!-- Bottom image -->
-    <div class="big-image" style="margin-top: 20px;">
-      <img src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE" alt="Bottom Image">
+    <div class="big-image">
+      <img id="sub-bottom-img" src="https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE" alt="Bottom Image">
     </div>
 
     <div class="nav-bar">
@@ -462,7 +482,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // 🔁 YOUR FIREBASE CONFIG (already correct)
+    // 🔁 YOUR FIREBASE CONFIG
     const firebaseConfig = {
       apiKey: "AIzaSyCXL6EiiLg_3lILCOSA_iFgeL8Y2nPEEnw",
       authDomain: "rudraksh-premium.firebaseapp.com",
@@ -532,39 +552,12 @@
       subBottomImage: "https://via.placeholder.com/400x150/FFE5B4/D4AF37?text=BOTTOM+IMAGE"
     };
 
-    // Apply config to DOM
-    function applyConfig() {
-      // Update market times in lists
-      document.querySelectorAll('.market-item[data-market]').forEach(el => {
-        const key = el.getAttribute('data-market');
-        if (config.markets[key]) {
-          const timeSpan = el.querySelector('.market-time');
-          if (timeSpan) timeSpan.innerText = config.markets[key].time;
-        }
-      });
-
-      // Update notice boards
-      document.querySelectorAll('.notice').forEach(el => {
-        el.innerHTML = `<strong>📢 NOTICE BOARD</strong><br>${config.noticeBoard.replace(/\n/g, '<br>')}`;
-      });
-
-      // Update subscription page images
-      const subPage = document.getElementById('subscription-page');
-      if (subPage) {
-        const topImg = subPage.querySelector('.big-image:first-child img');
-        const bottomImg = subPage.querySelector('.big-image:last-child img');
-        if (topImg) topImg.src = config.subTopImage;
-        if (bottomImg) bottomImg.src = config.subBottomImage;
-      }
-    }
-
-    // Helper: show page
+    // ---------- Helper Functions ----------
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
     }
 
-    // Helper: load market detail
     function loadMarketDetail(marketKey) {
       const market = config.markets[marketKey];
       if (!market) return;
@@ -580,7 +573,6 @@
       });
     }
 
-    // Live date/time
     function updateDateTime() {
       const now = new Date();
       const dateEl = document.getElementById('live-date');
@@ -590,33 +582,132 @@
     }
     setInterval(updateDateTime, 1000);
 
-    // ---------- All Event Listeners (must run after DOM ready) ----------
+    // Apply config to DOM
+    function applyConfig() {
+      // Update market times
+      document.querySelectorAll('.market-item[data-market]').forEach(el => {
+        const key = el.getAttribute('data-market');
+        if (config.markets[key]) {
+          const timeSpan = el.querySelector('.market-time');
+          if (timeSpan) timeSpan.innerText = config.markets[key].time;
+        }
+      });
+      // Update notice boards
+      document.querySelectorAll('.notice').forEach(el => {
+        el.innerHTML = `<strong>📢 NOTICE BOARD</strong><br>${config.noticeBoard.replace(/\n/g, '<br>')}`;
+      });
+      // Update subscription page images
+      const topImg = document.getElementById('sub-top-img');
+      const bottomImg = document.getElementById('sub-bottom-img');
+      if (topImg) topImg.src = config.subTopImage;
+      if (bottomImg) bottomImg.src = config.subBottomImage;
+    }
+
+    // Ensure user document exists
+    async function ensureUserDocument(user) {
+      if (!user) return null;
+      const userRef = db.collection('users').doc(user.uid);
+      const doc = await userRef.get();
+      if (!doc.exists) {
+        const mobile = user.email ? user.email.replace('@matka.com', '') : '';
+        await userRef.set({
+          mobile: mobile,
+          subscriptionActive: false,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return { subscriptionActive: false };
+      } else {
+        return doc.data();
+      }
+    }
+
+    // Timer variables
+    let timerInterval = null;
+    let timerEndTime = null;
+    const TIMER_DURATION = 10 * 60 * 1000; // 10 minutes in milliseconds
+
+    function startTimer() {
+      const timerContainer = document.getElementById('timer-container');
+      const timerMessage = document.getElementById('timer-message');
+      if (!timerContainer || !timerMessage) return;
+
+      // Clear any existing timer
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerEndTime = Date.now() + TIMER_DURATION;
+      timerContainer.style.display = 'block';
+      const paidBtn = document.getElementById('paid-btn');
+      if (paidBtn) paidBtn.disabled = true;
+
+      timerInterval = setInterval(async () => {
+        const now = Date.now();
+        const remaining = timerEndTime - now;
+
+        if (remaining <= 0) {
+          // Timer expired
+          clearInterval(timerInterval);
+          timerInterval = null;
+          timerContainer.style.display = 'none';
+          if (paidBtn) paidBtn.disabled = false;
+          alert('Payment verification timeout. Please try again or contact support.');
+          return;
+        }
+
+        // Format remaining time
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        timerMessage.innerText = `⏳ Verifying payment... Time left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        // Check Firestore for subscription activation
+        const user = auth.currentUser;
+        if (user) {
+          try {
+            const doc = await db.collection('users').doc(user.uid).get();
+            if (doc.exists && doc.data().subscriptionActive === true) {
+              // Payment verified!
+              clearInterval(timerInterval);
+              timerInterval = null;
+              timerContainer.style.display = 'none';
+              if (paidBtn) paidBtn.disabled = false;
+              alert('Payment verified! Redirecting to dashboard.');
+              showPage('dashboard-page');
+            }
+          } catch (err) {
+            console.error('Firestore check error', err);
+          }
+        }
+      }, 5000); // check every 5 seconds
+    }
+
+    // ---------- Event Listeners (after DOM ready) ----------
     document.addEventListener('DOMContentLoaded', function() {
       applyConfig();
       updateDateTime();
 
-      // Login
+      // Login button with friendly error
       document.getElementById('login-btn').addEventListener('click', (e) => {
         e.preventDefault();
         const mobile = document.getElementById('mobile').value.trim();
         const password = document.getElementById('password').value.trim();
-        if (!mobile || !password) return alert('Enter mobile and password');
+        const errorEl = document.getElementById('login-error');
+
+        if (!mobile || !password) {
+          errorEl.style.display = 'block';
+          errorEl.innerText = 'Please enter mobile number and password.';
+          return;
+        }
+
         const email = mobile + '@matka.com';
         auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            errorEl.style.display = 'none';
+          })
           .catch(err => {
-            if (err.code === 'auth/user-not-found') {
-              auth.createUserWithEmailAndPassword(email, password)
-                .then(cred => {
-                  return db.collection('users').doc(cred.user.uid).set({
-                    mobile: mobile,
-                    subscriptionActive: false,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                  });
-                })
-                .then(() => alert('Account created! Please wait for admin to activate subscription.'))
-                .catch(err2 => alert('Creation error: ' + err2.message));
+            errorEl.style.display = 'block';
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+              errorEl.innerText = 'Invalid mobile number or password.';
             } else {
-              alert('Login error: ' + err.message);
+              errorEl.innerText = 'Login failed. Please try again.';
             }
           });
       });
@@ -624,10 +715,11 @@
       // Logout
       document.getElementById('logout').addEventListener('click', () => auth.signOut());
 
-      // Paid button – send WhatsApp to admin
-      document.getElementById('paid-btn').addEventListener('click', () => {
+      // Paid button – start timer and send WhatsApp
+      document.getElementById('paid-btn').addEventListener('click', async () => {
         const user = auth.currentUser;
         if (!user) return alert('You must be logged in');
+
         let selectedPlan = '1 day';
         if (document.getElementById('plan-1week').classList.contains('selected')) {
           selectedPlan = '1 week';
@@ -636,16 +728,24 @@
         } else {
           return alert('Please select a plan');
         }
-        db.collection('users').doc(user.uid).get()
-          .then(doc => {
-            if (!doc.exists) throw new Error('User not found');
-            const mobile = doc.data().mobile;
-            const message = `PAYMENT REQUEST%0AUser: ${mobile}%0APlan: ${selectedPlan}%0AUID: ${user.uid}%0APlease verify and update subscription.`;
-            const whatsappUrl = `https://wa.me/${config.adminWhatsApp.replace(/\D/g, '')}?text=${message}`;
-            window.open(whatsappUrl, '_blank');
-            alert('WhatsApp opened. Send payment screenshot to admin.');
-          })
-          .catch(err => alert('Error: ' + err.message));
+
+        try {
+          // Ensure document exists
+          const userData = await ensureUserDocument(user);
+          const mobile = userData.mobile || (user.email ? user.email.replace('@matka.com', '') : '');
+
+          // Send WhatsApp
+          const message = `PAYMENT REQUEST%0AUser: ${mobile}%0APlan: ${selectedPlan}%0AUID: ${user.uid}%0APlease verify and update subscription.`;
+          const whatsappUrl = `https://wa.me/${config.adminWhatsApp.replace(/\D/g, '')}?text=${message}`;
+          window.open(whatsappUrl, '_blank');
+
+          // Start 10-minute timer
+          startTimer();
+
+          alert('WhatsApp opened. Send payment screenshot to admin. Verification will take up to 10 minutes.');
+        } catch (err) {
+          alert('Error: ' + err.message);
+        }
       });
 
       // Plan selection
@@ -660,7 +760,16 @@
 
       // Navigation
       document.getElementById('goto-subscription').addEventListener('click', () => showPage('subscription-page'));
-      document.getElementById('back-from-sub').addEventListener('click', () => showPage('dashboard-page'));
+      document.getElementById('back-from-sub').addEventListener('click', () => {
+        // If timer is running, stop it and re-enable button
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          document.getElementById('timer-container').style.display = 'none';
+          document.getElementById('paid-btn').disabled = false;
+        }
+        showPage('dashboard-page');
+      });
       document.getElementById('back-to-dash').addEventListener('click', () => showPage('dashboard-page'));
       document.getElementById('back-to-markets').addEventListener('click', () => showPage('markets-page'));
 
@@ -671,37 +780,49 @@
 
       // Market item clicks – go to detail only if subscribed
       document.querySelectorAll('.market-item').forEach(el => {
-        el.addEventListener('click', (e) => {
+        el.addEventListener('click', async (e) => {
           const marketKey = e.currentTarget.getAttribute('data-market');
           if (!marketKey) return;
           const user = auth.currentUser;
           if (!user) return showPage('login-page');
-          db.collection('users').doc(user.uid).get()
-            .then(doc => {
-              if (doc.exists && doc.data().subscriptionActive) {
-                loadMarketDetail(marketKey);
-                showPage('detail-page');
-              } else {
-                alert('Subscription not active. Please contact admin.');
-                showPage('subscription-page');
-              }
-            })
-            .catch(() => showPage('subscription-page'));
+          try {
+            const userData = await ensureUserDocument(user);
+            if (userData.subscriptionActive) {
+              loadMarketDetail(marketKey);
+              showPage('detail-page');
+            } else {
+              alert('Subscription not active. Please contact admin.');
+              showPage('subscription-page');
+            }
+          } catch (err) {
+            alert('Error checking subscription');
+            showPage('subscription-page');
+          }
         });
       });
 
-      // Auth state observer
-      auth.onAuthStateChanged(user => {
+      // Auth state observer – ensures document exists and redirects
+      auth.onAuthStateChanged(async user => {
+        // Clear any timer if user logs out
+        if (!user && timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          document.getElementById('timer-container').style.display = 'none';
+          document.getElementById('paid-btn').disabled = false;
+        }
+
         if (user) {
-          db.collection('users').doc(user.uid).get()
-            .then(doc => {
-              if (doc.exists && doc.data().subscriptionActive) {
-                showPage('dashboard-page');
-              } else {
-                showPage('subscription-page');
-              }
-            })
-            .catch(() => showPage('subscription-page'));
+          try {
+            const userData = await ensureUserDocument(user);
+            if (userData.subscriptionActive) {
+              showPage('dashboard-page');
+            } else {
+              showPage('subscription-page');
+            }
+          } catch (err) {
+            console.error(err);
+            showPage('subscription-page');
+          }
         } else {
           showPage('login-page');
         }
