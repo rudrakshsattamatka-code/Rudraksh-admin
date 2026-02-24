@@ -303,7 +303,7 @@
       transform: scale(1.05);
       box-shadow: 0 10px 20px -8px #ff8c00;
     }
-    /* QR image styling (replaces placeholder) */
+    /* QR image styling */
     .qr-image {
       width: 180px;
       height: 180px;
@@ -410,7 +410,7 @@
       <h2>WELCOME</h2>
       <!-- Logo banner -->
       <div class="logo-banner">
-        <img src="https://i.supaimg.com/2242c14d-f1da-4eb4-a998-70deaee422b2.jpg" alt="Rudraksh Logo">
+        <img src="https://i.supaimg.com/77d3c4c6-7511-43b3-ab6f-06af76156292.jpg" alt="Rudraksh Logo">
       </div>
       <div style="text-align:center; margin-bottom:20px;">
         <div style="font-weight:600; color:#b95f00;">MOST TRUSTED MATKA GUESSING</div>
@@ -454,20 +454,20 @@
     <!-- DASHBOARD PAGE -->
 <div id="dashboard-page" class="page">
   <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h2 style="margin:0;">RUDRAKSH</h2>
+    <h2 style="margin:0;">DASHBOARD</h2>
     <div><span id="live-date"></span><br><span id="live-time" style="font-weight:600;"></span></div>
   </div>
   <!-- Logo banner -->
   <div class="logo-banner">
-    <img src="https://i.supaimg.com/2242c14d-f1da-4eb4-a998-70deaee422b2.jpg" alt="Rudraksh Logo">
+    <img src="https://i.supaimg.com/77d3c4c6-7511-43b3-ab6f-06af76156292.jpg" alt="Rudraksh Logo">
   </div>
 
   <!-- Dashboard images -->
   <div class="big-image">
-    <img src="https://i.supaimg.com/d026f774-60e1-4925-88e1-75281544a80e/a3bf0825-c851-401d-b7e6-4b2e27fb9fb9.jpg" alt="Dashboard Image 1">
+    <img src="https://i.supaimg.com/5a6c33f8-dd21-4288-84f8-8ddc2aa7bb09.png" alt="Dashboard Image 1">
   </div>
   <div class="big-image">
-    <img src="https://i.supaimg.com/d026f774-60e1-4925-88e1-75281544a80e/e6d32229-8638-4d0d-8168-0ecf26c97511.jpg" alt="Dashboard Image 2">
+    <img src="https://i.supaimg.com/975d1739-548d-4038-b6d7-963129cffe25.png" alt="Dashboard Image 2">
   </div>
 
   <div class="market-list">
@@ -533,11 +533,11 @@
     <button class="nav-btn" id="refresh-detail"><i class="fas fa-sync-alt"></i> REFRESH</button>
   </div>
 </div>
-  <!-- SUBSCRIPTION PAGE (with top/bottom images, QR image, buttons after contact card) -->
+  <!-- SUBSCRIPTION PAGE -->
   <div id="subscription-page" class="page">
     <!-- Top image -->
     <div class="big-image">
-      <img id="sub-top-img" src="https://i.supaimg.com/d026f774-60e1-4925-88e1-75281544a80e/f94bbdd7-fa3c-4791-a387-18bd057b2868.jpg" alt="Top Image">
+      <img id="sub-top-img" src="https://i.supaimg.com/975d1739-548d-4038-b6d7-963129cffe25.png" alt="Top Image">
     </div>
 
     <h2>SUBSCRIPTION</h2>
@@ -549,7 +549,7 @@
       <p style="color:#b95f00;">Select plan and scan QR to pay</p>
 
       <!-- QR Code Image (replace src with your actual QR code) -->
-      <img src="https://i.supaimg.com/d026f774-60e1-4925-88e1-75281544a80e/0e62c615-2776-42a3-99b4-252c5fb435c1.png" alt="Scan to Pay" class="qr-image" id="qr-code-img">
+      <img src="https://via.placeholder.com/180x180/fff2db/ff8c00?text=QR+Code" alt="Scan to Pay" class="qr-image" id="qr-code-img">
 
       <p style="font-size:0.9rem; color:#b95f00;">Scan via PhonePe, GPay, Paytm, any UPI</p>
 
@@ -566,7 +566,7 @@
       </div>
     </div>
 
-    <!-- 🔽 BACK & I HAVE PAID buttons (after contact card, before bottom image) -->
+    <!-- BACK & I HAVE PAID buttons (after contact card, before bottom image) -->
     <div class="nav-bar">
       <button class="nav-btn" id="back-from-sub"><i class="fas fa-arrow-left"></i> BACK</button>
       <button class="nav-btn" id="paid-btn">I HAVE PAID</button>
@@ -574,7 +574,7 @@
 
     <!-- Bottom image -->
     <div class="big-image">
-      <img id="sub-bottom-img" src="https://i.supaimg.com/2242c14d-f1da-4eb4-a998-70deaee422b2.jpg" alt="Bottom Image">
+      <img id="sub-bottom-img" src="https://i.supaimg.com/975d1739-548d-4038-b6d7-963129cffe25.png" alt="Bottom Image">
     </div>
   </div>
 </div>
@@ -598,60 +598,98 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // ---------- CONFIGURATION: EDIT NUMBERS HERE ----------
+    // ---------- 📝 EASY MARKET EDITING SECTION ----------
+    // Change any number or text inside the quotes below.
+    // You can use letters, symbols, or numbers.
+    // Just don't delete the commas between entries.
     const config = {
       adminWhatsApp: "+917353547650",  // Your WhatsApp number
 
-      // Market data – edit numbers as needed
       markets: {
         kalyan: {
           name: "KALYAN",
           time: "2:30 PM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "*X*X*", support: "*X*X*", jodi: "*X*X*", pannel: "***" }
+          numbers: { 
+            otc: "5* 3* 6* 2*",        // ← CHANGE THESE NUMBERS/LETTERS
+            support: "5* 3*",           // ← CHANGE THESE
+            jodi: "53 35 62 26",        // ← CHANGE THESE
+            pannel: "123* 145* 245* 356*" // ← CHANGE THESE
+          }
         },
         sridevi: {
           name: "SRIDEVI",
           time: "10:00 AM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "***", support: "***", jodi: "***", pannel: "***" }
+          numbers: { 
+            otc: "2* 7* 4* 9*", 
+            support: "2* 7*", 
+            jodi: "27 72 49 94", 
+            pannel: "234* 257* 279* 290*" 
+          }
         },
         timebazar: {
           name: "TIME BAZAR",
           time: "12:00 PM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "***", support: "***", jodi: "***", pannel: "***" }
+          numbers: { 
+            otc: "1* 4* 8* 3*", 
+            support: "1* 4*", 
+            jodi: "14 41 83 38", 
+            pannel: "123* 148* 183* 134*" 
+          }
         },
         milanday: {
           name: "MILAN DAY",
           time: "2:00 PM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "***", support: "***", jodi: "***", pannel: "***" }
+          numbers: { 
+            otc: "6* 1* 5* 8*", 
+            support: "6* 1*", 
+            jodi: "61 16 58 85", 
+            pannel: "167* 168* 156* 158*" 
+          }
         },
         sridevinight: {
           name: "SRIDEVI NIGHT",
           time: "6:00 PM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "***", support: "***", jodi: "***", pannel: "***" }
+          numbers: { 
+            otc: "9* 2* 7* 4*", 
+            support: "9* 2*", 
+            jodi: "92 29 74 47", 
+            pannel: "279* 294* 247* 249*" 
+          }
         },
         milannight: {
           name: "MILAN NIGHT",
           time: "8:00 PM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "**"", support: "***", jodi: "***", pannel: "***" }
+          numbers: { 
+            otc: "3* 6* 2* 5*", 
+            support: "3* 6*", 
+            jodi: "36 63 25 52", 
+            pannel: "356* 325* 362* 352*" 
+          }
         },
         mainbazar: {
           name: "MAIN BAZAR",
           time: "8:30 PM",
           labels: { otc: "O.T.C", support: "SUPPORT", jodi: "JODI", pannel: "PANNEL" },
-          numbers: { otc: "***", support: "***", jodi: "***", pannel: "***" }
+          numbers: { 
+            otc: "4* 8* 1* 7*", 
+            support: "4* 8*", 
+            jodi: "48 84 17 71", 
+            pannel: "148* 147* 178* 187*" 
+          }
         }
       },
 
-      noticeBoard: "RUDRAKSH"
+      noticeBoard: "gsgsivdhdjissjhehehs\nhdsgywighdjsksososooss\ndveuowgdhjdjidjdjjjdjd\ngdurhdhdsjsjsjsj\ngsuwo vxgiwi vdhiw bdhek"
     };
+    // ---------- END OF EASY EDIT SECTION ----------
 
-    // ---------- Helper Functions ----------
+    // ---------- Helper Functions (don't change anything below) ----------
     function showPage(pageId) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageId).classList.add('active');
