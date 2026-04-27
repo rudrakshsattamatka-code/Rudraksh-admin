@@ -181,13 +181,27 @@
             box-shadow: 0 3px 12px rgba(0,0,0,0.05);
         }
 
-        .markets-title {
-            font-size: 22px;
-            color: #1a4a7a;
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #ff8c00;
+        .refresh-btn-container {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+
+        .refresh-btn {
+            background: #ff8c00;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: rotate(180deg);
         }
 
         .market-card {
@@ -204,17 +218,15 @@
             font-weight: bold;
             margin-bottom: 10px;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
         }
 
-        .market-name span:first-child {
+        .market-name span {
             background: #ff8c00;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 6px 20px;
+            border-radius: 25px;
+            font-size: 18px;
         }
 
         .result-numbers {
@@ -235,49 +247,17 @@
             min-width: 70px;
         }
 
-        .result-box .label {
-            font-size: 11px;
-            opacity: 0.8;
-        }
-
         .result-box .value {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
         }
 
         .time-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
             margin-top: 10px;
             font-size: 12px;
-            opacity: 0.9;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .refresh-status {
-            background: #ff8c00;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .refresh-status.loading {
-            background: #e74c3c;
-            animation: pulse 1s infinite;
-        }
-
-        .refresh-status.live {
-            background: #27ae60;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            opacity: 0.8;
         }
 
         .modal {
@@ -334,6 +314,14 @@
             margin-bottom: 10px;
         }
 
+        .market-edit-item label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #1a4a7a;
+        }
+
         .notice {
             background: #fff3e0;
             border-left: 4px solid #ff8c00;
@@ -357,8 +345,8 @@
         @media (max-width: 768px) {
             .site-title { font-size: 28px; }
             .logo-image { width: 55px; height: 55px; }
-            .result-box .value { font-size: 18px; }
-            .market-name { font-size: 16px; }
+            .result-box .value { font-size: 20px; }
+            .market-name span { font-size: 14px; }
             .result-box { padding: 5px 8px; }
         }
     </style>
@@ -397,10 +385,12 @@
     </div>
 
     <div class="markets-section">
-        <div class="markets-title">📊 Today's Matka Results</div>
+        <div class="refresh-btn-container">
+            <button class="refresh-btn" onclick="window.location.reload()">🔄 REFRESH</button>
+        </div>
         <div id="marketsContainer"></div>
         <div class="notice">
-            ⚠️ Informational Purpose Only | Results refresh automatically
+            ⚠️ Informational Purpose Only | No Betting Services
         </div>
     </div>
 </div>
@@ -449,46 +439,6 @@
         window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
     }
 
-    // ============ CHECK RESULT STATUS ============
-    function getMarketStatus(startTime, endTime) {
-        const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes();
-        
-        let [startHour, startMin] = startTime.split(':');
-        let [endHour, endMin] = endTime.split(':');
-        
-        let startTotal = parseInt(startHour) * 60 + parseInt(startMin);
-        let endTotal = parseInt(endHour) * 60 + parseInt(endMin);
-        
-        if (endTotal < startTotal) {
-            endTotal += 24 * 60;
-        }
-        
-        let currentAdjusted = currentTime;
-        if (currentAdjusted < startTotal && endTotal > 24*60) {
-            currentAdjusted += 24 * 60;
-        }
-        
-        if (currentAdjusted >= startTotal && currentAdjusted <= endTotal) {
-            const minutesUntilEnd = endTotal - currentAdjusted;
-            if (minutesUntilEnd <= 10) {
-                return { status: 'loading', text: '🔄 RESULT LOADING...', class: 'loading' };
-            }
-            return { status: 'live', text: '⏳ MARKET OPEN', class: '' };
-        }
-        
-        if (currentAdjusted > endTotal) {
-            return { status: 'closed', text: '✅ RESULT DECLARED', class: 'live' };
-        }
-        
-        const minutesUntilStart = startTotal - currentAdjusted;
-        if (minutesUntilStart <= 10 && minutesUntilStart > 0) {
-            return { status: 'soon', text: '⏰ RESULT SOON (10 min)', class: 'loading' };
-        }
-        
-        return { status: 'waiting', text: '⏳ WAITING', class: '' };
-    }
-
     // ============ RENDER MARKETS ============
     function renderMarkets() {
         const container = document.getElementById('marketsContainer');
@@ -497,31 +447,24 @@
         let html = '';
         
         markets.forEach((market, index) => {
-            const status = getMarketStatus(market.startTime, market.endTime);
-            
             html += `
                 <div class="market-card">
                     <div class="market-name">
                         <span>${market.name}</span>
-                        <span class="refresh-status ${status.class}">${status.text}</span>
                     </div>
                     <div class="result-numbers">
                         <div class="result-box">
-                            <div class="label">OPEN</div>
                             <div class="value">${market.open || '--'}</div>
                         </div>
                         <div class="result-box">
-                            <div class="label">CLOSE</div>
                             <div class="value">${market.close || '--'}</div>
                         </div>
                         <div class="result-box">
-                            <div class="label">JODI</div>
                             <div class="value">${market.jodi || '--'}</div>
                         </div>
                     </div>
                     <div class="time-info">
-                        <span>🕐 ${market.startTime} - ${market.endTime}</span>
-                        <span>🔄 Auto Refresh</span>
+                        🕐 ${market.startTime} - ${market.endTime}
                     </div>
                 </div>
             `;
@@ -538,12 +481,17 @@
         markets.forEach((market, index) => {
             html += `
                 <div class="market-edit-item">
-                    <label><strong>Market ${index+1}</strong></label>
+                    <label>📊 Market ${index+1} Name</label>
                     <input type="text" id="market_name_${index}" value="${market.name}" placeholder="Market Name">
+                    <label>🔢 Open Result</label>
                     <input type="text" id="market_open_${index}" value="${market.open}" placeholder="Open Result">
+                    <label>🔢 Close Result</label>
                     <input type="text" id="market_close_${index}" value="${market.close}" placeholder="Close Result">
+                    <label>🔢 Jodi</label>
                     <input type="text" id="market_jodi_${index}" value="${market.jodi}" placeholder="Jodi">
+                    <label>⏰ Start Time</label>
                     <input type="time" id="market_start_${index}" value="${market.startTime}" placeholder="Start Time">
+                    <label>⏰ End Time</label>
                     <input type="time" id="market_end_${index}" value="${market.endTime}" placeholder="End Time">
                 </div>
             `;
@@ -695,10 +643,9 @@
         document.getElementById('aboutText').innerHTML = savedAbout;
     }
 
-    // ============ AUTO REFRESH ============
+    // ============ RENDER ON LOAD ============
     renderMarkets();
     addMarketEditButton();
-    setInterval(renderMarkets, 30000);
 
     // Close modals on outside click
     window.onclick = (event) => {
