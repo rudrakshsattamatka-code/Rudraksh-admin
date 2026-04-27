@@ -229,6 +229,16 @@
         .logo-preview span {
             font-size: 30px;
         }
+
+        .info-note {
+            background: #ff8c0022;
+            border-left: 3px solid #ff8c00;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #ff8c00;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -239,21 +249,22 @@
 </div>
 
 <div class="container">
-    <!-- Login Box -->
     <div id="loginBox" class="login-box">
         <h2>Admin Login</h2>
         <input type="password" id="adminPassword" placeholder="Enter Admin Password">
         <button onclick="checkLogin()">Login</button>
     </div>
 
-    <!-- Admin Panel (Hidden until login) -->
     <div id="adminPanel" class="admin-panel">
         <a href="index.html" class="back-btn">← Back to Website</a>
+        
+        <div class="info-note">
+            💡 Note: Changes you save here will be visible immediately to all users when they refresh the page.
+        </div>
         
         <div id="successMsg" class="success-msg"></div>
         <div id="errorMsg" class="error-msg"></div>
 
-        <!-- Logo Upload Section -->
         <div class="section">
             <h3>📷 Upload Logo</h3>
             <div class="logo-preview" id="logoPreview" onclick="document.getElementById('logoUpload').click()">
@@ -263,14 +274,12 @@
             <p style="font-size:12px; color:#888; text-align:center; margin-top:10px;">Click on circle to upload logo</p>
         </div>
 
-        <!-- About Section Edit -->
         <div class="section">
             <h3>📝 Edit About Section</h3>
             <textarea id="aboutContent" class="about-textarea" placeholder="Write about content here..."></textarea>
             <button class="save-btn" onclick="saveAbout()">💾 Save About Section</button>
         </div>
 
-        <!-- Markets Edit -->
         <div class="section">
             <h3>🎲 Edit Market Results</h3>
             <div id="marketsEditContainer"></div>
@@ -295,7 +304,6 @@
     }
 
     function loadData() {
-        // Load markets
         const storedMarkets = localStorage.getItem('rudrakshMarkets');
         if (storedMarkets) {
             markets = JSON.parse(storedMarkets);
@@ -313,7 +321,6 @@
         
         renderMarketForms();
         
-        // Load about content
         const savedAbout = localStorage.getItem('rudrakshAbout');
         if (savedAbout) {
             document.getElementById('aboutContent').value = savedAbout.replace(/<p>/g, '').replace(/<\/p>/g, '\n\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
@@ -321,10 +328,12 @@
             document.getElementById('aboutContent').value = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka.\n\nThis website does not provide any betting or gambling services. It is made only for informational purposes.\n\nRUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
         }
         
-        // Load logo preview
         const savedLogo = localStorage.getItem('rudrakshLogo');
+        const logoPreview = document.getElementById('logoPreview');
         if (savedLogo) {
-            document.getElementById('logoPreview').innerHTML = `<img src="${savedLogo}" style="width:100%; height:100%; object-fit:cover;">`;
+            logoPreview.innerHTML = `<img src="${savedLogo}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            logoPreview.innerHTML = '<span>📷</span>';
         }
     }
 
@@ -389,17 +398,16 @@
         }
         
         localStorage.setItem('rudrakshMarkets', JSON.stringify(markets));
-        showMessage('success', '✅ All market results saved successfully!');
+        showMessage('success', '✅ All market results saved! Users will see updated results when they refresh.');
     }
 
     function saveAbout() {
         const content = document.getElementById('aboutContent').value;
         const formattedContent = content.split('\n\n').filter(p => p.trim()).map(p => `<p>${p.trim()}</p>`).join('');
         localStorage.setItem('rudrakshAbout', formattedContent);
-        showMessage('success', '✅ About section saved successfully!');
+        showMessage('success', '✅ About section saved! Users will see updated content when they refresh.');
     }
 
-    // Logo upload
     document.getElementById('logoUpload').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (file) {
@@ -408,7 +416,7 @@
                 const logoData = event.target.result;
                 localStorage.setItem('rudrakshLogo', logoData);
                 document.getElementById('logoPreview').innerHTML = `<img src="${logoData}" style="width:100%; height:100%; object-fit:cover;">`;
-                showMessage('success', '✅ Logo uploaded successfully!');
+                showMessage('success', '✅ Logo uploaded successfully! Users will see new logo when they refresh.');
             };
             reader.readAsDataURL(file);
         }
@@ -421,11 +429,11 @@
         if (type === 'success') {
             successDiv.innerHTML = message;
             successDiv.style.display = 'block';
-            setTimeout(() => { successDiv.style.display = 'none'; }, 3000);
+            setTimeout(() => { successDiv.style.display = 'none'; }, 4000);
         } else {
             errorDiv.innerHTML = message;
             errorDiv.style.display = 'block';
-            setTimeout(() => { errorDiv.style.display = 'none'; }, 3000);
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 4000);
         }
     }
 </script>
