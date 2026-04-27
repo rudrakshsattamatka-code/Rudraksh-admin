@@ -23,7 +23,6 @@
             padding: 15px;
             text-align: center;
             border-bottom: 3px solid #ff8c00;
-            position: relative;
         }
 
         .help-btn {
@@ -69,7 +68,6 @@
             justify-content: center;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            cursor: pointer;
         }
 
         .logo-image img {
@@ -131,7 +129,6 @@
             margin-bottom: 25px;
             box-shadow: 0 3px 12px rgba(0,0,0,0.05);
             border: 1px solid #e0e7ef;
-            position: relative;
         }
 
         .about-title {
@@ -152,25 +149,6 @@
             margin-bottom: 8px;
             font-size: 13px;
             line-height: 1.5;
-        }
-
-        .admin-edit-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: #ff8c00;
-            color: white;
-            border: none;
-            border-radius: 20px;
-            padding: 4px 12px;
-            font-size: 11px;
-            cursor: pointer;
-            opacity: 0.3;
-            transition: opacity 0.3s;
-        }
-
-        .admin-edit-btn:hover {
-            opacity: 1;
         }
 
         .markets-section {
@@ -210,7 +188,6 @@
             padding: 15px;
             margin-bottom: 15px;
             color: white;
-            position: relative;
         }
 
         .market-name {
@@ -260,68 +237,6 @@
             opacity: 0.8;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-content h3 {
-            color: #1a4a7a;
-            margin-bottom: 15px;
-        }
-
-        .modal-content input, .modal-content textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .modal-content button {
-            background: #1a4a7a;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .market-edit-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-
-        .market-edit-item label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
-            color: #1a4a7a;
-        }
-
         .notice {
             background: #fff3e0;
             border-left: 4px solid #ff8c00;
@@ -342,9 +257,26 @@
             font-size: 12px;
         }
 
+        .admin-login-link {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #888;
+            text-decoration: none;
+            z-index: 99;
+        }
+
+        .admin-login-link:hover {
+            color: #ff8c00;
+            background: rgba(0,0,0,0.5);
+        }
+
         @media (max-width: 768px) {
             .site-title { font-size: 28px; }
-            .logo-image { width: 55px; height: 55px; }
             .result-box .value { font-size: 20px; }
             .market-name span { font-size: 14px; }
             .result-box { padding: 5px 8px; }
@@ -353,15 +285,16 @@
 </head>
 <body>
 
+<a href="admin.html" class="admin-login-link">🔒 Admin</a>
+
 <button class="help-btn" onclick="openWhatsApp()">💬</button>
 
 <header class="header">
     <div class="logo-area">
         <div class="logo-image" id="logoContainer">
             <div class="logo-image-placeholder" id="logoPlaceholder">📷</div>
-            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
         </div>
-        <h1 class="site-title" contenteditable="true">❤️‍🔥RUDRAKSH❤️‍🔥</h1>
+        <h1 class="site-title">❤️‍🔥RUDRAKSH❤️‍🔥</h1>
     </div>
 </header>
 
@@ -381,7 +314,6 @@
             <p><strong>This website does not provide any betting or gambling services.</strong> It is made only for informational purposes.</p>
             <p>RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.</p>
         </div>
-        <button class="admin-edit-btn" id="adminEditBtn" title="Admin Edit">✏️</button>
     </div>
 
     <div class="markets-section">
@@ -399,54 +331,30 @@
     <p>&copy; 2025 RUDRAKSH - All information is for educational purpose only</p>
 </footer>
 
-<div class="modal" id="adminModal">
-    <div class="modal-content">
-        <h3>🔐 Admin Access</h3>
-        <input type="password" id="adminPassword" placeholder="Enter Password">
-        <button onclick="checkPassword()">Submit</button>
-        <button onclick="closeModal()">Cancel</button>
-    </div>
-</div>
-
-<div class="modal" id="marketEditModal">
-    <div class="modal-content">
-        <h3>✏️ Edit Market Results</h3>
-        <div id="marketEditList"></div>
-        <button onclick="saveAllMarkets()">💾 Save All Changes</button>
-        <button onclick="closeMarketModal()">Cancel</button>
-    </div>
-</div>
 <script>
-    // ============ CONFIGURATION ============
-    const ADMIN_PASSWORD = "rudraksh123";
     const WHATSAPP_NUMBER = "919316742722";
 
-    // Default Market Data
-    const defaultMarkets = [
-        { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45", enabled: true },
-        { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10", enabled: true },
-        { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10", enabled: true },
-        { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40", enabled: true },
-        { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25", enabled: true },
-        { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10", enabled: true },
-        { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10", enabled: true }
-    ];
-
-    let markets = JSON.parse(localStorage.getItem('rudrakshMarkets')) || defaultMarkets;
-
-    // ============ HELP WHATSAPP ============
     function openWhatsApp() {
         window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
     }
 
-    // ============ RENDER MARKETS ============
     function renderMarkets() {
         const container = document.getElementById('marketsContainer');
         if (!container) return;
         
-        let html = '';
+        const storedMarkets = localStorage.getItem('rudrakshMarkets');
+        let markets = storedMarkets ? JSON.parse(storedMarkets) : [
+            { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
+            { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
+            { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
+            { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
+            { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
+            { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
+            { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
+        ];
         
-        markets.forEach((market, index) => {
+        let html = '';
+        markets.forEach((market) => {
             html += `
                 <div class="market-card">
                     <div class="market-name">
@@ -469,189 +377,15 @@
                 </div>
             `;
         });
-        
         container.innerHTML = html;
     }
 
-    // ============ ADMIN: EDIT MARKETS ============
-    function openMarketEditor() {
-        const container = document.getElementById('marketEditList');
-        let html = '';
-        
-        markets.forEach((market, index) => {
-            html += `
-                <div class="market-edit-item">
-                    <label>📊 Market ${index+1} Name</label>
-                    <input type="text" id="market_name_${index}" value="${market.name}" placeholder="Market Name">
-                    <label>🔢 Open Result</label>
-                    <input type="text" id="market_open_${index}" value="${market.open}" placeholder="Open Result">
-                    <label>🔢 Close Result</label>
-                    <input type="text" id="market_close_${index}" value="${market.close}" placeholder="Close Result">
-                    <label>🔢 Jodi</label>
-                    <input type="text" id="market_jodi_${index}" value="${market.jodi}" placeholder="Jodi">
-                    <label>⏰ Start Time</label>
-                    <input type="time" id="market_start_${index}" value="${market.startTime}" placeholder="Start Time">
-                    <label>⏰ End Time</label>
-                    <input type="time" id="market_end_${index}" value="${market.endTime}" placeholder="End Time">
-                </div>
-            `;
-        });
-        
-        container.innerHTML = html;
-        document.getElementById('marketEditModal').style.display = 'flex';
-    }
-
-    function saveAllMarkets() {
-        for (let i = 0; i < markets.length; i++) {
-            const newName = document.getElementById(`market_name_${i}`)?.value;
-            const newOpen = document.getElementById(`market_open_${i}`)?.value;
-            const newClose = document.getElementById(`market_close_${i}`)?.value;
-            const newJodi = document.getElementById(`market_jodi_${i}`)?.value;
-            const newStart = document.getElementById(`market_start_${i}`)?.value;
-            const newEnd = document.getElementById(`market_end_${i}`)?.value;
-            
-            if (newName) markets[i].name = newName;
-            if (newOpen) markets[i].open = newOpen;
-            if (newClose) markets[i].close = newClose;
-            if (newJodi) markets[i].jodi = newJodi;
-            if (newStart) markets[i].startTime = newStart;
-            if (newEnd) markets[i].endTime = newEnd;
-        }
-        
-        localStorage.setItem('rudrakshMarkets', JSON.stringify(markets));
-        renderMarkets();
-        closeMarketModal();
-        alert('✅ All market changes saved!');
-    }
-
-    // ============ ADMIN: EDIT ABOUT SECTION ============
-    let adminModal = document.getElementById('adminModal');
-    let pendingAction = null;
-
-    function checkPassword() {
-        const password = document.getElementById('adminPassword').value;
-        if (password === ADMIN_PASSWORD) {
-            closeModal();
-            if (pendingAction === 'about') {
-                enableAboutEditMode();
-            } else if (pendingAction === 'markets') {
-                openMarketEditor();
-            }
-            pendingAction = null;
-        } else {
-            alert('❌ Incorrect Password!');
-        }
-        document.getElementById('adminPassword').value = '';
-    }
-
-    function closeModal() {
-        adminModal.style.display = 'none';
-    }
-
-    document.getElementById('adminEditBtn').addEventListener('click', () => {
-        pendingAction = 'about';
-        adminModal.style.display = 'flex';
-    });
-
-    function addMarketEditButton() {
-        const marketsSection = document.querySelector('.markets-section');
-        const editBtn = document.createElement('button');
-        editBtn.innerHTML = '✏️ Edit Markets';
-        editBtn.style.cssText = `
-            background: #ff8c00;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-bottom: 15px;
-            display: block;
-            width: fit-content;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        `;
-        editBtn.onmouseenter = () => editBtn.style.opacity = '1';
-        editBtn.onmouseleave = () => editBtn.style.opacity = '0.5';
-        editBtn.onclick = () => {
-            pendingAction = 'markets';
-            adminModal.style.display = 'flex';
-        };
-        marketsSection.insertBefore(editBtn, marketsSection.firstChild);
-    }
-
-    function enableAboutEditMode() {
-        const aboutText = document.getElementById('aboutText');
-        const currentContent = aboutText.innerHTML;
-        
-        aboutText.innerHTML = `
-            <textarea id="editAboutText" style="width:100%; min-height:150px; padding:10px; border-radius:8px; border:1px solid #ff8c00; font-size:13px;">${currentContent.replace(/<p>/g, '').replace(/<\/p>/g, '\n\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>')}</textarea>
-            <button onclick="saveAboutContent()" style="background:#27ae60; color:white; border:none; padding:8px 20px; border-radius:6px; margin-top:10px; cursor:pointer;">💾 Save</button>
-            <button onclick="cancelAboutEdit()" style="background:#e74c3c; color:white; border:none; padding:8px 20px; border-radius:6px; margin-top:10px; margin-left:10px; cursor:pointer;">Cancel</button>
-        `;
-        document.getElementById('aboutSection').classList.add('edit-mode');
-    }
-
-    function saveAboutContent() {
-        const newContent = document.getElementById('editAboutText').value;
-        const formattedContent = newContent.split('\n\n').filter(p => p.trim()).map(p => `<p>${p.trim()}</p>`).join('');
-        document.getElementById('aboutText').innerHTML = formattedContent || `<p>${newContent}</p>`;
-        document.getElementById('aboutSection').classList.remove('edit-mode');
-        localStorage.setItem('rudrakshAbout', document.getElementById('aboutText').innerHTML);
-        alert('✅ About section saved!');
-    }
-
-    function cancelAboutEdit() {
-        const savedContent = localStorage.getItem('rudrakshAbout');
-        if (savedContent) {
-            document.getElementById('aboutText').innerHTML = savedContent;
-        }
-        document.getElementById('aboutSection').classList.remove('edit-mode');
-    }
-
-    function closeMarketModal() {
-        document.getElementById('marketEditModal').style.display = 'none';
-    }
-
-    // ============ IMAGE UPLOAD ============
-    const logoContainer = document.getElementById('logoContainer');
-    const imageUpload = document.getElementById('imageUpload');
-    const logoPlaceholder = document.getElementById('logoPlaceholder');
-
-    logoContainer.addEventListener('click', () => imageUpload.click());
-    imageUpload.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                logoPlaceholder.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
-                localStorage.setItem('rudrakshLogo', event.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Load saved logo
-    const savedLogo = localStorage.getItem('rudrakshLogo');
-    if (savedLogo) {
-        logoPlaceholder.innerHTML = `<img src="${savedLogo}" style="width:100%; height:100%; object-fit:cover;">`;
-    }
-    
-    // Load saved about content
     const savedAbout = localStorage.getItem('rudrakshAbout');
     if (savedAbout) {
         document.getElementById('aboutText').innerHTML = savedAbout;
     }
 
-    // ============ RENDER ON LOAD ============
     renderMarkets();
-    addMarketEditButton();
-
-    // Close modals on outside click
-    window.onclick = (event) => {
-        if (event.target === document.getElementById('adminModal')) closeModal();
-        if (event.target === document.getElementById('marketEditModal')) closeMarketModal();
-    }
 </script>
 </body>
 </html>
