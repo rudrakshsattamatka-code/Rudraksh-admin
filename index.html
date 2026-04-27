@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RUDRAKSH - Satta Matka Results Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f0e8;
+            color: #2c1810;
+            line-height: 1.6;
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #8b1a1a 0%, #c0392b 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #f39c12;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .logo-image {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: #ff6b6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .site-title {
+            font-size: 48px;
+            color: white;
+            text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+            letter-spacing: 3px;
+        }
+
+        .site-title span {
+            font-size: 40px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Welcome Box */
+        .welcome-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid #c0392b;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            color: #c0392b;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .welcome-text {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        /* About Section */
+        .about-section {
+            background: linear-gradient(135deg, #fff9f0 0%, #fff 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #ffe0b3;
+        }
+
+        .about-title {
+            font-size: 24px;
+            color: #c0392b;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f39c12;
+            display: inline-block;
+        }
+
+        .about-text {
+            color: #444;
+            margin-top: 15px;
+        }
+
+        .about-text p {
+            margin-bottom: 12px;
+        }
+
+        /* Markets List */
+        .markets {
+            background: #2c1810;
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+        }
+
+        .markets h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #f39c12;
+        }
+
+        .market-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .market-tag {
+            background: #c0392b;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Notice */
+        .notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a0f0a;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 13px;
+        }
+
+        /* Editable text styling */
+        [contenteditable="true"] {
+            outline: none;
+            border-bottom: 1px dashed #f39c12;
+            padding: 2px 4px;
+        }
+
+        [contenteditable="true"]:hover {
+            background: #fff8e7;
+        }
+
+        @media (max-width: 768px) {
+            .site-title {
+                font-size: 32px;
+            }
+            .logo-image {
+                width: 60px;
+                height: 60px;
+            }
+            .welcome-title {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo-area">
+        <div class="logo-image" id="logoContainer">
+            <!-- You can upload image here - click to upload -->
+            <div class="logo-image-placeholder" id="logoPlaceholder">
+                📷
+            </div>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+        </div>
+        <h1 class="site-title" contenteditable="true">❤️‍🔥RUDRAKSH❤️‍🔥</h1>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Welcome Section (Editable) -->
+    <div class="welcome-box">
+        <div class="welcome-title" contenteditable="true">
+            👋 Welcome to RUDRAKSH
+        </div>
+        <div class="welcome-text" contenteditable="true">
+            This website is created for users who want simple and clear information related to Matka. 
+            Here you can find daily updates result information and details about markets like 
+            <strong>KALYAN, MILAN, SRIDEVI, MAIN BAZAR Matka</strong>.
+            <br><br>
+            The main goal of RUDRAKSH is to provide fast and easy to understand information without any confusion. 
+            All content is written in simple language so that every user can understand it easily.
+        </div>
+    </div>
+
+    <!-- About Section (Editable) -->
+    <div class="about-section">
+        <div class="about-title" contenteditable="true">👉 About RUDRAKSH</div>
+        <div class="about-text" contenteditable="true">
+            <p>RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. 
+            On this website you can check Final Matka results, Rudraksh updates and information about different markets.</p>
+            
+            <p><strong>This website does not provide any betting or gambling services.</strong> It is made only for informational purposes. 
+            Users can view updates and results only.</p>
+            
+            <p>RUDRAKSH focuses on providing a fast loading experience, simple design, and useful content. 
+            We regularly update the data so you always get fresh and accurate information.</p>
+        </div>
+    </div>
+
+    <!-- Markets Preview -->
+    <div class="markets">
+        <h3>📊 Markets We Cover</h3>
+        <div class="market-tags">
+            <span class="market-tag">KALYAN</span>
+            <span class="market-tag">MILAN</span>
+            <span class="market-tag">SRIDEVI</span>
+            <span class="market-tag">MAIN BAZAR</span>
+            <span class="market-tag">RAJDHANI</span>
+            <span class="market-tag">TIME BAZAR</span>
+        </div>
+        <div class="notice">
+            ⚠️ Informational Purpose Only | No Betting Services
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <p>&copy; 2025 RUDRAKSH - All information is for educational purpose only</p>
+</footer>
+
+<script>
+    // Image upload functionality
+    const logoContainer = document.getElementById('logoContainer');
+    const imageUpload = document.getElementById('imageUpload');
+    const logoPlaceholder = document.getElementById('logoPlaceholder');
+
+    logoContainer.addEventListener('click', function() {
+        imageUpload.click();
+    });
+
+    imageUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                logoPlaceholder.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:cover;">`;
+                logoPlaceholder.style.padding = '0';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+</body>
+</html>
