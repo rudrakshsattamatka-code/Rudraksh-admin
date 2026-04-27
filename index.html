@@ -275,6 +275,14 @@
             background: rgba(0,0,0,0.5);
         }
 
+        .last-updated {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            margin-top: 10px;
+            padding: 5px;
+        }
+
         @media (max-width: 768px) {
             .site-title { font-size: 28px; }
             .result-box .value { font-size: 20px; }
@@ -310,9 +318,7 @@
     <div class="about-section" id="aboutSection">
         <div class="about-title">👉 About RUDRAKSH</div>
         <div class="about-text" id="aboutText">
-            <p>RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka.</p>
-            <p><strong>This website does not provide any betting or gambling services.</strong> It is made only for informational purposes.</p>
-            <p>RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.</p>
+            <p>Loading...</p>
         </div>
     </div>
 
@@ -320,11 +326,14 @@
         <div class="refresh-btn-container">
             <button class="refresh-btn" onclick="window.location.reload()">🔄 REFRESH</button>
         </div>
-        <div id="marketsContainer"></div>
+        <div id="marketsContainer">
+            <p style="text-align:center; padding:20px;">Loading results...</p>
+        </div>
         <div class="notice">
             ⚠️ Informational Purpose Only | No Betting Services
         </div>
     </div>
+    <div class="last-updated" id="lastUpdated"></div>
 </div>
 
 <footer class="footer">
@@ -338,20 +347,51 @@
         window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
     }
 
-    function renderMarkets() {
+    // Function to load and display logo
+    function loadLogo() {
+        const savedLogo = localStorage.getItem('rudrakshLogo');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        if (savedLogo) {
+            logoPlaceholder.innerHTML = `<img src="${savedLogo}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            logoPlaceholder.innerHTML = '📷';
+        }
+    }
+
+    // Function to load and display about section
+    function loadAbout() {
+        const savedAbout = localStorage.getItem('rudrakshAbout');
+        const aboutText = document.getElementById('aboutText');
+        if (savedAbout) {
+            aboutText.innerHTML = savedAbout;
+        } else {
+            aboutText.innerHTML = '<p>RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka.</p><p><strong>This website does not provide any betting or gambling services.</strong> It is made only for informational purposes.</p><p>RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.</p>';
+        }
+    }
+
+    // Function to load and display markets
+    function loadMarkets() {
         const container = document.getElementById('marketsContainer');
         if (!container) return;
         
+        // Get latest data from localStorage
         const storedMarkets = localStorage.getItem('rudrakshMarkets');
-        let markets = storedMarkets ? JSON.parse(storedMarkets) : [
-            { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
-            { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
-            { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
-            { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
-            { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
-            { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
-            { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
-        ];
+        
+        let markets;
+        if (storedMarkets) {
+            markets = JSON.parse(storedMarkets);
+        } else {
+            // Default data if nothing is saved
+            markets = [
+                { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
+                { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
+                { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
+                { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
+                { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
+                { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
+                { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
+            ];
+        }
         
         let html = '';
         markets.forEach((market) => {
@@ -378,14 +418,28 @@
             `;
         });
         container.innerHTML = html;
+        
+        // Show last updated time
+        const lastUpdated = document.getElementById('lastUpdated');
+        const now = new Date();
+        lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()}`;
     }
 
-    const savedAbout = localStorage.getItem('rudrakshAbout');
-    if (savedAbout) {
-        document.getElementById('aboutText').innerHTML = savedAbout;
+    // Load everything when page loads
+    function loadAllData() {
+        loadLogo();
+        loadAbout();
+        loadMarkets();
     }
 
-    renderMarkets();
+    // Run on page load
+    loadAllData();
+    
+    // Optional: Check for updates every 30 seconds (but users can also refresh manually)
+    setInterval(function() {
+        loadMarkets();
+        loadAbout();
+    }, 30000);
 </script>
 </body>
 </html>
