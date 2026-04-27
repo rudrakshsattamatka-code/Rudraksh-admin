@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Panel - RUDRAKSH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            line-height: 1.5;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #ff8c00;
+        }
+
+        .admin-header h1 {
+            color: #ff8c00;
+            font-size: 28px;
+        }
+
+        .admin-header p {
+            color: #888;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: #16213e;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #ff8c00;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #0f0f1a;
+            color: white;
+            border: 1px solid #ff8c00;
+        }
+
+        .login-box button {
+            background: #ff8c00;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .login-box button:hover {
+            background: #e07b00;
+        }
+
+        .admin-panel {
+            display: none;
+        }
+
+        .section {
+            background: #16213e;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #ff8c00;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ff8c00;
+        }
+
+        .market-item {
+            background: #0f0f1a;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .market-item label {
+            display: block;
+            margin: 10px 0 5px;
+            font-size: 12px;
+            color: #ff8c00;
+        }
+
+        .market-item input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background: #1a1a2e;
+            color: white;
+            border: 1px solid #333;
+        }
+
+        .market-item input:focus {
+            border-color: #ff8c00;
+            outline: none;
+        }
+
+        .row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .about-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #0f0f1a;
+            color: white;
+            border: 1px solid #333;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .save-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background: #219a52;
+        }
+
+        .back-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: #555;
+        }
+
+        .success-msg {
+            background: #27ae60;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .error-msg {
+            background: #e74c3c;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .logo-preview {
+            width: 80px;
+            height: 80px;
+            background: #0f0f1a;
+            border-radius: 50%;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid #ff8c00;
+        }
+
+        .logo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-preview span {
+            font-size: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-header">
+    <h1>🔐 RUDRAKSH Admin Panel</h1>
+    <p>Update Results & Website Content</p>
+</div>
+
+<div class="container">
+    <!-- Login Box -->
+    <div id="loginBox" class="login-box">
+        <h2>Admin Login</h2>
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+        <button onclick="checkLogin()">Login</button>
+    </div>
+
+    <!-- Admin Panel (Hidden until login) -->
+    <div id="adminPanel" class="admin-panel">
+        <a href="index.html" class="back-btn">← Back to Website</a>
+        
+        <div id="successMsg" class="success-msg"></div>
+        <div id="errorMsg" class="error-msg"></div>
+
+        <!-- Logo Upload Section -->
+        <div class="section">
+            <h3>📷 Upload Logo</h3>
+            <div class="logo-preview" id="logoPreview" onclick="document.getElementById('logoUpload').click()">
+                <span id="logoPlaceholder">📷</span>
+            </div>
+            <input type="file" id="logoUpload" accept="image/*" style="display:none">
+            <p style="font-size:12px; color:#888; text-align:center; margin-top:10px;">Click on circle to upload logo</p>
+        </div>
+
+        <!-- About Section Edit -->
+        <div class="section">
+            <h3>📝 Edit About Section</h3>
+            <textarea id="aboutContent" class="about-textarea" placeholder="Write about content here..."></textarea>
+            <button class="save-btn" onclick="saveAbout()">💾 Save About Section</button>
+        </div>
+
+        <!-- Markets Edit -->
+        <div class="section">
+            <h3>🎲 Edit Market Results</h3>
+            <div id="marketsEditContainer"></div>
+            <button class="save-btn" onclick="saveAllMarkets()">💾 Save All Markets</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ADMIN_PASSWORD = "rudraksh123";
+    let markets = [];
+
+    function checkLogin() {
+        const password = document.getElementById('adminPassword').value;
+        if (password === ADMIN_PASSWORD) {
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            loadData();
+        } else {
+            alert('❌ Incorrect Password!');
+        }
+    }
+
+    function loadData() {
+        // Load markets
+        const storedMarkets = localStorage.getItem('rudrakshMarkets');
+        if (storedMarkets) {
+            markets = JSON.parse(storedMarkets);
+        } else {
+            markets = [
+                { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
+                { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
+                { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
+                { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
+                { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
+                { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
+                { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
+            ];
+        }
+        
+        renderMarketForms();
+        
+        // Load about content
+        const savedAbout = localStorage.getItem('rudrakshAbout');
+        if (savedAbout) {
+            document.getElementById('aboutContent').value = savedAbout.replace(/<p>/g, '').replace(/<\/p>/g, '\n\n').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+        } else {
+            document.getElementById('aboutContent').value = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka.\n\nThis website does not provide any betting or gambling services. It is made only for informational purposes.\n\nRUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
+        }
+        
+        // Load logo preview
+        const savedLogo = localStorage.getItem('rudrakshLogo');
+        if (savedLogo) {
+            document.getElementById('logoPreview').innerHTML = `<img src="${savedLogo}" style="width:100%; height:100%; object-fit:cover;">`;
+        }
+    }
+
+    function renderMarketForms() {
+        const container = document.getElementById('marketsEditContainer');
+        let html = '';
+        
+        markets.forEach((market, index) => {
+            html += `
+                <div class="market-item">
+                    <h4 style="color:#ff8c00; margin-bottom:10px;">📊 ${market.name}</h4>
+                    <label>Market Name</label>
+                    <input type="text" id="market_name_${index}" value="${market.name}">
+                    
+                    <div class="row-3">
+                        <div>
+                            <label>Open Result</label>
+                            <input type="text" id="market_open_${index}" value="${market.open}" placeholder="e.g., 123">
+                        </div>
+                        <div>
+                            <label>Close Result</label>
+                            <input type="text" id="market_close_${index}" value="${market.close}" placeholder="e.g., 456">
+                        </div>
+                        <div>
+                            <label>Jodi</label>
+                            <input type="text" id="market_jodi_${index}" value="${market.jodi}" placeholder="e.g., 789">
+                        </div>
+                    </div>
+                    
+                    <div class="row-2">
+                        <div>
+                            <label>Start Time</label>
+                            <input type="time" id="market_start_${index}" value="${market.startTime}">
+                        </div>
+                        <div>
+                            <label>End Time</label>
+                            <input type="time" id="market_end_${index}" value="${market.endTime}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    function saveAllMarkets() {
+        for (let i = 0; i < markets.length; i++) {
+            const newName = document.getElementById(`market_name_${i}`)?.value;
+            const newOpen = document.getElementById(`market_open_${i}`)?.value;
+            const newClose = document.getElementById(`market_close_${i}`)?.value;
+            const newJodi = document.getElementById(`market_jodi_${i}`)?.value;
+            const newStart = document.getElementById(`market_start_${i}`)?.value;
+            const newEnd = document.getElementById(`market_end_${i}`)?.value;
+            
+            if (newName) markets[i].name = newName;
+            if (newOpen) markets[i].open = newOpen;
+            if (newClose) markets[i].close = newClose;
+            if (newJodi) markets[i].jodi = newJodi;
+            if (newStart) markets[i].startTime = newStart;
+            if (newEnd) markets[i].endTime = newEnd;
+        }
+        
+        localStorage.setItem('rudrakshMarkets', JSON.stringify(markets));
+        showMessage('success', '✅ All market results saved successfully!');
+    }
+
+    function saveAbout() {
+        const content = document.getElementById('aboutContent').value;
+        const formattedContent = content.split('\n\n').filter(p => p.trim()).map(p => `<p>${p.trim()}</p>`).join('');
+        localStorage.setItem('rudrakshAbout', formattedContent);
+        showMessage('success', '✅ About section saved successfully!');
+    }
+
+    // Logo upload
+    document.getElementById('logoUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const logoData = event.target.result;
+                localStorage.setItem('rudrakshLogo', logoData);
+                document.getElementById('logoPreview').innerHTML = `<img src="${logoData}" style="width:100%; height:100%; object-fit:cover;">`;
+                showMessage('success', '✅ Logo uploaded successfully!');
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function showMessage(type, message) {
+        const successDiv = document.getElementById('successMsg');
+        const errorDiv = document.getElementById('errorMsg');
+        
+        if (type === 'success') {
+            successDiv.innerHTML = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => { successDiv.style.display = 'none'; }, 3000);
+        } else {
+            errorDiv.innerHTML = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => { errorDiv.style.display = 'none'; }, 3000);
+        }
+    }
+</script>
+</body>
+</html>
