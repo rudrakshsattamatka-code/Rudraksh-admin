@@ -2,28 +2,155 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>RUDRAKSH - Matka Results</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:Arial,sans-serif;background:#f0f4f8;padding:15px;}
-        .header{background:linear-gradient(135deg,#1a4a7a,#2c6eb4);padding:20px;text-align:center;color:white;border-radius:15px;margin-bottom:20px;}
-        .header h1{font-size:40px;}
-        .help-btn{position:fixed;bottom:20px;left:20px;background:#25D366;width:55px;height:55px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;border:none;color:white;box-shadow:0 2px 10px rgba(0,0,0,0.2);z-index:100;}
-        .container{max-width:800px;margin:auto;}
-        .card{background:white;border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-        .about-text{font-size:14px;line-height:1.6;color:#333;}
-        .market{background:linear-gradient(135deg,#1a4a7a,#2c6eb4);border-radius:12px;padding:15px;margin-bottom:15px;color:white;}
-        .market-name{background:#ff8c00;display:inline-block;padding:6px 20px;border-radius:25px;margin-bottom:15px;}
-        .numbers{display:flex;justify-content:space-between;gap:10px;margin:15px 0;}
-        .number-box{background:rgba(255,255,255,0.2);flex:1;text-align:center;padding:10px;border-radius:8px;}
-        .number-box span{font-size:28px;font-weight:bold;display:block;}
-        .time{text-align:center;font-size:12px;opacity:0.8;}
-        .refresh-btn{background:#ff8c00;border:none;padding:10px;border-radius:30px;color:white;font-weight:bold;cursor:pointer;width:100%;margin-bottom:15px;}
-        .admin-link{position:fixed;bottom:15px;right:15px;background:rgba(0,0,0,0.4);padding:6px 12px;border-radius:20px;font-size:11px;color:#888;text-decoration:none;cursor:pointer;z-index:100;}
-        .last-updated{text-align:center;font-size:11px;color:#888;margin-top:10px;}
-        .footer{text-align:center;padding:15px;font-size:12px;color:#666;}
-        @media(max-width:600px){.number-box span{font-size:20px;}.header h1{font-size:28px;}}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f8;
+            padding: 15px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 40px;
+        }
+        .help-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #25D366;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            border: none;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .about-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .market {
+            background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: white;
+        }
+        .market-name {
+            background: #ff8c00;
+            display: inline-block;
+            padding: 6px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .numbers {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .number-box {
+            background: rgba(255,255,255,0.2);
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .number-box small {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        .number-box span {
+            font-size: 28px;
+            font-weight: bold;
+            display: block;
+        }
+        .time {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .refresh-btn {
+            background: #ff8c00;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        .admin-link {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #888;
+            text-decoration: none;
+            cursor: pointer;
+            z-index: 100;
+        }
+        .admin-link:hover {
+            background: #ff8c00;
+            color: white;
+        }
+        .last-updated {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            margin-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        @media (max-width: 600px) {
+            .number-box span {
+                font-size: 20px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+        }
     </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -42,7 +169,7 @@
 
     <div class="card">
         <h3>👋 Welcome to RUDRAKSH</h3>
-        <p>Daily updates result information for Kalyan, Milan, Sridevi, Main Bazar.</p>
+        <p>Daily updates result information for markets like KALYAN, MILAN, SRIDEVI, MAIN BAZAR.</p>
     </div>
 
     <div class="card">
@@ -56,24 +183,28 @@
         <div class="last-updated" id="lastUpdated"></div>
     </div>
 
-    <div class="footer">⚠️ Informational Only | No Betting Services</div>
+    <div class="footer">
+        ⚠️ Informational Purpose Only | No Betting Services
+    </div>
 </div>
 
 <script>
-    // ============ REPLACE WITH YOUR FIREBASE CONFIG ============
+    // ============ FIREBASE CONFIG (YOURS) ============
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-        projectId: "YOUR_PROJECT",
-        storageBucket: "YOUR_PROJECT.firebasestorage.app",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
+        authDomain: "rudraksh-d74c3.firebaseapp.com",
+        projectId: "rudraksh-d74c3",
+        storageBucket: "rudraksh-d74c3.firebasestorage.app",
+        messagingSenderId: "270620722307",
+        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+        measurementId: "G-406NQEK3XV"
     };
 
+    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    // Default data (used if nothing is in database yet)
     const defaultMarkets = [
         { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
         { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
@@ -84,32 +215,40 @@
         { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
     ];
 
-    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
+    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content. We regularly update the data so you always get fresh and accurate information.";
 
+    // Load data from Firebase
     async function loadData() {
-        // Load markets
-        const marketsRef = database.ref('markets');
-        marketsRef.once('value', (snapshot) => {
-            let markets = snapshot.val();
-            if (!markets) {
-                database.ref('markets').set(defaultMarkets);
+        try {
+            // Load markets
+            const marketsRef = database.ref('markets');
+            const marketsSnapshot = await marketsRef.once('value');
+            let markets = marketsSnapshot.val();
+            
+            if (!markets || markets.length === 0) {
+                // First time - save default data
+                await database.ref('markets').set(defaultMarkets);
                 markets = defaultMarkets;
             }
             displayMarkets(markets);
-        });
 
-        // Load about
-        const aboutRef = database.ref('about');
-        aboutRef.once('value', (snapshot) => {
-            let about = snapshot.val();
+            // Load about
+            const aboutRef = database.ref('about');
+            const aboutSnapshot = await aboutRef.once('value');
+            let about = aboutSnapshot.val();
+            
             if (!about) {
-                database.ref('about').set(defaultAbout);
+                await database.ref('about').set(defaultAbout);
                 about = defaultAbout;
             }
             document.getElementById('aboutText').innerHTML = about;
-        });
 
-        document.getElementById('lastUpdated').innerHTML = `Last updated: ${new Date().toLocaleString()}`;
+            // Update timestamp
+            document.getElementById('lastUpdated').innerHTML = `Last updated: ${new Date().toLocaleString()}`;
+        } catch (error) {
+            console.error("Error loading data:", error);
+            document.getElementById('marketsList').innerHTML = '<p style="text-align:center; color:red;">Error loading data. Please refresh.</p>';
+        }
     }
 
     function displayMarkets(markets) {
@@ -119,9 +258,18 @@
                 <div class="market">
                     <div class="market-name">${m.name}</div>
                     <div class="numbers">
-                        <div class="number-box"><small>OPEN</small><span>${m.open || '--'}</span></div>
-                        <div class="number-box"><small>CLOSE</small><span>${m.close || '--'}</span></div>
-                        <div class="number-box"><small>JODI</small><span>${m.jodi || '--'}</span></div>
+                        <div class="number-box">
+                            <small>OPEN</small>
+                            <span>${m.open || '--'}</span>
+                        </div>
+                        <div class="number-box">
+                            <small>CLOSE</small>
+                            <span>${m.close || '--'}</span>
+                        </div>
+                        <div class="number-box">
+                            <small>JODI</small>
+                            <span>${m.jodi || '--'}</span>
+                        </div>
                     </div>
                     <div class="time">🕐 ${m.startTime} - ${m.endTime}</div>
                 </div>
@@ -130,7 +278,10 @@
         document.getElementById('marketsList').innerHTML = html;
     }
 
+    // Load data on page load
     loadData();
+    
+    // Auto refresh every 60 seconds
     setInterval(loadData, 60000);
 </script>
 </body>
