@@ -80,6 +80,7 @@
     const auth = firebase.auth();
     const database = firebase.database();
     let simpleResults = [], freeGames = [];
+    
     const defaultSimpleResults = [
         { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
         { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
@@ -89,6 +90,7 @@
         { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
         { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
     ];
+    
     const defaultFreeGames = [
         { name: "SRIDEVI", otc: "1-4-3-8", jodi: "14-48-34-84", panel: "146-680-148-134", pass: "", type: "normal" },
         { name: "TIME BAZAR", otc: "1-5-9-4", jodi: "19-59-91-45", panel: "119-159-126-158", pass: "", type: "normal" },
@@ -98,6 +100,7 @@
         { name: "KALYAN", otc: "1-6-2-7", jodi: "12-62-26-76", panel: "128-123-679-160", pass: "Open (Pass) ((7))", type: "withpass" },
         { name: "SRIDEVI NIGHT", otc: "9-4-8-7", jodi: "94-49-48-84-87-78-79-97", panel: "379-112-125-188", pass: "Open (Pass) ((9))", type: "withpass" }
     ];
+
     async function login() {
         try {
             await auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value);
@@ -106,6 +109,7 @@
             await loadAllData();
         } catch(e) { alert('Login failed: ' + e.message); }
     }
+    
     async function loadAllData() {
         const s = await database.ref('simpleResults').once('value');
         simpleResults = s.val() || defaultSimpleResults;
@@ -123,29 +127,35 @@
             document.getElementById('callText').value = ct.callText || "📞 Or Call: +919316742722";
         }
     }
+    
     function displaySimpleResultsForms() {
         let h = '';
         for(let i=0;i<simpleResults.length;i++) h+=`<div class="market-item"><h4>📊 ${simpleResults[i].name}</h4><div class="row-3"><div><label>Open</label><input id="so_${i}" value="${simpleResults[i].open}"></div><div><label>Close</label><input id="sc_${i}" value="${simpleResults[i].close}"></div><div><label>Jodi</label><input id="sj_${i}" value="${simpleResults[i].jodi}"></div></div><div class="row-2"><div><label>Start</label><input type="time" id="ss_${i}" value="${simpleResults[i].startTime}"></div><div><label>End</label><input type="time" id="se_${i}" value="${simpleResults[i].endTime}"></div></div></div>`;
         document.getElementById('resultsList').innerHTML = h;
     }
+    
     function displayFreeGamesForms() {
         let h = '';
         for(let i=0;i<freeGames.length;i++) h+=`<div class="market-item"><h4>🎲 ${freeGames[i].name}</h4><label>Name</label><input id="fn_${i}" value="${freeGames[i].name}"><label>OTC</label><input id="fo_${i}" value="${freeGames[i].otc}"><label>Jodi</label><input id="fj_${i}" value="${freeGames[i].jodi}"><label>Panel</label><input id="fp_${i}" value="${freeGames[i].panel}"><div class="row-2"><div><label>Pass</label><input id="fpa_${i}" value="${freeGames[i].pass||''}"></div><div><label>Type</label><select id="ft_${i}"><option ${freeGames[i].type==='normal'?'selected':''}>normal</option><option ${freeGames[i].type==='withpass'?'selected':''}>withpass</option></select></div></div></div>`;
         document.getElementById('freegamesList').innerHTML = h;
     }
+    
     async function saveSimpleResults() {
         let u = [];
         for(let i=0;i<simpleResults.length;i++) u.push({name:simpleResults[i].name,open:document.getElementById(`so_${i}`).value,close:document.getElementById(`sc_${i}`).value,jodi:document.getElementById(`sj_${i}`).value,startTime:document.getElementById(`ss_${i}`).value,endTime:document.getElementById(`se_${i}`).value});
         await database.ref('simpleResults').set(u);
         showSuccess('✅ Results saved!');
     }
+    
     async function saveFreeGames() {
         let u = [];
         for(let i=0;i<freeGames.length;i++) u.push({name:document.getElementById(`fn_${i}`).value,otc:document.getElementById(`fo_${i}`).value,jodi:document.getElementById(`fj_${i}`).value,panel:document.getElementById(`fp_${i}`).value,pass:document.getElementById(`fpa_${i}`).value,type:document.getElementById(`ft_${i}`).value});
         await database.ref('freeGames').set(u);
         showSuccess('✅ Free Games saved!');
     }
+    
     async function saveAbout() { await database.ref('about').set(document.getElementById('aboutText').value); showSuccess('✅ About saved!'); }
+    
     async function saveContact() {
         await database.ref('contact').set({
             text: document.getElementById('contactText').value,
@@ -155,6 +165,7 @@
         });
         showSuccess('✅ Contact saved!');
     }
+    
     function switchAdminTab(t) {
         document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
@@ -162,7 +173,9 @@
         else if(t==='freegames'){ document.querySelector('.tab-btn:nth-child(2)').classList.add('active'); document.getElementById('adminFreegamesTab').classList.add('active'); }
         else{ document.querySelector('.tab-btn:nth-child(3)').classList.add('active'); document.getElementById('adminOtherTab').classList.add('active'); }
     }
+    
     function showSuccess(m) { let d=document.getElementById('successMsg'); d.innerHTML=m; d.style.display='block'; setTimeout(()=>d.style.display='none',3000); }
+    
     auth.onAuthStateChanged(u=>{ if(u){ document.getElementById('loginBox').style.display='none'; document.getElementById('adminPanel').style.display='block'; loadAllData(); } });
 </script>
 </body>
