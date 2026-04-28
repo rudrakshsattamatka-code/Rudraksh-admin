@@ -88,7 +88,6 @@
             font-weight: bold;
             display: inline-block;
         }
-        /* Notice Board Styles */
         .notice-board {
             background: linear-gradient(135deg, #fff3e0, #ffe0b3);
             border-left: 5px solid #ff8c00;
@@ -315,7 +314,6 @@
         <div class="logo-sub">Fast & Accurate Matka Results</div>
     </div>
 
-    <!-- Notice Board -->
     <div class="notice-board" id="noticeBoard">
         <h4>📢 NOTICE BOARD</h4>
         <div id="noticeText" class="notice-text">Loading notice...</div>
@@ -385,9 +383,9 @@
         { name: "SRIDEVI NIGHT", otc: "9-4-8-7", jodi: "94-49-48-84-87-78-79-97", panel: "379-112-125-188", pass: "Open (Pass) ((9))", type: "withpass" }
     ];
 
-    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
+    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes.";
 
-    const defaultNotice = "🔴 Today Special: Kalyan Open 3xx | Milan Day Jodi 5x\n🟢 New market added: Rajdhani Night\n⚠️ Results will be updated at sharp timing";
+    const defaultNotice = "🔴 Today Special: Kalyan Open 3xx | Milan Day Jodi 5x\n🟢 New updates coming soon\n⚠️ Results updated at sharp timing";
 
     async function forceSaveDefaultData() {
         try {
@@ -401,40 +399,45 @@
                 whatsappNumber: "+919316742722",
                 callText: "📞 Or Call: +919316742722"
             });
+            console.log("Default data saved");
             return true;
         } catch(e) {
-            console.error("Error:", e);
+            console.error("Error saving:", e);
             return false;
         }
     }
 
     async function loadAllData() {
         try {
-            const simpleCheck = await database.ref('simpleResults').once('value');
-            
-            if (!simpleCheck.exists()) {
+            // Check if data exists, if not save defaults
+            const check = await database.ref('simpleResults').once('value');
+            if (!check.exists()) {
                 await forceSaveDefaultData();
             }
             
-            const simpleSnapshot = await database.ref('simpleResults').once('value');
-            const simpleResults = simpleSnapshot.val() || defaultSimpleResults;
+            // Load Simple Results
+            const simpleSnap = await database.ref('simpleResults').once('value');
+            const simpleResults = simpleSnap.val() || defaultSimpleResults;
             displaySimpleResults(simpleResults);
 
-            const freeSnapshot = await database.ref('freeGames').once('value');
-            const freeGames = freeSnapshot.val() || defaultFreeGames;
+            // Load Free Games
+            const freeSnap = await database.ref('freeGames').once('value');
+            const freeGames = freeSnap.val() || defaultFreeGames;
             displayFreeGames(freeGames);
 
-            const aboutSnapshot = await database.ref('about').once('value');
-            const about = aboutSnapshot.val() || defaultAbout;
+            // Load About
+            const aboutSnap = await database.ref('about').once('value');
+            const about = aboutSnap.val() || defaultAbout;
             document.getElementById('aboutText').innerHTML = about;
 
-            // Load Notice Board
-            const noticeSnapshot = await database.ref('notice').once('value');
-            const notice = noticeSnapshot.val() || defaultNotice;
+            // Load Notice
+            const noticeSnap = await database.ref('notice').once('value');
+            const notice = noticeSnap.val() || defaultNotice;
             document.getElementById('noticeText').innerHTML = notice.replace(/\n/g, '<br>');
 
-            const contactSnapshot = await database.ref('contact').once('value');
-            const contact = contactSnapshot.val();
+            // Load Contact
+            const contactSnap = await database.ref('contact').once('value');
+            const contact = contactSnap.val();
             if(contact) {
                 document.getElementById('contactText').innerHTML = contact.text;
                 document.getElementById('whatsappLink').href = contact.whatsapp;
@@ -444,9 +447,9 @@
 
             document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
         } catch (error) {
-            console.error("Error:", error);
-            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error. Please refresh.</p>';
-            document.getElementById('freegamesList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading free games.</p>';
+            console.error("Error loading data:", error);
+            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Connection error. Please check internet and refresh.</p>';
+            document.getElementById('freegamesList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Connection error. Please refresh.</p>';
         }
     }
 
