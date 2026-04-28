@@ -180,6 +180,11 @@
             margin-bottom: 15px;
             display: none;
         }
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #ff8c00;
+        }
     </style>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -219,7 +224,9 @@
         <!-- Markets Editor -->
         <div class="section">
             <h3>🎲 Edit Market Results</h3>
-            <div id="marketsList"></div>
+            <div id="marketsList">
+                <div class="loading">Loading markets...</div>
+            </div>
             <button class="save-btn" onclick="saveMarkets()">💾 Save All Market Results</button>
         </div>
     </div>
@@ -265,6 +272,8 @@
             return;
         }
         
+        showLoading('Logging in...');
+        
         try {
             await auth.signInWithEmailAndPassword(email, password);
             document.getElementById('loginBox').style.display = 'none';
@@ -274,9 +283,11 @@
         } catch(error) {
             let errorMessage = 'Login failed: ';
             if (error.code === 'auth/user-not-found') {
-                errorMessage += 'User not found.';
+                errorMessage += 'User not found. Create admin user in Firebase Console.';
             } else if (error.code === 'auth/wrong-password') {
                 errorMessage += 'Wrong password.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage += 'Invalid email format.';
             } else {
                 errorMessage += error.message;
             }
@@ -287,62 +298,75 @@
     // Load data from Firebase
     async function loadData() {
         try {
-            // Load markets
+            // Try to load markets from database
             const marketsSnapshot = await database.ref('markets').once('value');
-            markets = marketsSnapshot.val();
+            let marketsData = marketsSnapshot.val();
             
-            if (!markets || markets.length === 0) {
+            if (marketsData && Array.isArray(marketsData) && marketsData.length > 0) {
+                markets = marketsData;
+                console.log('Loaded markets from database:', markets);
+            } else {
+                // Use default data and save to database
                 markets = defaultMarkets;
                 await database.ref('markets').set(defaultMarkets);
+                console.log('Saved default markets to database');
             }
             
             // Display market edit forms
-            let html = '';
-            for(let i = 0; i < markets.length; i++) {
-                html += `
-                    <div class="market-item">
-                        <h4>📊 ${markets[i].name}</h4>
-                        <div class="row-3">
-                            <div>
-                                <label>OPEN RESULT</label>
-                                <input type="text" id="open_${i}" value="${markets[i].open}" placeholder="e.g., 123">
-                            </div>
-                            <div>
-                                <label>CLOSE RESULT</label>
-                                <input type="text" id="close_${i}" value="${markets[i].close}" placeholder="e.g., 456">
-                            </div>
-                            <div>
-                                <label>JODI</label>
-                                <input type="text" id="jodi_${i}" value="${markets[i].jodi}" placeholder="e.g., 789">
-                            </div>
-                        </div>
-                        <div class="row-2">
-                            <div>
-                                <label>START TIME</label>
-                                <input type="time" id="start_${i}" value="${markets[i].startTime}">
-                            </div>
-                            <div>
-                                <label>END TIME</label>
-                                <input type="time" id="end_${i}" value="${markets[i].endTime}">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            document.getElementById('marketsList').innerHTML = html;
+            displayMarketForms();
             
             // Load about text
             const aboutSnapshot = await database.ref('about').once('value');
             let about = aboutSnapshot.val();
             if (!about) {
-                about = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes.";
+                about = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
                 await database.ref('about').set(about);
             }
             document.getElementById('aboutText').value = about;
             
         } catch(error) {
+            console.error('Error loading data:', error);
             showError('Error loading data: ' + error.message);
+            // Still show default markets as fallback
+            markets = defaultMarkets;
+            displayMarketForms();
         }
+    }
+    
+    function displayMarketForms() {
+        let html = '';
+        for(let i = 0; i < markets.length; i++) {
+            html += `
+                <div class="market-item">
+                    <h4>📊 ${markets[i].name}</h4>
+                    <div class="row-3">
+                        <div>
+                            <label>OPEN RESULT</label>
+                            <input type="text" id="open_${i}" value="${markets[i].open || '--'}" placeholder="e.g., 123">
+                        </div>
+                        <div>
+                            <label>CLOSE RESULT</label>
+                            <input type="text" id="close_${i}" value="${markets[i].close || '--'}" placeholder="e.g., 456">
+                        </div>
+                        <div>
+                            <label>JODI</label>
+                            <input type="text" id="jodi_${i}" value="${markets[i].jodi || '--'}" placeholder="e.g., 789">
+                        </div>
+                    </div>
+                    <div class="row-2">
+                        <div>
+                            <label>START TIME</label>
+                            <input type="time" id="start_${i}" value="${markets[i].startTime || '12:00'}">
+                        </div>
+                        <div>
+                            <label>END TIME</label>
+                            <input type="time" id="end_${i}" value="${markets[i].endTime || '13:00'}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('marketsList').innerHTML = html;
     }
 
     // Save all markets
@@ -350,19 +374,30 @@
         try {
             const updatedMarkets = [];
             for(let i = 0; i < markets.length; i++) {
+                const openVal = document.getElementById(`open_${i}`)?.value || '--';
+                const closeVal = document.getElementById(`close_${i}`)?.value || '--';
+                const jodiVal = document.getElementById(`jodi_${i}`)?.value || '--';
+                const startVal = document.getElementById(`start_${i}`)?.value || '12:00';
+                const endVal = document.getElementById(`end_${i}`)?.value || '13:00';
+                
                 updatedMarkets.push({
                     name: markets[i].name,
-                    open: document.getElementById(`open_${i}`).value,
-                    close: document.getElementById(`close_${i}`).value,
-                    jodi: document.getElementById(`jodi_${i}`).value,
-                    startTime: document.getElementById(`start_${i}`).value,
-                    endTime: document.getElementById(`end_${i}`).value
+                    open: openVal,
+                    close: closeVal,
+                    jodi: jodiVal,
+                    startTime: startVal,
+                    endTime: endVal
                 });
             }
             
             await database.ref('markets').set(updatedMarkets);
             showSuccess('✅ All market results saved! Users will see updates immediately when they refresh.');
+            
+            // Update local markets array
+            markets = updatedMarkets;
+            
         } catch(error) {
+            console.error('Error saving markets:', error);
             showError('Error saving markets: ' + error.message);
         }
     }
@@ -374,6 +409,7 @@
             await database.ref('about').set(content);
             showSuccess('✅ About section saved!');
         } catch(error) {
+            console.error('Error saving about:', error);
             showError('Error saving about: ' + error.message);
         }
     }
@@ -395,7 +431,18 @@
         div.style.display = 'block';
         setTimeout(() => {
             div.style.display = 'none';
-        }, 3000);
+        }, 4000);
+    }
+    
+    function showLoading(message) {
+        const div = document.getElementById('errorMsg');
+        div.innerHTML = message;
+        div.style.display = 'block';
+        div.style.background = '#ff8c00';
+        setTimeout(() => {
+            div.style.display = 'none';
+            div.style.background = '#e74c3c';
+        }, 2000);
     }
 
     // Auto redirect if already logged in
