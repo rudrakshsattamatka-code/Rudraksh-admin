@@ -12,26 +12,66 @@
         }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f0f4f8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 15px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
         }
         .header {
-            background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
-            padding: 15px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 20px;
             text-align: center;
-            border-radius: 15px;
+            border-radius: 20px;
             margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,140,0,0.3);
         }
-        .header img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .logo-icon {
+            background: linear-gradient(135deg, #ff8c00, #ff6b00);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            box-shadow: 0 0 20px rgba(255,140,0,0.5);
+            animation: glow 2s infinite;
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(255,140,0,0.5); }
+            50% { box-shadow: 0 0 25px rgba(255,140,0,0.8); }
+            100% { box-shadow: 0 0 5px rgba(255,140,0,0.5); }
+        }
+        .logo-text {
+            font-size: 42px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff8c00, #ffcc00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .logo-sub {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 5px;
         }
         .help-btn {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            background: #25D366;
+            background: linear-gradient(135deg, #25D366, #128C7E);
             width: 55px;
             height: 55px;
             border-radius: 50%;
@@ -42,42 +82,70 @@
             cursor: pointer;
             border: none;
             color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 100;
+            transition: transform 0.3s;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
+        .help-btn:hover {
+            transform: scale(1.1);
         }
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 20px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .section-title {
-            background: #ff8c00;
+            background: linear-gradient(135deg, #ff8c00, #ff6b00);
             color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 20px;
             font-size: 20px;
             font-weight: bold;
             display: inline-block;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .about-text {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #333;
+        .refresh-btn-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        /* Results Section - Simple Market Cards */
+        .refresh-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #ff8c00, #ff6b00);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255,140,0,0.4);
+        }
+        .refresh-btn:active {
+            transform: translateY(1px);
+        }
         .market {
             background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 15px;
             margin-bottom: 15px;
             color: white;
+            transition: transform 0.2s;
+        }
+        .market:hover {
+            transform: translateX(5px);
         }
         .market-name {
             background: #ff8c00;
@@ -95,11 +163,15 @@
             margin: 15px 0;
         }
         .number-box {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.15);
             flex: 1;
             text-align: center;
             padding: 10px;
-            border-radius: 8px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .number-box:hover {
+            background: rgba(255,255,255,0.25);
         }
         .number-box small {
             font-size: 11px;
@@ -114,17 +186,26 @@
             text-align: center;
             font-size: 12px;
             opacity: 0.8;
+            margin-top: 10px;
         }
-        /* Free Games Section - Detailed Style (Like your image) */
+        .about-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
         .freegame-card {
             background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 15px;
             margin-bottom: 15px;
             color: white;
+            transition: transform 0.2s;
+        }
+        .freegame-card:hover {
+            transform: translateX(5px);
         }
         .freegame-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             margin-bottom: 15px;
             border-left: 4px solid #ff8c00;
@@ -134,7 +215,7 @@
             margin-bottom: 12px;
             padding: 8px;
             background: rgba(255,255,255,0.08);
-            border-radius: 8px;
+            border-radius: 10px;
         }
         .freegame-label {
             font-size: 13px;
@@ -153,12 +234,7 @@
             font-weight: bold;
             letter-spacing: 4px;
         }
-        .jodi-list {
-            font-size: 14px;
-            line-height: 1.8;
-            word-break: break-all;
-        }
-        .panel-list {
+        .jodi-list, .panel-list {
             font-size: 14px;
             line-height: 1.8;
             word-break: break-all;
@@ -168,84 +244,63 @@
             display: inline-block;
             padding: 3px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             margin-left: 10px;
-            font-weight: normal;
         }
         .live-badge {
             background: #e74c3c;
             display: inline-block;
             padding: 3px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             margin-left: 10px;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
-            0% { opacity: 1; }
+            0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
-            100% { opacity: 1; }
         }
-        /* Refresh Button - Right Side */
-        .refresh-side-btn {
-            background: #ff8c00;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .refresh-side-btn:hover {
-            background: #e07b00;
-        }
-        /* Contact Bar */
         .contact-bar {
-            background: linear-gradient(135deg, #2c3e50, #1a4a7a);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 10px;
             text-align: center;
             color: white;
+            border: 1px solid rgba(255,140,0,0.3);
         }
         .contact-bar p {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             font-size: 14px;
         }
-        .contact-bar .whatsapp-link {
-            background: #25D366;
+        .whatsapp-link {
+            background: linear-gradient(135deg, #25D366, #128C7E);
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 30px;
+            gap: 10px;
+            padding: 12px 25px;
+            border-radius: 50px;
             color: white;
             text-decoration: none;
             font-weight: bold;
-            margin-top: 5px;
+            margin: 10px 0;
+            transition: transform 0.2s;
         }
-        .contact-bar .whatsapp-link:hover {
-            background: #20b859;
+        .whatsapp-link:hover {
+            transform: scale(1.05);
         }
         .footer {
             text-align: center;
             padding: 15px;
             font-size: 12px;
-            color: #666;
+            color: rgba(255,255,255,0.6);
             margin-top: 20px;
         }
         .lock-icon {
             position: fixed;
             bottom: 15px;
             right: 15px;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.5);
             width: 40px;
             height: 40px;
             border-radius: 50%;
@@ -253,10 +308,12 @@
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            color: #888;
+            color: #aaa;
             text-decoration: none;
             cursor: pointer;
             z-index: 100;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
         }
         .lock-icon:hover {
             background: #ff8c00;
@@ -265,18 +322,35 @@
         .last-updated {
             text-align: center;
             font-size: 11px;
-            color: #888;
+            color: rgba(255,255,255,0.5);
             margin-top: 10px;
+        }
+        .loader {
+            text-align: center;
+            padding: 30px;
+            color: #ff8c00;
+        }
+        .loader::after {
+            content: "⏳";
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         @media (max-width: 600px) {
             .number-box span {
                 font-size: 20px;
             }
-            .otc-big {
-                font-size: 18px;
+            .logo-text {
+                font-size: 28px;
             }
-            .freegame-title {
-                font-size: 18px;
+            .logo-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 25px;
             }
         }
     </style>
@@ -290,33 +364,42 @@
 
 <div class="container">
     <div class="header">
-        <img src="https://i.imgur.com/a0BDwAL.jpeg" alt="RUDRAKSH">
+        <div class="logo">
+            <div class="logo-icon">🕉️</div>
+            <div class="logo-text">RUDRAKSH</div>
+        </div>
+        <div class="logo-sub">Fast & Accurate Matka Results</div>
     </div>
 
-    <!-- Results Section -->
     <div class="card">
         <div class="section-title">📊 TODAY RESULTS</div>
-        <div id="resultsList">Loading results...</div>
+        <div id="resultsList">
+            <div class="loader">Loading results...</div>
+        </div>
     </div>
 
-    <!-- Right Side Refresh Button (After Results) -->
-    <button class="refresh-side-btn" onclick="location.reload()">
-        🔄 REFRESH RESULTS
-    </button>
+    <div class="refresh-btn-container">
+        <button class="refresh-btn" onclick="location.reload()">
+            🔄 REFRESH PAGE
+        </button>
+        <button class="refresh-btn" onclick="loadData()">
+            ⚡ UPDATE DATA
+        </button>
+    </div>
 
-    <!-- About Section -->
     <div class="card">
         <div class="section-title">👉 About RUDRAKSH</div>
-        <div id="aboutText" class="about-text">Loading...</div>
+        <div id="aboutText" class="about-text">
+            <div class="loader">Loading...</div>
+        </div>
     </div>
 
-    <!-- Free Games Section (Like your image) -->
     <div class="card">
         <div class="section-title">🎲 TODAY LIVE UPDATED FREE GAMES</div>
-        <div id="freegamesList">Loading free games...</div>
+        <div id="freegamesList">
+            <div class="loader">Loading free games...</div>
+        </div>
     </div>
-
-    <!-- Contact Bar -->
     <div class="contact-bar" id="contactBar">
         <p id="contactText">⚠️ Agar aapko loss cover karne he to hame contact kare</p>
         <a href="#" id="whatsappLink" class="whatsapp-link" target="_blank">
@@ -345,7 +428,6 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // Default Simple Results Data
     const defaultSimpleResults = [
         { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
         { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
@@ -356,7 +438,6 @@
         { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
     ];
 
-    // Default Free Games Data (Exactly like your image)
     const defaultFreeGames = [
         { name: "SRIDEVI", otc: "1-4-3-8", jodi: "14-48-34-84", panel: "146-680-148-134", pass: "", type: "normal" },
         { name: "TIME BAZAR", otc: "1-5-9-4", jodi: "19-59-91-45", panel: "119-159-126-158", pass: "", type: "normal" },
@@ -367,7 +448,7 @@
         { name: "SRIDEVI NIGHT", otc: "9-4-8-7", jodi: "94-49-48-84-87-78-79-97", panel: "379-112-125-188", pass: "Open (Pass) ((9))", type: "withpass" }
     ];
 
-    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
+    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content. We regularly update the data so you always get fresh and accurate information.";
 
     const defaultContact = {
         text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
@@ -378,7 +459,6 @@
 
     async function loadData() {
         try {
-            // Load Simple Results
             const simpleSnapshot = await database.ref('simpleResults').once('value');
             let simpleResults = simpleSnapshot.val();
             if (!simpleResults || simpleResults.length === 0) {
@@ -387,7 +467,6 @@
             }
             displaySimpleResults(simpleResults);
 
-            // Load Free Games
             const freegamesSnapshot = await database.ref('freeGames').once('value');
             let freeGames = freegamesSnapshot.val();
             if (!freeGames || freeGames.length === 0) {
@@ -396,7 +475,6 @@
             }
             displayFreeGames(freeGames);
 
-            // Load About
             const aboutSnapshot = await database.ref('about').once('value');
             let about = aboutSnapshot.val();
             if (!about) {
@@ -405,7 +483,6 @@
             }
             document.getElementById('aboutText').innerHTML = about;
 
-            // Load Contact Bar
             const contactSnapshot = await database.ref('contact').once('value');
             let contact = contactSnapshot.val();
             if (!contact) {
@@ -414,9 +491,10 @@
             }
             displayContactBar(contact);
 
-            document.getElementById('lastUpdated').innerHTML = `Last updated: ${new Date().toLocaleString()}`;
+            document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
         } catch (error) {
             console.error("Error:", error);
+            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading data. Please refresh.</p>';
         }
     }
 
@@ -454,7 +532,7 @@
                 html += `
                     <div class="freegame-card">
                         <div class="freegame-title">
-                            ${m.name} <span class="pass-badge">${m.pass}</span> <span class="live-badge">LIVE</span>
+                            ${m.name} <span class="pass-badge">${m.pass}</span> <span class="live-badge">LIVE 🔴</span>
                         </div>
                         <div class="freegame-row">
                             <span class="freegame-label">🎲 OTC :</span>
@@ -474,7 +552,7 @@
                 html += `
                     <div class="freegame-card">
                         <div class="freegame-title">
-                            ${m.name} <span class="live-badge">LIVE</span>
+                            ${m.name} <span class="live-badge">LIVE 🔴</span>
                         </div>
                         <div class="freegame-row">
                             <span class="freegame-label">🎲 OTC :</span>
