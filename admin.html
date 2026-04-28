@@ -25,7 +25,7 @@
         .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
         .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
         .save-btn{background:#27ae60;padding:14px;border:none;border-radius:8px;cursor:pointer;width:100%;font-size:16px;font-weight:bold;margin-top:10px;color:white;}
-        .about-textarea,.contact-textarea{width:100%;min-height:100px;padding:12px;background:#0f0f1a;color:white;border:1px solid #333;border-radius:8px;}
+        .about-textarea,.contact-textarea,.notice-textarea{width:100%;min-height:100px;padding:12px;background:#0f0f1a;color:white;border:1px solid #333;border-radius:8px;font-family:Arial;font-size:14px;}
         .success{background:#27ae60;padding:12px;border-radius:8px;text-align:center;margin-bottom:15px;display:none;}
         .tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
         .tab-btn{background:#0f0f1a;border:none;padding:10px 20px;border-radius:8px;color:white;cursor:pointer;}
@@ -39,7 +39,7 @@
 </head>
 <body>
 <div class="container">
-    <div class="header"><h1>🔐 RUDRAKSH Admin Panel</h1><p>Edit Results, Free Games, About & Contact</p></div>
+    <div class="header"><h1>🔐 RUDRAKSH Admin Panel</h1><p>Edit Results, Free Games, Notice, About & Contact</p></div>
     <div id="loginBox" class="login-box">
         <h2>Admin Login</h2>
         <input type="email" id="email" placeholder="Email">
@@ -52,6 +52,7 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchAdminTab('results')">📊 Edit Results</button>
             <button class="tab-btn" onclick="switchAdminTab('freegames')">🎲 Edit Free Games</button>
+            <button class="tab-btn" onclick="switchAdminTab('notice')">📢 Edit Notice Board</button>
             <button class="tab-btn" onclick="switchAdminTab('other')">⚙️ About & Contact</button>
         </div>
         <div id="adminResultsTab" class="tab-content active">
@@ -59,6 +60,9 @@
         </div>
         <div id="adminFreegamesTab" class="tab-content">
             <div class="section"><h3>🎲 Free Games (OTC, Jodi, Panel)</h3><div id="freegamesList"></div><button class="save-btn" onclick="saveFreeGames()">💾 Save Free Games</button></div>
+        </div>
+        <div id="adminNoticeTab" class="tab-content">
+            <div class="section"><h3>📢 Notice Board</h3><textarea id="noticeText" class="notice-textarea" placeholder="Write notice here... (Use new line for multiple lines)"></textarea><button class="save-btn" onclick="saveNotice()">💾 Save Notice</button></div>
         </div>
         <div id="adminOtherTab" class="tab-content">
             <div class="section"><h3>📝 Edit About Section</h3><textarea id="aboutText" class="about-textarea"></textarea><button class="save-btn" onclick="saveAbout()">💾 Save About</button></div>
@@ -119,6 +123,8 @@
         displayFreeGamesForms();
         const a = await database.ref('about').once('value');
         document.getElementById('aboutText').value = a.val() || "";
+        const n = await database.ref('notice').once('value');
+        document.getElementById('noticeText').value = n.val() || "";
         const c = await database.ref('contact').once('value');
         const ct = c.val();
         if(ct) {
@@ -156,6 +162,8 @@
     
     async function saveAbout() { await database.ref('about').set(document.getElementById('aboutText').value); showSuccess('✅ About saved!'); }
     
+    async function saveNotice() { await database.ref('notice').set(document.getElementById('noticeText').value); showSuccess('✅ Notice saved!'); }
+    
     async function saveContact() {
         await database.ref('contact').set({
             text: document.getElementById('contactText').value,
@@ -169,9 +177,10 @@
     function switchAdminTab(t) {
         document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-        if(t==='results'){ document.querySelector('.tab-btn:first-child').classList.add('active'); document.getElementById('adminResultsTab').classList.add('active'); }
+        if(t==='results'){ document.querySelector('.tab-btn:nth-child(1)').classList.add('active'); document.getElementById('adminResultsTab').classList.add('active'); }
         else if(t==='freegames'){ document.querySelector('.tab-btn:nth-child(2)').classList.add('active'); document.getElementById('adminFreegamesTab').classList.add('active'); }
-        else{ document.querySelector('.tab-btn:nth-child(3)').classList.add('active'); document.getElementById('adminOtherTab').classList.add('active'); }
+        else if(t==='notice'){ document.querySelector('.tab-btn:nth-child(3)').classList.add('active'); document.getElementById('adminNoticeTab').classList.add('active'); }
+        else{ document.querySelector('.tab-btn:nth-child(4)').classList.add('active'); document.getElementById('adminOtherTab').classList.add('active'); }
     }
     
     function showSuccess(m) { let d=document.getElementById('successMsg'); d.innerHTML=m; d.style.display='block'; setTimeout(()=>d.style.display='none',3000); }
