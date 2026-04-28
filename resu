@@ -1,0 +1,445 @@
+2<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>RUDRAKSH - Satta Matka Results Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1a2a3a;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a4a7a 0%, #2c6eb4 100%);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px solid #ff8c00;
+        }
+
+        .help-btn {
+            position: fixed;
+            left: 20px;
+            bottom: 30px;
+            background: #25D366;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: transform 0.3s;
+            border: none;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .logo-image {
+            width: 70px;
+            height: 70px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: #ff8c00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .site-title {
+            font-size: 42px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .welcome-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            border-left: 4px solid #ff8c00;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            color: #1a4a7a;
+            margin-bottom: 12px;
+        }
+
+        .welcome-text {
+            color: #2c3e50;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .about-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e0e7ef;
+        }
+
+        .about-title {
+            font-size: 20px;
+            color: #1a4a7a;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ff8c00;
+            display: inline-block;
+        }
+
+        .about-text {
+            color: #2c3e50;
+            margin-top: 12px;
+        }
+
+        .about-text p {
+            margin-bottom: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .markets-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+        }
+
+        .refresh-btn-container {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+
+        .refresh-btn {
+            background: #ff8c00;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.3s;
+        }
+
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+        }
+
+        .market-card {
+            background: linear-gradient(135deg, #1a4a7a 0%, #2c6eb4 100%);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .market-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .market-name span {
+            background: #ff8c00;
+            padding: 6px 20px;
+            border-radius: 25px;
+            font-size: 18px;
+        }
+
+        .result-numbers {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .result-box {
+            background: rgba(255,255,255,0.15);
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 70px;
+        }
+
+        .result-box .value {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .time-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .notice {
+            background: #fff3e0;
+            border-left: 4px solid #ff8c00;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #1a4a7a;
+        }
+
+        .footer {
+            background: #0d2b44;
+            color: #ccc;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+
+        .admin-login-link {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: #888;
+            text-decoration: none;
+            z-index: 99;
+        }
+
+        .admin-login-link:hover {
+            color: #ff8c00;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .last-updated {
+            text-align: center;
+            font-size: 11px;
+            color: #666;
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .site-title { font-size: 28px; }
+            .result-box .value { font-size: 20px; }
+            .market-name span { font-size: 14px; }
+            .result-box { padding: 5px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<a href="admin.html" class="admin-login-link">🔒 Admin</a>
+
+<button class="help-btn" onclick="openWhatsApp()">💬</button>
+
+<header class="header">
+    <div class="logo-area">
+        <div class="logo-image" id="logoContainer">
+            <div class="logo-image-placeholder" id="logoPlaceholder">📷</div>
+        </div>
+        <h1 class="site-title">❤️‍🔥RUDRAKSH❤️‍🔥</h1>
+    </div>
+</header>
+
+<div class="container">
+    <div class="welcome-box">
+        <div class="welcome-title">👋 Welcome to RUDRAKSH</div>
+        <div class="welcome-text">
+            This website is created for users who want simple and clear information related to Matka.
+            Here you can find daily updates result information and details about markets.
+        </div>
+    </div>
+
+    <div class="about-section" id="aboutSection">
+        <div class="about-title">👉 About RUDRAKSH</div>
+        <div class="about-text" id="aboutText">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <div class="markets-section">
+        <div class="refresh-btn-container">
+            <button class="refresh-btn" onclick="window.location.reload()">🔄 REFRESH</button>
+        </div>
+        <div id="marketsContainer">
+            <p style="text-align:center; padding:20px;">Loading results...</p>
+        </div>
+        <div class="notice">
+            ⚠️ Informational Purpose Only | No Betting Services
+        </div>
+    </div>
+    <div class="last-updated" id="lastUpdated"></div>
+</div>
+
+<footer class="footer">
+    <p>&copy; 2025 RUDRAKSH - All information is for educational purpose only</p>
+</footer>
+
+<script>
+    const WHATSAPP_NUMBER = "919316742722";
+
+    function openWhatsApp() {
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank');
+    }
+
+    // Function to load and display logo
+    function loadLogo() {
+        const savedLogo = localStorage.getItem('rudrakshLogo');
+        const logoPlaceholder = document.getElementById('logoPlaceholder');
+        if (savedLogo) {
+            logoPlaceholder.innerHTML = `<img src="${savedLogo}" style="width:100%; height:100%; object-fit:cover;">`;
+        } else {
+            logoPlaceholder.innerHTML = '📷';
+        }
+    }
+
+    // Function to load and display about section
+    function loadAbout() {
+        const savedAbout = localStorage.getItem('rudrakshAbout');
+        const aboutText = document.getElementById('aboutText');
+        if (savedAbout) {
+            aboutText.innerHTML = savedAbout;
+        } else {
+            aboutText.innerHTML = '<p>RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka.</p><p><strong>This website does not provide any betting or gambling services.</strong> It is made only for informational purposes.</p><p>RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.</p>';
+        }
+    }
+
+    // Function to load and display markets
+    function loadMarkets() {
+        const container = document.getElementById('marketsContainer');
+        if (!container) return;
+        
+        // Get latest data from localStorage
+        const storedMarkets = localStorage.getItem('rudrakshMarkets');
+        
+        let markets;
+        if (storedMarkets) {
+            markets = JSON.parse(storedMarkets);
+        } else {
+            // Default data if nothing is saved
+            markets = [
+                { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
+                { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
+                { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
+                { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
+                { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
+                { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
+                { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
+            ];
+        }
+        
+        let html = '';
+        markets.forEach((market) => {
+            html += `
+                <div class="market-card">
+                    <div class="market-name">
+                        <span>${market.name}</span>
+                    </div>
+                    <div class="result-numbers">
+                        <div class="result-box">
+                            <div class="value">${market.open || '--'}</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="value">${market.close || '--'}</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="value">${market.jodi || '--'}</div>
+                        </div>
+                    </div>
+                    <div class="time-info">
+                        🕐 ${market.startTime} - ${market.endTime}
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        
+        // Show last updated time
+        const lastUpdated = document.getElementById('lastUpdated');
+        const now = new Date();
+        lastUpdated.innerHTML = `Last updated: ${now.toLocaleTimeString()}`;
+    }
+
+    // Load everything when page loads
+    function loadAllData() {
+        loadLogo();
+        loadAbout();
+        loadMarkets();
+    }
+
+    // Run on page load
+    loadAllData();
+    
+    // Optional: Check for updates every 30 seconds (but users can also refresh manually)
+    setInterval(function() {
+        loadMarkets();
+        loadAbout();
+    }, 30000);
+</script>
+</body>
+</html>
