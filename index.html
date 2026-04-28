@@ -88,6 +88,28 @@
             font-weight: bold;
             display: inline-block;
         }
+        /* Notice Board Styles */
+        .notice-board {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b3);
+            border-left: 5px solid #ff8c00;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .notice-board h4 {
+            color: #ff8c00;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .notice-text {
+            margin-top: 5px;
+        }
         .refresh-btn-container {
             display: flex;
             gap: 10px;
@@ -140,10 +162,6 @@
             text-align: center;
             padding: 8px;
             border-radius: 10px;
-        }
-        .number-box small {
-            font-size: 10px;
-            opacity: 0.8;
         }
         .number-box span {
             font-size: 24px;
@@ -297,6 +315,12 @@
         <div class="logo-sub">Fast & Accurate Matka Results</div>
     </div>
 
+    <!-- Notice Board -->
+    <div class="notice-board" id="noticeBoard">
+        <h4>📢 NOTICE BOARD</h4>
+        <div id="noticeText" class="notice-text">Loading notice...</div>
+    </div>
+
     <div class="card">
         <div class="section-title">📊 TODAY RESULTS</div>
         <div id="resultsList">Loading results...</div>
@@ -341,7 +365,6 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // Default data
     const defaultSimpleResults = [
         { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
         { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
@@ -364,53 +387,52 @@
 
     const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
 
-    // Force save default data to Firebase
+    const defaultNotice = "🔴 Today Special: Kalyan Open 3xx | Milan Day Jodi 5x\n🟢 New market added: Rajdhani Night\n⚠️ Results will be updated at sharp timing";
+
     async function forceSaveDefaultData() {
         try {
-            console.log("Saving default data to Firebase...");
             await database.ref('simpleResults').set(defaultSimpleResults);
             await database.ref('freeGames').set(defaultFreeGames);
             await database.ref('about').set(defaultAbout);
+            await database.ref('notice').set(defaultNotice);
             await database.ref('contact').set({
                 text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
                 whatsapp: "https://wa.me/919316742722",
                 whatsappNumber: "+919316742722",
                 callText: "📞 Or Call: +919316742722"
             });
-            console.log("Default data saved successfully!");
             return true;
         } catch(e) {
-            console.error("Error saving default data:", e);
+            console.error("Error:", e);
             return false;
         }
     }
 
     async function loadAllData() {
         try {
-            // First check if data exists
             const simpleCheck = await database.ref('simpleResults').once('value');
             
             if (!simpleCheck.exists()) {
-                // Data doesn't exist, save default data
                 await forceSaveDefaultData();
             }
             
-            // Load Simple Results
             const simpleSnapshot = await database.ref('simpleResults').once('value');
             const simpleResults = simpleSnapshot.val() || defaultSimpleResults;
             displaySimpleResults(simpleResults);
 
-            // Load Free Games
             const freeSnapshot = await database.ref('freeGames').once('value');
             const freeGames = freeSnapshot.val() || defaultFreeGames;
             displayFreeGames(freeGames);
 
-            // Load About
             const aboutSnapshot = await database.ref('about').once('value');
             const about = aboutSnapshot.val() || defaultAbout;
             document.getElementById('aboutText').innerHTML = about;
 
-            // Load Contact
+            // Load Notice Board
+            const noticeSnapshot = await database.ref('notice').once('value');
+            const notice = noticeSnapshot.val() || defaultNotice;
+            document.getElementById('noticeText').innerHTML = notice.replace(/\n/g, '<br>');
+
             const contactSnapshot = await database.ref('contact').once('value');
             const contact = contactSnapshot.val();
             if(contact) {
@@ -422,8 +444,8 @@
 
             document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
         } catch (error) {
-            console.error("Error loading data:", error);
-            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error. Please check internet and refresh.</p>';
+            console.error("Error:", error);
+            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error. Please refresh.</p>';
             document.getElementById('freegamesList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading free games.</p>';
         }
     }
@@ -435,9 +457,9 @@
                 <div class="market">
                     <div class="market-name">${m.name}</div>
                     <div class="numbers">
-                        <div class="number-box"><small>OPEN</small><span>${m.open || '--'}</span></div>
-                        <div class="number-box"><small>CLOSE</small><span>${m.close || '--'}</span></div>
-                        <div class="number-box"><small>JODI</small><span>${m.jodi || '--'}</span></div>
+                        <div class="number-box"><span>${m.open || '--'}</span></div>
+                        <div class="number-box"><span>${m.close || '--'}</span></div>
+                        <div class="number-box"><span>${m.jodi || '--'}</span></div>
                     </div>
                     <div class="time">🕐 ${m.startTime} - ${m.endTime}</div>
                 </div>
@@ -476,7 +498,6 @@
         loadAllData();
     }
 
-    // Load everything on page load
     loadAllData();
     setInterval(loadAllData, 60000);
 </script>
