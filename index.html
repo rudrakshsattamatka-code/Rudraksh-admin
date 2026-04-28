@@ -29,29 +29,14 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,140,0,0.3);
         }
-        .logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-        .logo-icon {
-            background: linear-gradient(135deg, #ff8c00, #ff6b00);
-            width: 70px;
-            height: 70px;
+        .logo-img {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 35px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 3px solid #ff8c00;
             box-shadow: 0 0 20px rgba(255,140,0,0.5);
-            animation: glow 2s infinite;
-        }
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px rgba(255,140,0,0.5); }
-            50% { box-shadow: 0 0 25px rgba(255,140,0,0.8); }
-            100% { box-shadow: 0 0 5px rgba(255,140,0,0.5); }
         }
         .logo-text {
             font-size: 42px;
@@ -60,7 +45,6 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
         .logo-sub {
             color: #aaa;
@@ -126,15 +110,11 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .refresh-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(255,140,0,0.4);
-        }
-        .refresh-btn:active {
-            transform: translateY(1px);
         }
         .market {
             background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
@@ -168,10 +148,6 @@
             text-align: center;
             padding: 10px;
             border-radius: 12px;
-            transition: all 0.3s;
-        }
-        .number-box:hover {
-            background: rgba(255,255,255,0.25);
         }
         .number-box small {
             font-size: 11px;
@@ -313,7 +289,6 @@
             cursor: pointer;
             z-index: 100;
             backdrop-filter: blur(5px);
-            transition: all 0.3s;
         }
         .lock-icon:hover {
             background: #ff8c00;
@@ -330,28 +305,10 @@
             padding: 30px;
             color: #ff8c00;
         }
-        .loader::after {
-            content: "⏳";
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-left: 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
         @media (max-width: 600px) {
-            .number-box span {
-                font-size: 20px;
-            }
-            .logo-text {
-                font-size: 28px;
-            }
-            .logo-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 25px;
-            }
+            .number-box span { font-size: 20px; }
+            .logo-text { font-size: 28px; }
+            .logo-img { width: 60px; height: 60px; }
         }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -364,53 +321,39 @@
 
 <div class="container">
     <div class="header">
-        <div class="logo">
-            <div class="logo-icon">🕉️</div>
-            <div class="logo-text">RUDRAKSH</div>
-        </div>
+        <!-- Add your image URL below -->
+        <img src="https://i.imgur.com/a0BDwAL.jpeg" alt="RUDRAKSH" class="logo-img" onerror="this.style.display='none'">
+        <div class="logo-text">RUDRAKSH</div>
         <div class="logo-sub">Fast & Accurate Matka Results</div>
     </div>
 
     <div class="card">
         <div class="section-title">📊 TODAY RESULTS</div>
-        <div id="resultsList">
-            <div class="loader">Loading results...</div>
-        </div>
+        <div id="resultsList">Loading results...</div>
     </div>
 
     <div class="refresh-btn-container">
-        <button class="refresh-btn" onclick="location.reload()">
-            🔄 REFRESH PAGE
-        </button>
-        <button class="refresh-btn" onclick="loadData()">
-            ⚡ UPDATE DATA
-        </button>
+        <button class="refresh-btn" onclick="location.reload()">🔄 REFRESH PAGE</button>
+        <button class="refresh-btn" onclick="loadAllData()">⚡ UPDATE DATA</button>
     </div>
 
     <div class="card">
         <div class="section-title">👉 About RUDRAKSH</div>
-        <div id="aboutText" class="about-text">
-            <div class="loader">Loading...</div>
-        </div>
+        <div id="aboutText" class="about-text">Loading...</div>
     </div>
 
     <div class="card">
         <div class="section-title">🎲 TODAY LIVE UPDATED FREE GAMES</div>
-        <div id="freegamesList">
-            <div class="loader">Loading free games...</div>
-        </div>
+        <div id="freegamesList">Loading free games...</div>
     </div>
+
     <div class="contact-bar" id="contactBar">
         <p id="contactText">⚠️ Agar aapko loss cover karne he to hame contact kare</p>
-        <a href="#" id="whatsappLink" class="whatsapp-link" target="_blank">
-            💬 WhatsApp: +919316742722
-        </a>
+        <a href="#" id="whatsappLink" class="whatsapp-link" target="_blank">💬 WhatsApp: +919316742722</a>
         <p id="callText" style="font-size: 12px; margin-top: 8px;">📞 Or Call: +919316742722</p>
     </div>
 
-    <div class="footer">
-        ⚠️ Informational Purpose Only | No Betting Services
-    </div>
+    <div class="footer">⚠️ Informational Purpose Only | No Betting Services</div>
     <div class="last-updated" id="lastUpdated"></div>
 </div>
 
@@ -428,6 +371,7 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    // Default data
     const defaultSimpleResults = [
         { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
         { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
@@ -448,53 +392,79 @@
         { name: "SRIDEVI NIGHT", otc: "9-4-8-7", jodi: "94-49-48-84-87-78-79-97", panel: "379-112-125-188", pass: "Open (Pass) ((9))", type: "withpass" }
     ];
 
-    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content. We regularly update the data so you always get fresh and accurate information.";
+    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
 
-    const defaultContact = {
-        text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
-        whatsapp: "https://wa.me/919316742722",
-        whatsappNumber: "+919316742722",
-        callText: "📞 Or Call: +919316742722"
-    };
+    // Function to initialize database with default data if empty
+    async function initDatabase() {
+        const simpleRef = database.ref('simpleResults');
+        const simpleSnapshot = await simpleRef.once('value');
+        if (!simpleSnapshot.exists()) {
+            await simpleRef.set(defaultSimpleResults);
+            console.log("Default simple results added to database");
+        }
+        
+        const freeRef = database.ref('freeGames');
+        const freeSnapshot = await freeRef.once('value');
+        if (!freeSnapshot.exists()) {
+            await freeRef.set(defaultFreeGames);
+            console.log("Default free games added to database");
+        }
+        
+        const aboutRef = database.ref('about');
+        const aboutSnapshot = await aboutRef.once('value');
+        if (!aboutSnapshot.exists()) {
+            await aboutRef.set(defaultAbout);
+            console.log("Default about added to database");
+        }
+        
+        const contactRef = database.ref('contact');
+        const contactSnapshot = await contactRef.once('value');
+        if (!contactSnapshot.exists()) {
+            await contactRef.set({
+                text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
+                whatsapp: "https://wa.me/919316742722",
+                whatsappNumber: "+919316742722",
+                callText: "📞 Or Call: +919316742722"
+            });
+            console.log("Default contact added to database");
+        }
+    }
 
-    async function loadData() {
+    async function loadAllData() {
         try {
+            // First, initialize database with default data if needed
+            await initDatabase();
+            
+            // Load Simple Results
             const simpleSnapshot = await database.ref('simpleResults').once('value');
-            let simpleResults = simpleSnapshot.val();
-            if (!simpleResults || simpleResults.length === 0) {
-                await database.ref('simpleResults').set(defaultSimpleResults);
-                simpleResults = defaultSimpleResults;
-            }
+            const simpleResults = simpleSnapshot.val();
             displaySimpleResults(simpleResults);
 
-            const freegamesSnapshot = await database.ref('freeGames').once('value');
-            let freeGames = freegamesSnapshot.val();
-            if (!freeGames || freeGames.length === 0) {
-                await database.ref('freeGames').set(defaultFreeGames);
-                freeGames = defaultFreeGames;
-            }
+            // Load Free Games
+            const freeSnapshot = await database.ref('freeGames').once('value');
+            const freeGames = freeSnapshot.val();
             displayFreeGames(freeGames);
 
+            // Load About
             const aboutSnapshot = await database.ref('about').once('value');
-            let about = aboutSnapshot.val();
-            if (!about) {
-                await database.ref('about').set(defaultAbout);
-                about = defaultAbout;
-            }
+            const about = aboutSnapshot.val();
             document.getElementById('aboutText').innerHTML = about;
 
+            // Load Contact
             const contactSnapshot = await database.ref('contact').once('value');
-            let contact = contactSnapshot.val();
-            if (!contact) {
-                await database.ref('contact').set(defaultContact);
-                contact = defaultContact;
+            const contact = contactSnapshot.val();
+            if(contact) {
+                document.getElementById('contactText').innerHTML = contact.text;
+                document.getElementById('whatsappLink').href = contact.whatsapp;
+                document.getElementById('whatsappLink').innerHTML = `💬 WhatsApp: ${contact.whatsappNumber}`;
+                document.getElementById('callText').innerHTML = contact.callText;
             }
-            displayContactBar(contact);
 
             document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
         } catch (error) {
             console.error("Error:", error);
             document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading data. Please refresh.</p>';
+            document.getElementById('freegamesList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading free games.</p>';
         }
     }
 
@@ -505,18 +475,9 @@
                 <div class="market">
                     <div class="market-name">${m.name}</div>
                     <div class="numbers">
-                        <div class="number-box">
-                            <small>OPEN</small>
-                            <span>${m.open || '--'}</span>
-                        </div>
-                        <div class="number-box">
-                            <small>CLOSE</small>
-                            <span>${m.close || '--'}</span>
-                        </div>
-                        <div class="number-box">
-                            <small>JODI</small>
-                            <span>${m.jodi || '--'}</span>
-                        </div>
+                        <div class="number-box"><small>OPEN</small><span>${m.open || '--'}</span></div>
+                        <div class="number-box"><small>CLOSE</small><span>${m.close || '--'}</span></div>
+                        <div class="number-box"><small>JODI</small><span>${m.jodi || '--'}</span></div>
                     </div>
                     <div class="time">🕐 ${m.startTime} - ${m.endTime}</div>
                 </div>
@@ -531,41 +492,19 @@
             if(m.type === "withpass") {
                 html += `
                     <div class="freegame-card">
-                        <div class="freegame-title">
-                            ${m.name} <span class="pass-badge">${m.pass}</span> <span class="live-badge">LIVE 🔴</span>
-                        </div>
-                        <div class="freegame-row">
-                            <span class="freegame-label">🎲 OTC :</span>
-                            <span class="freegame-value otc-big">→ ${m.otc}</span>
-                        </div>
-                        <div class="freegame-row">
-                            <span class="freegame-label">🔗 Jodi :</span>
-                            <span class="freegame-value jodi-list">→ ${m.jodi}</span>
-                        </div>
-                        <div class="freegame-row">
-                            <span class="freegame-label">📊 Panel :</span>
-                            <span class="freegame-value panel-list">→ ${m.panel}</span>
-                        </div>
+                        <div class="freegame-title">${m.name} <span class="pass-badge">${m.pass}</span> <span class="live-badge">LIVE 🔴</span></div>
+                        <div class="freegame-row"><span class="freegame-label">🎲 OTC :</span><span class="freegame-value otc-big">→ ${m.otc}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value jodi-list">→ ${m.jodi}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value panel-list">→ ${m.panel}</span></div>
                     </div>
                 `;
             } else {
                 html += `
                     <div class="freegame-card">
-                        <div class="freegame-title">
-                            ${m.name} <span class="live-badge">LIVE 🔴</span>
-                        </div>
-                        <div class="freegame-row">
-                            <span class="freegame-label">🎲 OTC :</span>
-                            <span class="freegame-value otc-big">→ ${m.otc}</span>
-                        </div>
-                        <div class="freegame-row">
-                            <span class="freegame-label">🔗 Jodi :</span>
-                            <span class="freegame-value jodi-list">→ ${m.jodi}</span>
-                        </div>
-                        <div class="freegame-row">
-                            <span class="freegame-label">📊 Panel :</span>
-                            <span class="freegame-value panel-list">→ ${m.panel}</span>
-                        </div>
+                        <div class="freegame-title">${m.name} <span class="live-badge">LIVE 🔴</span></div>
+                        <div class="freegame-row"><span class="freegame-label">🎲 OTC :</span><span class="freegame-value otc-big">→ ${m.otc}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value jodi-list">→ ${m.jodi}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value panel-list">→ ${m.panel}</span></div>
                     </div>
                 `;
             }
@@ -573,15 +512,9 @@
         document.getElementById('freegamesList').innerHTML = html;
     }
 
-    function displayContactBar(contact) {
-        document.getElementById('contactText').innerHTML = contact.text;
-        document.getElementById('whatsappLink').href = contact.whatsapp;
-        document.getElementById('whatsappLink').innerHTML = `💬 WhatsApp: ${contact.whatsappNumber}`;
-        document.getElementById('callText').innerHTML = contact.callText;
-    }
-
-    loadData();
-    setInterval(loadData, 60000);
+    // Load everything on page load
+    loadAllData();
+    setInterval(loadAllData, 60000);
 </script>
 </body>
 </html>
