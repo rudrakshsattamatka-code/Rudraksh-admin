@@ -17,14 +17,15 @@
         }
         .header {
             background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
-            padding: 20px;
+            padding: 15px;
             text-align: center;
-            color: white;
             border-radius: 15px;
             margin-bottom: 20px;
         }
-        .header h1 {
-            font-size: 40px;
+        .header img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
         }
         .help-btn {
             position: fixed;
@@ -45,8 +46,22 @@
             z-index: 100;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: auto;
+        }
+        /* Two Column Layout */
+        .two-columns {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .left-column {
+            flex: 2;
+            min-width: 250px;
+        }
+        .right-column {
+            flex: 1;
+            min-width: 200px;
         }
         .card {
             background: white;
@@ -60,6 +75,7 @@
             line-height: 1.6;
             color: #333;
         }
+        /* Market Cards */
         .market {
             background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
             border-radius: 12px;
@@ -74,60 +90,139 @@
             border-radius: 25px;
             font-weight: bold;
             margin-bottom: 15px;
+            font-size: 18px;
         }
-        .numbers {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .number-box {
-            background: rgba(255,255,255,0.2);
-            flex: 1;
-            text-align: center;
-            padding: 10px;
+        /* New Detailed Results Style */
+        .detail-row {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
             border-radius: 8px;
         }
-        .number-box small {
-            font-size: 11px;
-            opacity: 0.8;
-        }
-        .number-box span {
-            font-size: 28px;
-            font-weight: bold;
-            display: block;
-        }
-        .time {
-            text-align: center;
+        .detail-label {
             font-size: 12px;
             opacity: 0.8;
+            display: inline-block;
+            width: 60px;
         }
-        .refresh-btn {
+        .detail-value {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .otc-numbers {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+        .jodi-numbers {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .panel-numbers {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .pass-badge {
+            background: #27ae60;
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+        /* Refresh Button - Right Side */
+        .refresh-side-btn {
             background: #ff8c00;
             border: none;
             padding: 12px;
-            border-radius: 30px;
+            border-radius: 12px;
             color: white;
             font-weight: bold;
             font-size: 16px;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .admin-link {
+        .refresh-side-btn:hover {
+            background: #e07b00;
+        }
+        /* Today Live Title */
+        .live-title {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* Contact Bar */
+        .contact-bar {
+            background: linear-gradient(135deg, #2c3e50, #1a4a7a);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+        }
+        .contact-bar p {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .contact-bar .whatsapp-link {
+            background: #25D366;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .contact-bar .whatsapp-link:hover {
+            background: #20b859;
+        }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+        }
+        /* Lock Icon (Admin Link) */
+        .lock-icon {
             position: fixed;
             bottom: 15px;
             right: 15px;
             background: rgba(0,0,0,0.4);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 11px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
             color: #888;
             text-decoration: none;
             cursor: pointer;
             z-index: 100;
         }
-        .admin-link:hover {
+        .lock-icon:hover {
             background: #ff8c00;
             color: white;
         }
@@ -137,18 +232,12 @@
             color: #888;
             margin-top: 10px;
         }
-        .footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 12px;
-            color: #666;
-        }
-        @media (max-width: 600px) {
-            .number-box span {
-                font-size: 20px;
+        @media (max-width: 768px) {
+            .two-columns {
+                flex-direction: column;
             }
-            .header h1 {
-                font-size: 28px;
+            .otc-numbers {
+                font-size: 16px;
             }
         }
     </style>
@@ -159,37 +248,52 @@
 <body>
 
 <button class="help-btn" onclick="window.open('https://wa.me/919316742722')">💬</button>
-<a class="admin-link" href="admin.html">🔒 Admin</a>
+<a class="lock-icon" href="admin.html">🔒</a>
 
 <div class="container">
     <div class="header">
-        <h1>❤️‍🔥 RUDRAKSH ❤️‍🔥</h1>
-        <p>Daily Matka Results</p>
+        <img src="https://i.imgur.com/a0BDwAL.jpeg" alt="RUDRAKSH">
     </div>
 
-    <div class="card">
-        <h3>👋 Welcome to RUDRAKSH</h3>
-        <p>Daily updates result information for markets like KALYAN, MILAN, SRIDEVI, MAIN BAZAR.</p>
+    <div class="two-columns">
+        <!-- Left Column - Main Content -->
+        <div class="left-column">
+            <div class="card">
+                <div class="live-title">🔥 TODAY LIVE UPDATED FREE GAMES 🔥</div>
+                <div id="marketsList">Loading results...</div>
+            </div>
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="right-column">
+            <button class="refresh-side-btn" onclick="loadData()">
+                🔄 REFRESH RESULTS
+            </button>
+            
+            <div class="card">
+                <h3>👉 About RUDRAKSH</h3>
+                <div id="aboutText" class="about-text">Loading...</div>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <h3>👉 About RUDRAKSH</h3>
-        <div id="aboutText" class="about-text">Loading...</div>
-    </div>
-
-    <div class="card">
-        <button class="refresh-btn" onclick="loadData()">🔄 REFRESH RESULTS</button>
-        <div id="marketsList">Loading results...</div>
-        <div class="last-updated" id="lastUpdated"></div>
+    <!-- Contact Bar -->
+    <div class="contact-bar" id="contactBar">
+        <p id="contactText">⚠️ Agar aapko loss cover karne he to hame contact kare</p>
+        <a href="#" id="whatsappLink" class="whatsapp-link" target="_blank">
+            💬 WhatsApp: +919316742722
+        </a>
+        <p id="callText" style="font-size: 12px; margin-top: 8px;">📞 Or Call: +919316742722</p>
     </div>
 
     <div class="footer">
         ⚠️ Informational Purpose Only | No Betting Services
     </div>
+    <div class="last-updated" id="lastUpdated"></div>
 </div>
 
 <script>
-    // ============ FIREBASE CONFIG (YOURS) ============
+    // ============ FIREBASE CONFIG ============
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
         authDomain: "rudraksh-d74c3.firebaseapp.com",
@@ -200,53 +304,62 @@
         measurementId: "G-406NQEK3XV"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // Default data (used if nothing is in database yet)
+    // Default detailed market data
     const defaultMarkets = [
-        { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
-        { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
-        { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
-        { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
-        { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
-        { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
-        { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
+        { name: "SRIDEVI", otc: "1-4-3-8", jodi: "14-48-34-84", panel: "146-680-148-134", pass: "", type: "normal" },
+        { name: "TIME BAZAR", otc: "1-5-9-4", jodi: "19-59-91-45", panel: "119-159-126-158", pass: "", type: "normal" },
+        { name: "MADHUR DAY", otc: "1-5-4", jodi: "15-51-54-45-40-04-01-10", panel: "155-122-888-460", pass: "Close (Pass) ((5))", type: "withpass" },
+        { name: "MILAN DAY", otc: "5-9-7-4", jodi: "59-95-97-79-74-47-45-54", panel: "168-234-557-257", pass: "Jodi (Pass) ((97))", type: "withpass" },
+        { name: "RAJDHANI DAY", otc: "6-5-9-1", jodi: "65-59-91-15", panel: "150-159-126-380", pass: "", type: "normal" },
+        { name: "KALYAN", otc: "1-6-2-7", jodi: "12-62-26-76", panel: "128-123-679-160", pass: "Open (Pass) ((7))", type: "withpass" },
+        { name: "SRIDEVI NIGHT", otc: "9-4-8-7", jodi: "94-49-48-84-87-78-79-97", panel: "379-112-125-188", pass: "Open (Pass) ((9))", type: "withpass" }
     ];
 
-    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content. We regularly update the data so you always get fresh and accurate information.";
+    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes.";
 
-    // Load data from Firebase
+    const defaultContact = {
+        text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
+        whatsapp: "https://wa.me/919316742722",
+        whatsappNumber: "+919316742722",
+        callText: "📞 Or Call: +919316742722"
+    };
+
     async function loadData() {
         try {
             // Load markets
-            const marketsRef = database.ref('markets');
-            const marketsSnapshot = await marketsRef.once('value');
+            const marketsSnapshot = await database.ref('markets').once('value');
             let markets = marketsSnapshot.val();
             
             if (!markets || markets.length === 0) {
-                // First time - save default data
                 await database.ref('markets').set(defaultMarkets);
                 markets = defaultMarkets;
             }
             displayMarkets(markets);
 
             // Load about
-            const aboutRef = database.ref('about');
-            const aboutSnapshot = await aboutRef.once('value');
+            const aboutSnapshot = await database.ref('about').once('value');
             let about = aboutSnapshot.val();
-            
             if (!about) {
                 await database.ref('about').set(defaultAbout);
                 about = defaultAbout;
             }
             document.getElementById('aboutText').innerHTML = about;
 
-            // Update timestamp
+            // Load contact bar data
+            const contactSnapshot = await database.ref('contact').once('value');
+            let contact = contactSnapshot.val();
+            if (!contact) {
+                await database.ref('contact').set(defaultContact);
+                contact = defaultContact;
+            }
+            displayContactBar(contact);
+
             document.getElementById('lastUpdated').innerHTML = `Last updated: ${new Date().toLocaleString()}`;
         } catch (error) {
-            console.error("Error loading data:", error);
+            console.error("Error:", error);
             document.getElementById('marketsList').innerHTML = '<p style="text-align:center; color:red;">Error loading data. Please refresh.</p>';
         }
     }
@@ -254,34 +367,55 @@
     function displayMarkets(markets) {
         let html = '';
         for(let m of markets) {
-            html += `
-                <div class="market">
-                    <div class="market-name">${m.name}</div>
-                    <div class="numbers">
-                        <div class="number-box">
-                            <small>OPEN</small>
-                            <span>${m.open || '--'}</span>
+            if(m.type === "withpass") {
+                html += `
+                    <div class="market">
+                        <div class="market-name">${m.name} <span class="pass-badge">${m.pass || ''}</span></div>
+                        <div class="detail-row">
+                            <span class="detail-label">🎲 OTC :</span>
+                            <span class="detail-value otc-numbers">→ ${m.otc}</span>
                         </div>
-                        <div class="number-box">
-                            <small>CLOSE</small>
-                            <span>${m.close || '--'}</span>
+                        <div class="detail-row">
+                            <span class="detail-label">🔗 Jodi :</span>
+                            <span class="detail-value jodi-numbers">→ ${m.jodi}</span>
                         </div>
-                        <div class="number-box">
-                            <small>JODI</small>
-                            <span>${m.jodi || '--'}</span>
+                        <div class="detail-row">
+                            <span class="detail-label">📊 Panel :</span>
+                            <span class="detail-value panel-numbers">→ ${m.panel}</span>
                         </div>
                     </div>
-                    <div class="time">🕐 ${m.startTime} - ${m.endTime}</div>
-                </div>
-            `;
+                `;
+            } else {
+                html += `
+                    <div class="market">
+                        <div class="market-name">${m.name}</div>
+                        <div class="detail-row">
+                            <span class="detail-label">🎲 OTC :</span>
+                            <span class="detail-value otc-numbers">→ ${m.otc}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">🔗 Jodi :</span>
+                            <span class="detail-value jodi-numbers">→ ${m.jodi}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">📊 Panel :</span>
+                            <span class="detail-value panel-numbers">→ ${m.panel}</span>
+                        </div>
+                    </div>
+                `;
+            }
         }
         document.getElementById('marketsList').innerHTML = html;
     }
 
-    // Load data on page load
+    function displayContactBar(contact) {
+        document.getElementById('contactText').innerHTML = contact.text;
+        document.getElementById('whatsappLink').href = contact.whatsapp;
+        document.getElementById('whatsappLink').innerHTML = `💬 WhatsApp: ${contact.whatsappNumber}`;
+        document.getElementById('callText').innerHTML = contact.callText;
+    }
+
     loadData();
-    
-    // Auto refresh every 60 seconds
     setInterval(loadData, 60000);
 </script>
 </body>
