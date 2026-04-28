@@ -12,7 +12,7 @@
         }
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             padding: 15px;
             min-height: 100vh;
         }
@@ -21,25 +21,23 @@
             margin: auto;
         }
         .header {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            padding: 20px;
+            background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+            padding: 25px 20px;
             text-align: center;
-            border-radius: 20px;
+            border-radius: 25px;
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border: 1px solid rgba(255,140,0,0.3);
         }
         .logo-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-            border: 3px solid #ff8c00;
-            box-shadow: 0 0 20px rgba(255,140,0,0.5);
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 15px;
         }
         .logo-text {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: bold;
             background: linear-gradient(135deg, #ff8c00, #ffcc00);
             -webkit-background-clip: text;
@@ -86,10 +84,9 @@
             padding: 10px 20px;
             border-radius: 30px;
             margin-bottom: 20px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             display: inline-block;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         .refresh-btn-container {
             display: flex;
@@ -104,14 +101,13 @@
             border-radius: 12px;
             color: white;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
             transition: transform 0.2s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
         .refresh-btn:hover {
             transform: translateY(-2px);
@@ -122,50 +118,46 @@
             padding: 15px;
             margin-bottom: 15px;
             color: white;
-            transition: transform 0.2s;
-        }
-        .market:hover {
-            transform: translateX(5px);
         }
         .market-name {
             background: #ff8c00;
             display: inline-block;
-            padding: 6px 20px;
+            padding: 5px 15px;
             border-radius: 25px;
             font-weight: bold;
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 12px;
+            font-size: 16px;
         }
         .numbers {
             display: flex;
             justify-content: space-between;
             gap: 10px;
-            margin: 15px 0;
+            margin: 12px 0;
         }
         .number-box {
             background: rgba(255,255,255,0.15);
             flex: 1;
             text-align: center;
-            padding: 10px;
-            border-radius: 12px;
+            padding: 8px;
+            border-radius: 10px;
         }
         .number-box small {
-            font-size: 11px;
+            font-size: 10px;
             opacity: 0.8;
         }
         .number-box span {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             display: block;
         }
         .time {
             text-align: center;
-            font-size: 12px;
+            font-size: 11px;
             opacity: 0.8;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .about-text {
-            font-size: 14px;
+            font-size: 13px;
             line-height: 1.6;
             color: #333;
         }
@@ -175,61 +167,50 @@
             padding: 15px;
             margin-bottom: 15px;
             color: white;
-            transition: transform 0.2s;
-        }
-        .freegame-card:hover {
-            transform: translateX(5px);
         }
         .freegame-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border-left: 4px solid #ff8c00;
-            padding-left: 12px;
+            padding-left: 10px;
         }
         .freegame-row {
-            margin-bottom: 12px;
-            padding: 8px;
+            margin-bottom: 10px;
+            padding: 6px;
             background: rgba(255,255,255,0.08);
-            border-radius: 10px;
+            border-radius: 8px;
         }
         .freegame-label {
-            font-size: 13px;
+            font-size: 12px;
             opacity: 0.8;
             display: inline-block;
-            width: 65px;
+            width: 55px;
             font-weight: bold;
         }
         .freegame-value {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            letter-spacing: 1px;
         }
         .otc-big {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 4px;
-        }
-        .jodi-list, .panel-list {
-            font-size: 14px;
-            line-height: 1.8;
-            word-break: break-all;
+            font-size: 18px;
+            letter-spacing: 3px;
         }
         .pass-badge {
             background: #27ae60;
             display: inline-block;
-            padding: 3px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 11px;
-            margin-left: 10px;
+            font-size: 10px;
+            margin-left: 8px;
         }
         .live-badge {
             background: #e74c3c;
             display: inline-block;
-            padding: 3px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 11px;
-            margin-left: 10px;
+            font-size: 10px;
+            margin-left: 8px;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
@@ -237,7 +218,7 @@
             50% { opacity: 0.6; }
         }
         .contact-bar {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
             padding: 20px;
             border-radius: 20px;
             margin-top: 10px;
@@ -246,30 +227,26 @@
             border: 1px solid rgba(255,140,0,0.3);
         }
         .contact-bar p {
-            margin-bottom: 12px;
-            font-size: 14px;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
         .whatsapp-link {
             background: linear-gradient(135deg, #25D366, #128C7E);
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px 25px;
+            gap: 8px;
+            padding: 10px 20px;
             border-radius: 50px;
             color: white;
             text-decoration: none;
             font-weight: bold;
-            margin: 10px 0;
-            transition: transform 0.2s;
-        }
-        .whatsapp-link:hover {
-            transform: scale(1.05);
+            margin: 8px 0;
         }
         .footer {
             text-align: center;
             padding: 15px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
             margin-top: 20px;
         }
         .lock-icon {
@@ -277,18 +254,17 @@
             bottom: 15px;
             right: 15px;
             background: rgba(0,0,0,0.5);
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 16px;
             color: #aaa;
             text-decoration: none;
             cursor: pointer;
             z-index: 100;
-            backdrop-filter: blur(5px);
         }
         .lock-icon:hover {
             background: #ff8c00;
@@ -296,19 +272,14 @@
         }
         .last-updated {
             text-align: center;
-            font-size: 11px;
-            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
             margin-top: 10px;
         }
-        .loader {
-            text-align: center;
-            padding: 30px;
-            color: #ff8c00;
-        }
         @media (max-width: 600px) {
-            .number-box span { font-size: 20px; }
+            .number-box span { font-size: 18px; }
             .logo-text { font-size: 28px; }
-            .logo-img { width: 60px; height: 60px; }
+            .otc-big { font-size: 14px; letter-spacing: 2px; }
         }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -321,8 +292,7 @@
 
 <div class="container">
     <div class="header">
-        <!-- Add your image URL below -->
-        <img src="https://i.imgur.com/a0BDwAL.jpeg" alt="RUDRAKSH" class="logo-img" onerror="this.style.display='none'">
+        <img src="https://i.imgur.com/a0BDwAL.jpeg" alt="RUDRAKSH" class="logo-img">
         <div class="logo-text">RUDRAKSH</div>
         <div class="logo-sub">Fast & Accurate Matka Results</div>
     </div>
@@ -334,7 +304,7 @@
 
     <div class="refresh-btn-container">
         <button class="refresh-btn" onclick="location.reload()">🔄 REFRESH PAGE</button>
-        <button class="refresh-btn" onclick="loadAllData()">⚡ UPDATE DATA</button>
+        <button class="refresh-btn" onclick="forceLoadData()">⚡ UPDATE DATA</button>
     </div>
 
     <div class="card">
@@ -350,7 +320,7 @@
     <div class="contact-bar" id="contactBar">
         <p id="contactText">⚠️ Agar aapko loss cover karne he to hame contact kare</p>
         <a href="#" id="whatsappLink" class="whatsapp-link" target="_blank">💬 WhatsApp: +919316742722</a>
-        <p id="callText" style="font-size: 12px; margin-top: 8px;">📞 Or Call: +919316742722</p>
+        <p id="callText" style="font-size: 12px; margin-top: 5px;">📞 Or Call: +919316742722</p>
     </div>
 
     <div class="footer">⚠️ Informational Purpose Only | No Betting Services</div>
@@ -394,60 +364,50 @@
 
     const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes. RUDRAKSH focuses on providing fast loading experience, simple design, and useful content.";
 
-    // Function to initialize database with default data if empty
-    async function initDatabase() {
-        const simpleRef = database.ref('simpleResults');
-        const simpleSnapshot = await simpleRef.once('value');
-        if (!simpleSnapshot.exists()) {
-            await simpleRef.set(defaultSimpleResults);
-            console.log("Default simple results added to database");
-        }
-        
-        const freeRef = database.ref('freeGames');
-        const freeSnapshot = await freeRef.once('value');
-        if (!freeSnapshot.exists()) {
-            await freeRef.set(defaultFreeGames);
-            console.log("Default free games added to database");
-        }
-        
-        const aboutRef = database.ref('about');
-        const aboutSnapshot = await aboutRef.once('value');
-        if (!aboutSnapshot.exists()) {
-            await aboutRef.set(defaultAbout);
-            console.log("Default about added to database");
-        }
-        
-        const contactRef = database.ref('contact');
-        const contactSnapshot = await contactRef.once('value');
-        if (!contactSnapshot.exists()) {
-            await contactRef.set({
+    // Force save default data to Firebase
+    async function forceSaveDefaultData() {
+        try {
+            console.log("Saving default data to Firebase...");
+            await database.ref('simpleResults').set(defaultSimpleResults);
+            await database.ref('freeGames').set(defaultFreeGames);
+            await database.ref('about').set(defaultAbout);
+            await database.ref('contact').set({
                 text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
                 whatsapp: "https://wa.me/919316742722",
                 whatsappNumber: "+919316742722",
                 callText: "📞 Or Call: +919316742722"
             });
-            console.log("Default contact added to database");
+            console.log("Default data saved successfully!");
+            return true;
+        } catch(e) {
+            console.error("Error saving default data:", e);
+            return false;
         }
     }
 
     async function loadAllData() {
         try {
-            // First, initialize database with default data if needed
-            await initDatabase();
+            // First check if data exists
+            const simpleCheck = await database.ref('simpleResults').once('value');
+            
+            if (!simpleCheck.exists()) {
+                // Data doesn't exist, save default data
+                await forceSaveDefaultData();
+            }
             
             // Load Simple Results
             const simpleSnapshot = await database.ref('simpleResults').once('value');
-            const simpleResults = simpleSnapshot.val();
+            const simpleResults = simpleSnapshot.val() || defaultSimpleResults;
             displaySimpleResults(simpleResults);
 
             // Load Free Games
             const freeSnapshot = await database.ref('freeGames').once('value');
-            const freeGames = freeSnapshot.val();
+            const freeGames = freeSnapshot.val() || defaultFreeGames;
             displayFreeGames(freeGames);
 
             // Load About
             const aboutSnapshot = await database.ref('about').once('value');
-            const about = aboutSnapshot.val();
+            const about = aboutSnapshot.val() || defaultAbout;
             document.getElementById('aboutText').innerHTML = about;
 
             // Load Contact
@@ -462,8 +422,8 @@
 
             document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
         } catch (error) {
-            console.error("Error:", error);
-            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading data. Please refresh.</p>';
+            console.error("Error loading data:", error);
+            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error. Please check internet and refresh.</p>';
             document.getElementById('freegamesList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Error loading free games.</p>';
         }
     }
@@ -494,8 +454,8 @@
                     <div class="freegame-card">
                         <div class="freegame-title">${m.name} <span class="pass-badge">${m.pass}</span> <span class="live-badge">LIVE 🔴</span></div>
                         <div class="freegame-row"><span class="freegame-label">🎲 OTC :</span><span class="freegame-value otc-big">→ ${m.otc}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value jodi-list">→ ${m.jodi}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value panel-list">→ ${m.panel}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value">→ ${m.jodi}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value">→ ${m.panel}</span></div>
                     </div>
                 `;
             } else {
@@ -503,13 +463,17 @@
                     <div class="freegame-card">
                         <div class="freegame-title">${m.name} <span class="live-badge">LIVE 🔴</span></div>
                         <div class="freegame-row"><span class="freegame-label">🎲 OTC :</span><span class="freegame-value otc-big">→ ${m.otc}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value jodi-list">→ ${m.jodi}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value panel-list">→ ${m.panel}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value">→ ${m.jodi}</span></div>
+                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value">→ ${m.panel}</span></div>
                     </div>
                 `;
             }
         }
         document.getElementById('freegamesList').innerHTML = html;
+    }
+
+    function forceLoadData() {
+        loadAllData();
     }
 
     // Load everything on page load
