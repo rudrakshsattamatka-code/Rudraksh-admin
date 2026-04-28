@@ -52,7 +52,7 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchAdminTab('results')">📊 Edit Results</button>
             <button class="tab-btn" onclick="switchAdminTab('freegames')">🎲 Edit Free Games</button>
-            <button class="tab-btn" onclick="switchAdminTab('notice')">📢 Edit Notice Board</button>
+            <button class="tab-btn" onclick="switchAdminTab('notice')">📢 Edit Notice</button>
             <button class="tab-btn" onclick="switchAdminTab('other')">⚙️ About & Contact</button>
         </div>
         <div id="adminResultsTab" class="tab-content active">
@@ -161,7 +161,6 @@
     }
     
     async function saveAbout() { await database.ref('about').set(document.getElementById('aboutText').value); showSuccess('✅ About saved!'); }
-    
     async function saveNotice() { await database.ref('notice').set(document.getElementById('noticeText').value); showSuccess('✅ Notice saved!'); }
     
     async function saveContact() {
