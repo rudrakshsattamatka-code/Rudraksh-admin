@@ -2,507 +2,254 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RUDRAKSH - Matka Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Portal</title>
+    <!-- Tailwind CSS for modern mobile-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Forces an Android App aspect ratio container on desktop screens */
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 15px;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
-        .header {
-            background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
-            padding: 25px 20px;
-            text-align: center;
-            border-radius: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,140,0,0.3);
-        }
-        .logo-img {
+        .app-container {
             width: 100%;
-            max-width: 300px;
-            height: auto;
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-        .logo-text {
-            font-size: 36px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #ff8c00, #ffcc00);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .logo-sub {
-            color: #aaa;
-            font-size: 12px;
-            margin-top: 5px;
-        }
-        .help-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 850px;
+            background: #ffffff;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            cursor: pointer;
-            border: none;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 100;
-            transition: transform 0.3s;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        .help-btn:hover {
-            transform: scale(1.1);
-        }
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .section-title {
-            background: linear-gradient(135deg, #ff8c00, #ff6b00);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            display: inline-block;
-        }
-        .notice-board {
-            background: linear-gradient(135deg, #fff3e0, #ffe0b3);
-            border-left: 5px solid #ff8c00;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.5;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .notice-board h4 {
-            color: #ff8c00;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .notice-text {
-            margin-top: 5px;
-        }
-        .refresh-btn-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .refresh-btn {
-            flex: 1;
-            background: linear-gradient(135deg, #ff8c00, #ff6b00);
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: transform 0.2s;
-        }
-        .refresh-btn:hover {
-            transform: translateY(-2px);
-        }
-        .market {
-            background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            color: white;
-        }
-        .market-name {
-            background: #ff8c00;
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 25px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-        .numbers {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin: 12px 0;
-        }
-        .number-box {
-            background: rgba(255,255,255,0.15);
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            border-radius: 10px;
-        }
-        .number-box span {
-            font-size: 24px;
-            font-weight: bold;
-            display: block;
-        }
-        .time {
-            text-align: center;
-            font-size: 11px;
-            opacity: 0.8;
-            margin-top: 8px;
-        }
-        .about-text {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #333;
-        }
-        .freegame-card {
-            background: linear-gradient(135deg, #1a4a7a, #2c6eb4);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 15px;
-            color: white;
-        }
-        .freegame-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            border-left: 4px solid #ff8c00;
-            padding-left: 10px;
-        }
-        .freegame-row {
-            margin-bottom: 10px;
-            padding: 6px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 8px;
-        }
-        .freegame-label {
-            font-size: 12px;
-            opacity: 0.8;
-            display: inline-block;
-            width: 55px;
-            font-weight: bold;
-        }
-        .freegame-value {
-            font-size: 14px;
-            font-weight: bold;
-        }
-        .otc-big {
-            font-size: 18px;
-            letter-spacing: 3px;
-        }
-        .pass-badge {
-            background: #27ae60;
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            margin-left: 8px;
-        }
-        .live-badge {
-            background: #e74c3c;
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            margin-left: 8px;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        .contact-bar {
-            background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
-            padding: 20px;
-            border-radius: 20px;
-            margin-top: 10px;
-            text-align: center;
-            color: white;
-            border: 1px solid rgba(255,140,0,0.3);
-        }
-        .contact-bar p {
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        .whatsapp-link {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 50px;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            margin: 8px 0;
-        }
-        .footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 11px;
-            color: rgba(255,255,255,0.5);
-            margin-top: 20px;
-        }
-        .lock-icon {
-            position: fixed;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.5);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: #aaa;
-            text-decoration: none;
-            cursor: pointer;
-            z-index: 100;
-        }
-        .lock-icon:hover {
-            background: #ff8c00;
-            color: white;
-        }
-        .last-updated {
-            text-align: center;
-            font-size: 10px;
-            color: rgba(255,255,255,0.4);
-            margin-top: 10px;
-        }
-        @media (max-width: 600px) {
-            .number-box span { font-size: 18px; }
-            .logo-text { font-size: 28px; }
-            .otc-big { font-size: 14px; letter-spacing: 2px; }
+        @media (max-width: 450px) {
+            .app-container {
+                height: 100vh;
+                max-height: 100vh;
+            }
         }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
-<button class="help-btn" onclick="window.open('https://wa.me/919316742722')">💬</button>
-<a class="lock-icon" href="admin.html">🔒</a>
+<div class="app-container">
 
-<div class="container">
-    <div class="header">
-        <img src="https://i.imgur.com/a0BDwAL.jpeg" alt="RUDRAKSH" class="logo-img">
-        <div class="logo-text">RUDRAKSH</div>
-        <div class="logo-sub">Fast & Accurate Matka Results</div>
+    <!-- SPLASH / AUTO-LOGIN SCREEN -->
+    <div id="splash-screen" class="flex-1 flex flex-col items-center justify-center p-6 bg-white z-50">
+        <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-32 h-32 object-contain mb-4 rounded-full shadow-md">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
     </div>
 
-    <div class="notice-board" id="noticeBoard">
-        <h4>📢 NOTICE BOARD</h4>
-        <div id="noticeText" class="notice-text">Loading notice...</div>
+    <!-- AUTHENTICATION CARD (LOGIN & REGISTER) -->
+    <div id="auth-screen" class="hidden flex-1 flex flex-col p-6 justify-between">
+        <div class="w-full flex flex-col items-center mt-4">
+            <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-24 h-24 object-contain mb-6 rounded-full shadow-sm">
+            
+            <!-- Tabs to toggle Login/Register -->
+            <div class="flex w-full border-b border-gray-200 mb-6">
+                <button id="tab-login" class="flex-1 pb-2 font-bold text-center border-b-2 border-orange-500 text-orange-600" onclick="switchTab('login')">Login</button>
+                <button id="tab-register" class="flex-1 pb-2 font-bold text-center text-gray-400 border-b-2 border-transparent" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <!-- Form Wrapper -->
+            <div class="w-full">
+                <!-- Name Field (Only visible during Registration) -->
+                <div id="field-name" class="hidden mb-4">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1">Full Name</label>
+                    <input type="text" id="auth-name" placeholder="Enter your name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                </div>
+
+                <!-- Mobile Field -->
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1">Mobile Number</label>
+                    <input type="tel" id="auth-mobile" placeholder="Enter 10-digit mobile" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                </div>
+
+                <!-- 4-Digit PIN Field -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-semibold mb-1">4-Digit PIN</label>
+                    <input type="password" id="auth-pin" maxlength="4" placeholder="••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg tracking-widest text-center text-lg focus:outline-none focus:border-green-500">
+                </div>
+
+                <!-- Action Button -->
+                <button id="submit-btn" onclick="handleAuth()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors shadow-md">
+                    Login
+                </button>
+            </div>
+        </div>
+
+        <!-- Disclaimer pinned cleanly to the bottom of auth screen -->
+        <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mt-8 text-center">
+            <p class="text-[10px] text-gray-500 leading-relaxed font-medium">
+                <span class="text-orange-600 font-bold block mb-1">-:DISCLAIMER:-</span>
+                Visiting this site and browsing it is strictly recommended at your own risk. Every information available here is only according to informational purpose and based on astrology and number calculations. We are no associated or affiliated with any illegal Matka business. We make sure we follow all rules and regulations of the regions where you are accessing the website. There are also chances that the website may be banned in your area and after that if you are using it, you are solely dependable and responsible for any damage, loss or legal action taken. If you are the one who does not like our disclaimer it is advised that you leave our website immediately. Copying of any information/contents posted on the website is strictly prohibited and against the law.
+            </p>
+        </div>
     </div>
 
-    <div class="card">
-        <div class="section-title">📊 TODAY RESULTS</div>
-        <div id="resultsList">Loading results...</div>
+    <!-- MAIN APP DASHBOARD SCREEN -->
+    <div id="dashboard-screen" class="hidden flex-1 flex flex-col bg-gray-50">
+        <!-- App Bar header -->
+        <div class="bg-green-600 text-white px-4 py-3 flex items-center justify-between shadow-md">
+            <div class="flex items-center space-x-2">
+                <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-8 h-8 rounded-full bg-white object-contain">
+                <span id="welcome-user" class="font-bold tracking-wide">Welcome</span>
+            </div>
+            <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1 text-xs font-bold rounded shadow transition-colors">
+                LOGOUT
+            </button>
+        </div>
+
+        <!-- Dynamic Content placeholder for your next features -->
+        <div class="flex-1 p-4 flex flex-col items-center justify-center text-center">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-xs">
+                <p class="text-gray-600 text-sm">You are successfully logged in to your secure dashboard.</p>
+                <div class="mt-4 inline-block bg-orange-100 text-orange-700 font-bold px-3 py-1 rounded-full text-xs">
+                    Ready for features
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="refresh-btn-container">
-        <button class="refresh-btn" onclick="location.reload()">🔄 REFRESH PAGE</button>
-        <button class="refresh-btn" onclick="forceLoadData()">⚡ UPDATE DATA</button>
-    </div>
-
-    <div class="card">
-        <div class="section-title">👉 About RUDRAKSH</div>
-        <div id="aboutText" class="about-text">Loading...</div>
-    </div>
-
-    <div class="card">
-        <div class="section-title">🎲 TODAY LIVE UPDATED FREE GAMES</div>
-        <div id="freegamesList">Loading free games...</div>
-    </div>
-
-    <div class="contact-bar" id="contactBar">
-        <p id="contactText">⚠️ Agar aapko loss cover karne he to hame contact kare</p>
-        <a href="#" id="whatsappLink" class="whatsapp-link" target="_blank">💬 WhatsApp: +919316742722</a>
-        <p id="callText" style="font-size: 12px; margin-top: 5px;">📞 Or Call: +919316742722</p>
-    </div>
-
-    <div class="footer">⚠️ Informational Purpose Only | No Betting Services</div>
-    <div class="last-updated" id="lastUpdated"></div>
 </div>
 
-<script>
+<!-- Firebase Modular App Libraries -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // TODO: Replace with your actual configuration details from your Firebase Console
     const firebaseConfig = {
-        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
-        authDomain: "rudraksh-d74c3.firebaseapp.com",
-        projectId: "rudraksh-d74c3",
-        storageBucket: "rudraksh-d74c3.firebasestorage.app",
-        messagingSenderId: "270620722307",
-        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
-        measurementId: "G-406NQEK3XV"
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    // Initialize Firebase & Database
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    const defaultSimpleResults = [
-        { name: "SRIDEVI", open: "123", close: "61", jodi: "560", startTime: "11:45", endTime: "12:45" },
-        { name: "TIME BAZAR", open: "230", close: "59", jodi: "450", startTime: "13:10", endTime: "14:10" },
-        { name: "MILAN DAY", open: "370", close: "01", jodi: "470", startTime: "15:10", endTime: "17:10" },
-        { name: "KALYAN", open: "349", close: "62", jodi: "570", startTime: "15:40", endTime: "17:40" },
-        { name: "SRIDEVI NIGHT", open: "380", close: "18", jodi: "350", startTime: "19:25", endTime: "20:25" },
-        { name: "MILAN NIGHT", open: "450", close: "96", jodi: "790", startTime: "21:10", endTime: "23:10" },
-        { name: "MAIN BAZAR", open: "490", close: "32", jodi: "444", startTime: "22:00", endTime: "00:10" }
-    ];
+    let currentMode = 'login';
 
-    const defaultFreeGames = [
-        { name: "SRIDEVI", otc: "1-4-3-8", jodi: "14-48-34-84", panel: "146-680-148-134", pass: "", type: "normal" },
-        { name: "TIME BAZAR", otc: "1-5-9-4", jodi: "19-59-91-45", panel: "119-159-126-158", pass: "", type: "normal" },
-        { name: "MADHUR DAY", otc: "1-5-4", jodi: "15-51-54-45-40-04-01-10", panel: "155-122-888-460", pass: "Close (Pass) ((5))", type: "withpass" },
-        { name: "MILAN DAY", otc: "5-9-7-4", jodi: "59-95-97-79-74-47-45-54", panel: "168-234-557-257", pass: "Jodi (Pass) ((97))", type: "withpass" },
-        { name: "RAJDHANI DAY", otc: "6-5-9-1", jodi: "65-59-91-15", panel: "150-159-126-380", pass: "", type: "normal" },
-        { name: "KALYAN", otc: "1-6-2-7", jodi: "12-62-26-76", panel: "128-123-679-160", pass: "Open (Pass) ((7))", type: "withpass" },
-        { name: "SRIDEVI NIGHT", otc: "9-4-8-7", jodi: "94-49-48-84-87-78-79-97", panel: "379-112-125-188", pass: "Open (Pass) ((9))", type: "withpass" }
-    ];
+    // Run persistence check on page load
+    window.addEventListener('DOMContentLoaded', checkUserSession);
 
-    const defaultAbout = "RUDRAKSH is an informational platform where you can find basic and updated details about Indian Matka. This website does not provide any betting or gambling services. It is made only for informational purposes.";
+    async function checkUserSession() {
+        const savedMobile = localStorage.getItem('app_user_mobile');
+        if (savedMobile) {
+            try {
+                const userDoc = await getDoc(doc(db, "users", savedMobile));
+                if (userDoc.exists()) {
+                    showDashboard(userDoc.data().name);
+                    return;
+                }
+            } catch (error) {
+                console.error("Session check failed: ", error);
+            }
+        }
+        // Fallback to login screen if no session exists
+        document.getElementById('splash-screen').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+    }
 
-    const defaultNotice = "🔴 Today Special: Kalyan Open 3xx | Milan Day Jodi 5x\n🟢 New updates coming soon\n⚠️ Results updated at sharp timing";
+    window.switchTab = function(mode) {
+        currentMode = mode;
+        const loginTab = document.getElementById('tab-login');
+        const regTab = document.getElementById('tab-register');
+        const nameField = document.getElementById('field-name');
+        const submitBtn = document.getElementById('submit-btn');
 
-    async function forceSaveDefaultData() {
-        try {
-            await database.ref('simpleResults').set(defaultSimpleResults);
-            await database.ref('freeGames').set(defaultFreeGames);
-            await database.ref('about').set(defaultAbout);
-            await database.ref('notice').set(defaultNotice);
-            await database.ref('contact').set({
-                text: "⚠️ Agar aapko loss cover karne he to hame contact kare",
-                whatsapp: "https://wa.me/919316742722",
-                whatsappNumber: "+919316742722",
-                callText: "📞 Or Call: +919316742722"
-            });
-            console.log("Default data saved");
-            return true;
-        } catch(e) {
-            console.error("Error saving:", e);
-            return false;
+        if (mode === 'register') {
+            regTab.className = "flex-1 pb-2 font-bold text-center border-b-2 border-orange-500 text-orange-600";
+            loginTab.className = "flex-1 pb-2 font-bold text-center text-gray-400 border-b-2 border-transparent";
+            nameField.classList.remove('hidden');
+            submitBtn.innerText = "Create Account";
+        } else {
+            loginTab.className = "flex-1 pb-2 font-bold text-center border-b-2 border-orange-500 text-orange-600";
+            regTab.className = "flex-1 pb-2 font-bold text-center text-gray-400 border-b-2 border-transparent";
+            nameField.classList.add('hidden');
+            submitBtn.innerText = "Login";
         }
     }
 
-    async function loadAllData() {
-        try {
-            // Check if data exists, if not save defaults
-            const check = await database.ref('simpleResults').once('value');
-            if (!check.exists()) {
-                await forceSaveDefaultData();
+    window.handleAuth = async function() {
+        const mobile = document.getElementById('auth-mobile').value.trim();
+        const pin = document.getElementById('auth-pin').value.trim();
+        const name = document.getElementById('auth-name').value.trim();
+
+        if (!mobile || mobile.length < 10) {
+            alert("Please enter a valid mobile number.");
+            return;
+        }
+        if (pin.length !== 4 || isNaN(pin)) {
+            alert("PIN must be exactly 4 digits.");
+            return;
+        }
+
+        if (currentMode === 'register') {
+            if (!name) {
+                alert("Please enter your name.");
+                return;
             }
             
-            // Load Simple Results
-            const simpleSnap = await database.ref('simpleResults').once('value');
-            const simpleResults = simpleSnap.val() || defaultSimpleResults;
-            displaySimpleResults(simpleResults);
-
-            // Load Free Games
-            const freeSnap = await database.ref('freeGames').once('value');
-            const freeGames = freeSnap.val() || defaultFreeGames;
-            displayFreeGames(freeGames);
-
-            // Load About
-            const aboutSnap = await database.ref('about').once('value');
-            const about = aboutSnap.val() || defaultAbout;
-            document.getElementById('aboutText').innerHTML = about;
-
-            // Load Notice
-            const noticeSnap = await database.ref('notice').once('value');
-            const notice = noticeSnap.val() || defaultNotice;
-            document.getElementById('noticeText').innerHTML = notice.replace(/\n/g, '<br>');
-
-            // Load Contact
-            const contactSnap = await database.ref('contact').once('value');
-            const contact = contactSnap.val();
-            if(contact) {
-                document.getElementById('contactText').innerHTML = contact.text;
-                document.getElementById('whatsappLink').href = contact.whatsapp;
-                document.getElementById('whatsappLink').innerHTML = `💬 WhatsApp: ${contact.whatsappNumber}`;
-                document.getElementById('callText').innerHTML = contact.callText;
+            // Check if user already exists
+            const userRef = doc(db, "users", mobile);
+            const userSnap = await getDoc(userRef);
+            
+            if (userSnap.exists()) {
+                alert("An account with this mobile number already exists. Please login.");
+                switchTab('login');
+                return;
             }
 
-            document.getElementById('lastUpdated').innerHTML = `📅 Last updated: ${new Date().toLocaleString()}`;
-        } catch (error) {
-            console.error("Error loading data:", error);
-            document.getElementById('resultsList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Connection error. Please check internet and refresh.</p>';
-            document.getElementById('freegamesList').innerHTML = '<p style="text-align:center; color:red;">⚠️ Connection error. Please refresh.</p>';
-        }
-    }
+            // Save user data securely in Firestore
+            await setDoc(userRef, { name, mobile, pin });
+            localStorage.setItem('app_user_mobile', mobile);
+            showDashboard(name);
 
-    function displaySimpleResults(markets) {
-        let html = '';
-        for(let m of markets) {
-            html += `
-                <div class="market">
-                    <div class="market-name">${m.name}</div>
-                    <div class="numbers">
-                        <div class="number-box"><span>${m.open || '--'}</span></div>
-                        <div class="number-box"><span>${m.close || '--'}</span></div>
-                        <div class="number-box"><span>${m.jodi || '--'}</span></div>
-                    </div>
-                    <div class="time">🕐 ${m.startTime} - ${m.endTime}</div>
-                </div>
-            `;
-        }
-        document.getElementById('resultsList').innerHTML = html;
-    }
+        } else {
+            // Login Logic
+            const userRef = doc(db, "users", mobile);
+            const userSnap = await getDoc(userRef);
 
-    function displayFreeGames(games) {
-        let html = '';
-        for(let m of games) {
-            if(m.type === "withpass") {
-                html += `
-                    <div class="freegame-card">
-                        <div class="freegame-title">${m.name} <span class="pass-badge">${m.pass}</span> <span class="live-badge">LIVE 🔴</span></div>
-                        <div class="freegame-row"><span class="freegame-label">🎲 OTC :</span><span class="freegame-value otc-big">→ ${m.otc}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value">→ ${m.jodi}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value">→ ${m.panel}</span></div>
-                    </div>
-                `;
-            } else {
-                html += `
-                    <div class="freegame-card">
-                        <div class="freegame-title">${m.name} <span class="live-badge">LIVE 🔴</span></div>
-                        <div class="freegame-row"><span class="freegame-label">🎲 OTC :</span><span class="freegame-value otc-big">→ ${m.otc}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">🔗 Jodi :</span><span class="freegame-value">→ ${m.jodi}</span></div>
-                        <div class="freegame-row"><span class="freegame-label">📊 Panel :</span><span class="freegame-value">→ ${m.panel}</span></div>
-                    </div>
-                `;
+            if (!userSnap.exists() || userSnap.data().pin !== pin) {
+                alert("Incorrect mobile number or PIN.");
+                return;
             }
+
+            localStorage.setItem('app_user_mobile', mobile);
+            showDashboard(userSnap.data().name);
         }
-        document.getElementById('freegamesList').innerHTML = html;
     }
 
-    function forceLoadData() {
-        loadAllData();
+    window.handleLogout = function() {
+        localStorage.removeItem('app_user_mobile');
+        document.getElementById('dashboard-screen').classList.add('hidden');
+        document.getElementById('auth-screen').classList.remove('hidden');
+        // Reset form inputs
+        document.getElementById('auth-mobile').value = '';
+        document.getElementById('auth-pin').value = '';
+        document.getElementById('auth-name').value = '';
+        switchTab('login');
     }
 
-    loadAllData();
-    setInterval(loadAllData, 60000);
+    function showDashboard(userName) {
+        document.getElementById('welcome-user').innerText = userName;
+        document.getElementById('splash-screen').classList.add('hidden');
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('dashboard-screen').classList.remove('hidden');
+    }
 </script>
+
 </body>
 </html>
