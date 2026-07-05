@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Portal</title>
-    <!-- Tailwind CSS for modern mobile-first styling -->
+    <title>Welcome - Secure Portal</title>
+    <!-- Tailwind CSS for mobile-first app styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Forces an Android App aspect ratio container on desktop screens */
+        /* Forces an Android App layout on desktop, full screen on mobile */
         body {
             background-color: #f3f4f6;
             display: flex;
@@ -43,14 +43,16 @@
 
     <!-- SPLASH / AUTO-LOGIN SCREEN -->
     <div id="splash-screen" class="flex-1 flex flex-col items-center justify-center p-6 bg-white z-50">
-        <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-32 h-32 object-contain mb-4 rounded-full shadow-md">
+        <!-- Pulse animated logo with no borders or outlines -->
+        <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-40 h-40 object-contain mb-6 animate-pulse">
         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
     </div>
 
     <!-- AUTHENTICATION CARD (LOGIN & REGISTER) -->
     <div id="auth-screen" class="hidden flex-1 flex flex-col p-6 justify-between">
         <div class="w-full flex flex-col items-center mt-4">
-            <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-24 h-24 object-contain mb-6 rounded-full shadow-sm">
+            <!-- App Logo (Plain, borderless) -->
+            <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-28 h-28 object-contain mb-6">
             
             <!-- Tabs to toggle Login/Register -->
             <div class="flex w-full border-b border-gray-200 mb-6">
@@ -66,16 +68,16 @@
                     <input type="text" id="auth-name" placeholder="Enter your name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
                 </div>
 
-                <!-- Mobile Field -->
+                <!-- Mobile Field (Forces Number Pad on Mobile devices) -->
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-semibold mb-1">Mobile Number</label>
-                    <input type="tel" id="auth-mobile" placeholder="Enter 10-digit mobile" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="auth-mobile" placeholder="Enter 10-digit mobile" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
                 </div>
 
-                <!-- 4-Digit PIN Field -->
+                <!-- 4-Digit PIN Field (Forces Number Pad on Mobile devices) -->
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-semibold mb-1">4-Digit PIN</label>
-                    <input type="password" id="auth-pin" maxlength="4" placeholder="••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg tracking-widest text-center text-lg focus:outline-none focus:border-green-500">
+                    <input type="password" inputmode="numeric" pattern="[0-9]*" id="auth-pin" maxlength="4" placeholder="••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg tracking-widest text-center text-lg focus:outline-none focus:border-green-500">
                 </div>
 
                 <!-- Action Button -->
@@ -85,7 +87,7 @@
             </div>
         </div>
 
-        <!-- Disclaimer pinned cleanly to the bottom of auth screen -->
+        <!-- Legal Disclaimer text -->
         <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mt-8 text-center">
             <p class="text-[10px] text-gray-500 leading-relaxed font-medium">
                 <span class="text-orange-600 font-bold block mb-1">-:DISCLAIMER:-</span>
@@ -94,54 +96,30 @@
         </div>
     </div>
 
-    <!-- MAIN APP DASHBOARD SCREEN -->
-    <div id="dashboard-screen" class="hidden flex-1 flex flex-col bg-gray-50">
-        <!-- App Bar header -->
-        <div class="bg-green-600 text-white px-4 py-3 flex items-center justify-between shadow-md">
-            <div class="flex items-center space-x-2">
-                <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-8 h-8 rounded-full bg-white object-contain">
-                <span id="welcome-user" class="font-bold tracking-wide">Welcome</span>
-            </div>
-            <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1 text-xs font-bold rounded shadow transition-colors">
-                LOGOUT
-            </button>
-        </div>
-
-        <!-- Dynamic Content placeholder for your next features -->
-        <div class="flex-1 p-4 flex flex-col items-center justify-center text-center">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 max-w-xs">
-                <p class="text-gray-600 text-sm">You are successfully logged in to your secure dashboard.</p>
-                <div class="mt-4 inline-block bg-orange-100 text-orange-700 font-bold px-3 py-1 rounded-full text-xs">
-                    Ready for features
-                </div>
-            </div>
-        </div>
-    </div>
-
 </div>
 
-<!-- Firebase Modular App Libraries -->
+<!-- Firebase Configured Stack Modules -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // TODO: Replace with your actual configuration details from your Firebase Console
+    // Your production Firebase configurations integrated
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
+        authDomain: "rudraksh-d74c3.firebaseapp.com",
+        databaseURL: "https://rudraksh-d74c3-default-rtdb.firebaseio.com",
+        projectId: "rudraksh-d74c3",
+        storageBucket: "rudraksh-d74c3.firebasestorage.app",
+        messagingSenderId: "270620722307",
+        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+        measurementId: "G-406NQEK3XV"
     };
 
-    // Initialize Firebase & Database
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     let currentMode = 'login';
 
-    // Run persistence check on page load
     window.addEventListener('DOMContentLoaded', checkUserSession);
 
     async function checkUserSession() {
@@ -150,14 +128,14 @@
             try {
                 const userDoc = await getDoc(doc(db, "users", savedMobile));
                 if (userDoc.exists()) {
-                    showDashboard(userDoc.data().name);
+                    // Redirect directly to dashboard.html file
+                    window.location.href = 'dashboard.html';
                     return;
                 }
             } catch (error) {
-                console.error("Session check failed: ", error);
+                console.error("Session lookup error: ", error);
             }
         }
-        // Fallback to login screen if no session exists
         document.getElementById('splash-screen').classList.add('hidden');
         document.getElementById('auth-screen').classList.remove('hidden');
     }
@@ -188,66 +166,45 @@
         const name = document.getElementById('auth-name').value.trim();
 
         if (!mobile || mobile.length < 10) {
-            alert("Please enter a valid mobile number.");
+            alert("Please enter a valid 10-digit mobile number.");
             return;
         }
         if (pin.length !== 4 || isNaN(pin)) {
-            alert("PIN must be exactly 4 digits.");
+            alert("PIN must be a 4-digit number.");
             return;
         }
 
         if (currentMode === 'register') {
             if (!name) {
-                alert("Please enter your name.");
+                alert("Please fill in your name.");
                 return;
             }
             
-            // Check if user already exists
             const userRef = doc(db, "users", mobile);
             const userSnap = await getDoc(userRef);
             
             if (userSnap.exists()) {
-                alert("An account with this mobile number already exists. Please login.");
+                alert("Mobile number already registered. Please login.");
                 switchTab('login');
                 return;
             }
 
-            // Save user data securely in Firestore
             await setDoc(userRef, { name, mobile, pin });
             localStorage.setItem('app_user_mobile', mobile);
-            showDashboard(name);
+            window.location.href = 'dashboard.html';
 
         } else {
-            // Login Logic
             const userRef = doc(db, "users", mobile);
             const userSnap = await getDoc(userRef);
 
             if (!userSnap.exists() || userSnap.data().pin !== pin) {
-                alert("Incorrect mobile number or PIN.");
+                alert("Invalid mobile number or PIN.");
                 return;
             }
 
             localStorage.setItem('app_user_mobile', mobile);
-            showDashboard(userSnap.data().name);
+            window.location.href = 'dashboard.html';
         }
-    }
-
-    window.handleLogout = function() {
-        localStorage.removeItem('app_user_mobile');
-        document.getElementById('dashboard-screen').classList.add('hidden');
-        document.getElementById('auth-screen').classList.remove('hidden');
-        // Reset form inputs
-        document.getElementById('auth-mobile').value = '';
-        document.getElementById('auth-pin').value = '';
-        document.getElementById('auth-name').value = '';
-        switchTab('login');
-    }
-
-    function showDashboard(userName) {
-        document.getElementById('welcome-user').innerText = userName;
-        document.getElementById('splash-screen').classList.add('hidden');
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
     }
 </script>
 
