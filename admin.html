@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Admin Controller</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen font-sans p-4 md:p-8">
+
+    <!-- ADMIN PIN LOCKOUT SCREEN -->
+    <div id="admin-gate" class="fixed inset-0 bg-gray-950 flex flex-col items-center justify-center p-6 z-50">
+        <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 w-full max-w-sm text-center shadow-2xl">
+            <h1 class="text-xl font-bold text-orange-500 mb-2">System Admin Gate</h1>
+            <p class="text-xs text-gray-400 mb-6">Enter Secure Master 4-Digit PIN</p>
+            <input type="password" id="gate-pin" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-gray-950 border border-gray-700 text-white rounded-lg p-3 text-center tracking-widest text-2xl focus:outline-none focus:border-orange-500 mb-4">
+            <button onclick="unlockAdminPanel()" class="w-full bg-orange-500 hover:bg-orange-600 font-bold py-3 rounded-lg transition-colors shadow-md text-white text-sm">
+                Verify Secure Access
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTROL PANEL LAYOUT -->
+    <div class="max-w-6xl mx-auto space-y-6 hidden" id="admin-dashboard">
+        <!-- Main Top Bar -->
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                    Rudraksh Control Engine <span class="text-xs bg-green-500/20 text-green-400 font-mono px-2 py-0.5 rounded-full border border-green-500/30">Live Terminal</span>
+                </h2>
+                <p class="text-xs text-gray-400 mt-1">Global settings, transactional validation, and real-time subscriber control arrays.</p>
+            </div>
+            <div class="flex gap-2 w-full md:w-auto">
+                <button onclick="openTab('system')" class="flex-1 md:flex-none bg-gray-700 hover:bg-gray-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors">System Global Config</button>
+                <button onclick="openTab('users')" class="flex-1 md:flex-none bg-gray-700 hover:bg-gray-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors">Subscribers</button>
+                <button onclick="openTab('deposits')" class="flex-1 md:flex-none bg-gray-700 hover:bg-gray-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors">Deposit Queue</button>
+            </div>
+        </div>
+
+        <!-- TAB SECTION 1: GLOBAL CONFIG & MARKETS -->
+        <div id="tab-system" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- App Variables Form -->
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 space-y-4">
+                <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">System Parameters</h3>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Global App Logo URL</label>
+                    <input type="text" id="cfg-logo" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Notice Board Broadcast Text</label>
+                    <textarea id="cfg-notice" rows="3" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Change Admin Master PIN (4 digits)</label>
+                    <input type="password" id="cfg-pin" maxlength="4" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-orange-500">
+                </div>
+                <button onclick="saveSystemConfig()" class="w-full bg-green-600 hover:bg-green-700 text-xs font-bold py-2.5 rounded-xl transition-colors text-white shadow-md">
+                    Apply Global Changes
+                </button>
+            </div>
+
+            <!-- Market Array Management -->
+            <div class="lg:col-span-2 bg-gray-800 border border-gray-700 rounded-2xl p-6 flex flex-col">
+                <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase mb-4">Market Registry</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                    <input type="text" id="mkt-name" placeholder="Market Name (e.g. KALYAN)" class="bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none">
+                    <input type="text" id="mkt-val" placeholder="Result (e.g. 123-65-780)" class="bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none">
+                    <button onclick="addOrUpdateMarket()" class="bg-orange-500 hover:bg-orange-600 text-xs font-bold rounded-lg transition-colors text-white py-2">Add / Update Market</button>
+                </div>
+                <div class="flex-1 overflow-x-auto">
+                    <table class="w-full text-left text-xs text-gray-300">
+                        <thead>
+                            <tr class="border-b border-gray-700 text-gray-400">
+                                <th class="py-2">Market Name</th>
+                                <th class="py-2">Active Live Output</th>
+                                <th class="py-2 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="market-table-body">
+                            <!-- Realtime insertion -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB SECTION 2: USER ACCOUNT DIRECTORY -->
+        <div id="tab-users" class="bg-gray-800 border border-gray-700 rounded-2xl p-6 hidden">
+            <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase mb-4">User Master Directory</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-gray-300">
+                    <thead>
+                        <tr class="border-b border-gray-700 text-gray-400">
+                            <th class="py-2.5">Name / Mobile</th>
+                            <th class="py-2.5">Status</th>
+                            <th class="py-2.5">Telemetry Logging</th>
+                            <th class="py-2.5">Subscription</th>
+                            <th class="py-2.5 text-right">Operational Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-table-body">
+                        <!-- Iterated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB SECTION 3: DEPOSIT MANAGEMENT -->
+        <div id="tab-deposits" class="bg-gray-800 border border-gray-700 rounded-2xl p-6 hidden">
+            <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase mb-4">Incoming Deposit Operations</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-gray-300">
+                    <thead>
+                        <tr class="border-b border-gray-700 text-gray-400">
+                            <th class="py-2.5">Mobile Reference</th>
+                            <th class="py-2.5">Transaction Id / Reference</th>
+                            <th class="py-2.5">Amount Requested</th>
+                            <th class="py-2.5">Status</th>
+                            <th class="py-2.5 text-right">Validation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deposit-table-body">
+                        <!-- Iterated dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
+        authDomain: "rudraksh-d74c3.firebaseapp.com",
+        databaseURL: "https://rudraksh-d74c3-default-rtdb.firebaseio.com",
+        projectId: "rudraksh-d74c3",
+        storageBucket: "rudraksh-d74c3.firebasestorage.app",
+        messagingSenderId: "270620722307",
+        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+        measurementId: "G-406NQEK3XV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let masterAdminPin = "9999"; 
+
+    window.unlockAdminPanel = async function() {
+        const pinInput = document.getElementById('gate-pin').value.trim();
+        try {
+            const configDoc = await getDoc(doc(db, "system_config", "settings"));
+            if(configDoc.exists()) {
+                masterAdminPin = configDoc.data().admin_pin || "9999";
+            }
+            if(pinInput === masterAdminPin) {
+                document.getElementById('admin-gate').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
+                loadAllPanelData();
+            } else {
+                alert("Unauthorized Access Profile Invalid PIN Setup.");
+            }
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    window.openTab = function(tabId) {
+        ['system', 'users', 'deposits'].forEach(t => document.getElementById('tab-'+t).classList.add('hidden'));
+        document.getElementById('tab-'+tabId).classList.remove('hidden');
+    }
+
+    async function loadAllPanelData() {
+        // 1. Fetch system variables
+        const systemDoc = await getDoc(doc(db, "system_config", "settings"));
+        if(systemDoc.exists()) {
+            document.getElementById('cfg-logo').value = systemDoc.data().logo_url || '';
+            document.getElementById('cfg-notice').value = systemDoc.data().notice_text || '';
+            document.getElementById('cfg-pin').value = systemDoc.data().admin_pin || '';
+        }
+
+        // 2. Load Market registries
+        const marketSnap = await getDocs(collection(db, "markets"));
+        const mktBody = document.getElementById('market-table-body');
+        mktBody.innerHTML = '';
+        marketSnap.forEach(doc => {
+            mktBody.innerHTML += `
+                <tr class="border-b border-gray-800">
+                    <td class="py-2 font-bold">${doc.id}</td>
+                    <td class="py-2 font-mono text-orange-400">${doc.data().value}</td>
+                    <td class="py-2 text-right">
+                        <button onclick="deleteMarket('${doc.id}')" class="text-red-500 font-bold hover:underline">Delete</button>
+                    </td>
+                </tr>`;
+        });
+
+        // 3. Load Directory Users
+        const userSnap = await getDocs(collection(db, "users"));
+        const userBody = document.getElementById('user-table-body');
+        userBody.innerHTML = '';
+        userSnap.forEach(uDoc => {
+            const u = uDoc.data();
+            const onlineState = u.isOnline ? '<span class="text-green-400">● Online</span>' : '<span class="text-gray-500">○ Offline</span>';
+            const subBadge = u.subscription === "active" ? '<span class="bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded">Active</span>' : '<span class="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded">Inactive</span>';
+            
+            userBody.innerHTML += `
+                <tr class="border-b border-gray-800 hover:bg-gray-800/40">
+                    <td class="py-3"><div class="font-bold">${u.name || 'No Name'}</div><div class="text-gray-400 text-[11px]">${uDoc.id}</div></td>
+                    <td class="py-3">${onlineState}</td>
+                    <td class="py-3 text-[11px] text-gray-400 font-mono">${u.lastVisited || 'Never'}</td>
+                    <td class="py-3">${subBadge}</td>
+                    <td class="py-3 text-right space-x-2">
+                        <button onclick="toggleUserSub('${uDoc.id}', '${u.subscription}')" class="text-blue-400 font-bold hover:underline">Toggle Sub</button>
+                        <button onclick="blockUser('${uDoc.id}')" class="text-amber-500 font-bold hover:underline">Block/Reset</button>
+                        <button onclick="deleteUser('${uDoc.id}')" class="text-red-500 font-bold hover:underline">Delete</button>
+                    </td>
+                </tr>`;
+        });
+
+        // 4. Load Deposits queue entries
+        const depSnap = await getDocs(collection(db, "deposits"));
+        const depBody = document.getElementById('deposit-table-body');
+        depBody.innerHTML = '';
+        depSnap.forEach(dDoc => {
+            const d = dDoc.data();
+            depBody.innerHTML += `
+                <tr class="border-b border-gray-800">
+                    <td class="py-2.5 font-mono">${d.userMobile}</td>
+                    <td class="py-2.5 text-gray-400">${d.txId}</td>
+                    <td class="py-2.5 font-bold text-green-400">₹${d.amount}</td>
+                    <td class="py-2.5 uppercase text-[10px]">${d.status}</td>
+                    <td class="py-2.5 text-right space-x-2">
+                        <button onclick="updateDeposit('${dDoc.id}', 'approved', '${d.userMobile}')" class="text-green-500 font-bold hover:underline">Approve</button>
+                        <button onclick="updateDeposit('${dDoc.id}', 'rejected')" class="text-red-500 font-bold hover:underline">Reject</button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    window.saveSystemConfig = async function() {
+        const logo_url = document.getElementById('cfg-logo').value.trim();
+        const notice_text = document.getElementById('cfg-notice').value.trim();
+        const admin_pin = document.getElementById('cfg-pin').value.trim();
+        await setDoc(doc(db, "system_config", "settings"), { logo_url, notice_text, admin_pin }, { merge: true });
+        alert("Global platform settings deployed.");
+        loadAllPanelData();
+    }
+
+    window.addOrUpdateMarket = async function() {
+        const name = document.getElementById('mkt-name').value.trim().toUpperCase();
+        const value = document.getElementById('mkt-val').value.trim();
+        if(!name || !value) return alert("Fill all market parameters.");
+        await setDoc(doc(db, "markets", name), { value });
+        loadAllPanelData();
+    }
+
+    window.deleteMarket = async function(id) {
+        if(confirm("Delete " + id + "?")) { await deleteDoc(doc(db, "markets", id)); loadAllPanelData(); }
+    }
+
+    window.toggleUserSub = async function(id, current) {
+        const nextStatus = current === "active" ? "inactive" : "active";
+        await updateDoc(doc(db, "users", id), { subscription: nextStatus });
+        loadAllPanelData();
+    }
+
+    window.blockUser = async function(id) {
+        if(confirm("Reset PIN/Session tracking for " + id + "?")) {
+            await updateDoc(doc(db, "users", id), { pin: "0000", subscription: "inactive", isOnline: false });
+            loadAllPanelData();
+        }
+    }
+
+    window.deleteUser = async function(id) {
+        if(confirm("Completely wipe profile " + id + " from database?")) {
+            await deleteDoc(doc(db, "users", id));
+            loadAllPanelData();
+        }
+    }
+
+    window.updateDeposit = async function(docId, outcome, userMobile) {
+        await updateDoc(doc(doc(db, "deposits", docId)), { status: outcome });
+        if(outcome === 'approved' && userMobile) {
+            await updateDoc(doc(db, "users", userMobile), { subscription: "active" });
+        }
+        alert("Deposit request processed.");
+        loadAllPanelData();
+    }
+</script>
+</body>
+</html>
