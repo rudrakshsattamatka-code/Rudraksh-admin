@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Automated Database Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-lg bg-gray-800 border border-gray-700 rounded-2xl p-6 md:p-8 shadow-2xl">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold text-orange-500 tracking-tight">Database Auto-Initializer</h1>
+            <p class="text-xs text-gray-400 mt-1">Automatically sets up collections, admin parameters, and configurations.</p>
+        </div>
+
+        <!-- FIREBASE CONFIG PREVIEW -->
+        <div class="bg-gray-950 rounded-xl p-4 border border-gray-800 mb-6 font-mono text-[11px] text-green-400 space-y-1">
+            <p class="text-gray-500 font-sans font-bold uppercase text-[10px] tracking-wider mb-1">Connected Project Target</p>
+            <p>Project ID: <span class="text-white">rudraksh-d74c3</span></p>
+            <p>Storage Bucket: <span class="text-white">rudraksh-d74c3.firebasestorage.app</span></p>
+        </div>
+
+        <!-- ACTION TERMINAL BOX -->
+        <div class="space-y-4">
+            <button onclick="startAutomaticSetup()" id="setup-btn" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 text-sm tracking-wide">
+                <span>Run Setup Matrix Now</span>
+            </button>
+
+            <!-- CONSOLE LOG OUTPUT -->
+            <div class="bg-gray-950 rounded-xl p-4 h-48 overflow-y-auto border border-gray-800 font-mono text-[11px] space-y-1 text-gray-400" id="log-output">
+                <p class="text-amber-500">[System] Waiting for execution deployment request...</p>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Your exact Firebase configuration details 
+    const firebaseConfig = {
+        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
+        authDomain: "rudraksh-d74c3.firebaseapp.com",
+        databaseURL: "https://rudraksh-d74c3-default-rtdb.firebaseio.com",
+        projectId: "rudraksh-d74c3",
+        storageBucket: "rudraksh-d74c3.firebasestorage.app",
+        messagingSenderId: "270620722307",
+        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+        measurementId: "G-406NQEK3XV"
+    };
+
+    // Initialize systems
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function log(message, type = 'info') {
+        const output = document.getElementById('log-output');
+        let colorClass = 'text-gray-400';
+        if (type === 'success') colorClass = 'text-green-400 font-semibold';
+        if (type === 'error') colorClass = 'text-red-400 font-bold';
+        if (type === 'process') colorClass = 'text-blue-400';
+        
+        output.innerHTML += `<p class="${colorClass}">${message}</p>`;
+        output.scrollTop = output.scrollHeight;
+    }
+
+    window.startAutomaticSetup = async function() {
+        const btn = document.getElementById('setup-btn');
+        btn.disabled = true;
+        btn.classList.add('opacity-50', 'cursor-not-allowed');
+        
+        document.getElementById('log-output').innerHTML = ''; // clear initial log
+        log("[System] Launching database build matrix standard procedure...", 'process');
+
+        try {
+            // 1. INITIALIZE SYSTEM GLOBAL CONFIGURATION SETTINGS
+            log("-> Deploying document structure: system_config/settings...");
+            await setDoc(doc(db, "system_config", "settings"), {
+                logo_url: "https://i.imgur.com/hWJLthc.png",
+                notice_text: "Welcome to Rudraksh App. Daily live astrology calculations and accurate number charts are updated directly here. Contact support immediately below if your subscription expires.",
+                admin_pin: "9999"
+            }, { merge: true });
+            log("✓ Successfully injected global configs (Admin PIN default: 9999, default notice saved).", 'success');
+
+            // 2. INITIALIZE STARTER MARKETS (Template)
+            log("-> Injecting default marketplace schemas to collection: markets...");
+            await setDoc(doc(db, "markets", "KALYAN"), {
+                value: "123-65-780"
+            }, { merge: true });
+            log("✓ Successfully deployed default market entry: KALYAN (123-65-780).", 'success');
+
+            // 3. INJECT A DEMO TEST DEPOSIT DOCUMENT FOR ARCHITECTURE ROBUSTNESS
+            log("-> Setting up data structural mapping collection: deposits...");
+            await setDoc(doc(db, "deposits", "initial_setup_schema"), {
+                userMobile: "9113224019",
+                txId: "TXN1234567890",
+                amount: "500",
+                status: "pending"
+            }, { merge: true });
+            log("✓ Successfully constructed sample deposit record queues.", 'success');
+
+            log("==========================================", 'process');
+            log("★ ALL COMPONENT STRUCTURES DEPLOYED AUTOMATICALLY ★", 'success');
+            log("[Info] You can now safely close this setup.html utility tool. Your app configurations match the system constraints perfectly.");
+
+        } catch (error) {
+            log(`❌ SETUP FAILED CRITICALLY: ${error.message}`, 'error');
+            log("[Troubleshoot] Please confirm your Firestore Rules allow reads/writes ('allow read, write: if true;').", 'info');
+        }
+    }
+</script>
+
+</body>
+</html>
