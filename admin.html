@@ -28,7 +28,7 @@
                 <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                     Rudraksh Control Engine <span class="text-xs bg-green-500/20 text-green-400 font-mono px-2 py-0.5 rounded-full border border-green-500/30">Live Terminal</span>
                 </h2>
-                <p class="text-xs text-gray-400 mt-1">Global settings, transactional validation, and real-time subscriber control arrays.</p>
+                <p class="text-xs text-gray-400 mt-1">Global settings, custom holiday tracking, and live results manager.</p>
             </div>
             <div class="flex gap-2 w-full md:w-auto">
                 <button onclick="openTab('system')" class="bg-gray-700 hover:bg-gray-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors">System Settings</button>
@@ -36,11 +36,13 @@
             </div>
         </div>
 
-        <!-- TAB SECTION 1: SYSTEM CONTROLS & DYNAMIC ADVANCED MARKETS -->
+        <!-- TAB SECTION 1: SYSTEM CONTROLS & DYNAMIC MARKETS -->
         <div id="tab-system" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- App Variables Form -->
             <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 space-y-4 h-fit">
-                <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">System Parameters</h3>
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">System Parameters</h3>
+                </div>
                 <div>
                     <label class="block text-xs text-gray-400 mb-1">Global App Logo URL</label>
                     <input type="text" id="cfg-logo" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none">
@@ -56,16 +58,25 @@
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 hover:bg-green-700 text-xs font-bold py-2.5 rounded-xl text-white shadow-md">
                     Apply Global Changes
                 </button>
+                
+                <div class="pt-4 border-t border-gray-700">
+                    <button onclick="resetAllMarketResults()" class="w-full bg-red-600/20 hover:bg-red-600 border border-red-500/30 text-red-400 hover:text-white text-xs font-bold py-2.5 rounded-xl transition-all">
+                        Reset All Market Results (Clear)
+                    </button>
+                </div>
             </div>
 
             <!-- Enhanced Multi-Input Market Engine -->
             <div class="lg:col-span-2 bg-gray-800 border border-gray-700 rounded-2xl p-6 flex flex-col space-y-4">
-                <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">Advanced Market Console</h3>
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">Advanced Market Console</h3>
+                    <span class="text-[11px] text-gray-400 font-medium">* Click any market row in the registry below to edit it instantly</span>
+                </div>
                 
                 <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
                         <label class="block text-xs text-gray-400 mb-1 font-bold">Market Name</label>
-                        <input type="text" id="mkt-name" placeholder="E.g. KALYAN" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none">
+                        <input type="text" id="mkt-name" placeholder="E.g. KALYAN" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none uppercase">
                     </div>
                     <div>
                         <label class="block text-xs text-gray-400 mb-1">Open Timing</label>
@@ -76,7 +87,13 @@
                         <input type="text" id="mkt-time-close" placeholder="E.g. 02:30 PM" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none">
                     </div>
                     
-                    <div class="border-t border-gray-800 sm:col-span-2 pt-2"><span class="text-xs text-orange-500 font-bold">Result Distribution Inputs</span></div>
+                    <div class="border-t border-gray-800 sm:col-span-2 pt-2 flex justify-between items-center">
+                        <span class="text-xs text-orange-500 font-bold">Result Inputs</span>
+                        <label class="inline-flex items-center space-x-2 text-xs text-red-400 font-bold cursor-pointer">
+                            <input type="checkbox" id="mkt-holiday" class="rounded bg-gray-900 border-gray-700 text-red-500 focus:ring-0">
+                            <span>Set as Holiday Today</span>
+                        </label>
+                    </div>
                     
                     <div>
                         <label class="block text-xs text-gray-400 mb-1">Open Pana (3 digits)</label>
@@ -107,7 +124,7 @@
                             <tr class="border-b border-gray-700 text-gray-400">
                                 <th class="py-2">Market Name</th>
                                 <th class="py-2">Timings</th>
-                                <th class="py-2">Active Result Structure</th>
+                                <th class="py-2">Status / Result Structure</th>
                                 <th class="py-2 text-right">Action</th>
                             </tr>
                         </thead>
@@ -139,7 +156,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
@@ -155,6 +172,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let masterAdminPin = "9999"; 
+    let globalMarketsCache = {};
 
     window.unlockAdminPanel = async function() {
         const pinInput = document.getElementById('gate-pin').value.trim();
@@ -184,18 +202,31 @@
             }
         });
 
-        // Realtime Markets Table Builder
+        // Realtime Markets Table Builder (Sorted Chronologically by Creation Timestamp)
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             const mktBody = document.getElementById('market-table-body');
             mktBody.innerHTML = '';
-            querySnapshot.forEach(doc => {
+            globalMarketsCache = {};
+
+            // Sort docs based on when they were added/created
+            const sortedDocs = querySnapshot.docs.sort((a, b) => {
+                return (a.data().createdAt || 0) - (b.data().createdAt || 0);
+            });
+
+            sortedDocs.forEach(doc => {
                 const m = doc.data();
+                globalMarketsCache[doc.id] = m; // Cache data for click-to-edit operation
+                
+                const displayResult = m.isHoliday 
+                    ? '<span class="bg-red-500/20 text-red-400 border border-red-500/30 px-2 py-0.5 rounded font-bold text-[10px]">HOLIDAY TODAY</span>'
+                    : `<span class="font-mono text-orange-400 font-bold">${m.openPana || '•••'}-${m.openDigit || '•'}${m.closeDigit || '•'}-${m.closePana || '•••'}</span>`;
+
                 mktBody.innerHTML += `
-                    <tr class="border-b border-gray-800">
-                        <td class="py-3 font-bold text-white uppercase">${doc.id}</td>
+                    <tr class="border-b border-gray-800 hover:bg-gray-800/50 cursor-pointer transition-colors" onclick="populateMarketForm('${doc.id}')">
+                        <td class="py-3 font-bold text-white uppercase tracking-wide">${doc.id}</td>
                         <td class="py-3 text-[11px] text-gray-400">Open: ${m.timeOpen || '--'}<br>Close: ${m.timeClose || '--'}</td>
-                        <td class="py-3 font-mono text-orange-400 font-bold">${m.openPana || '•••'}-${m.openDigit || '•'}${m.closeDigit || '•'}-${m.closePana || '•••'}</td>
-                        <td class="py-3 text-right">
+                        <td class="py-3">${displayResult}</td>
+                        <td class="py-3 text-right" onclick="event.stopPropagation();">
                             <button onclick="deleteMarket('${doc.id}')" class="text-red-500 font-bold hover:underline">Delete</button>
                         </td>
                     </tr>`;
@@ -226,6 +257,19 @@
         });
     }
 
+    window.populateMarketForm = function(marketId) {
+        const m = globalMarketsCache[marketId];
+        if(!m) return;
+        document.getElementById('mkt-name').value = marketId;
+        document.getElementById('mkt-time-open').value = m.timeOpen || '';
+        document.getElementById('mkt-time-close').value = m.timeClose || '';
+        document.getElementById('mkt-open-p').value = m.openPana || '';
+        document.getElementById('mkt-open-d').value = m.openDigit || '';
+        document.getElementById('mkt-close-d').value = m.closeDigit || '';
+        document.getElementById('mkt-close-p').value = m.closePana || '';
+        document.getElementById('mkt-holiday').checked = m.isHoliday || false;
+    }
+
     window.saveSystemConfig = async function() {
         const logo_url = document.getElementById('cfg-logo').value.trim();
         const notice_text = document.getElementById('cfg-notice').value.trim();
@@ -238,28 +282,54 @@
         const name = document.getElementById('mkt-name').value.trim().toUpperCase();
         if(!name) return alert("Please specify a valid Market Name first.");
 
+        // Pull existing market parameters to safeguard its chronological position
+        const marketRef = doc(db, "markets", name);
+        const marketSnap = await getDoc(marketRef);
+        const existingData = marketSnap.exists() ? marketSnap.data() : {};
+
         const marketPayload = {
             timeOpen: document.getElementById('mkt-time-open').value.trim(),
             timeClose: document.getElementById('mkt-time-close').value.trim(),
             openPana: document.getElementById('mkt-open-p').value.trim(),
             openDigit: document.getElementById('mkt-open-d').value.trim(),
             closeDigit: document.getElementById('mkt-close-d').value.trim(),
-            closePana: document.getElementById('mkt-close-p').value.trim()
+            closePana: document.getElementById('mkt-close-p').value.trim(),
+            isHoliday: document.getElementById('mkt-holiday').checked,
+            createdAt: existingData.createdAt || Date.now() // Retain chronological placement order
         };
 
-        await setDoc(doc(db, "markets", name), marketPayload, { merge: true });
+        await setDoc(marketRef, marketPayload, { merge: true });
         
-        // Clear input form spaces
+        // Reset input form spaces cleanly
         document.getElementById('mkt-name').value = '';
+        document.getElementById('mkt-time-open').value = '';
+        document.getElementById('mkt-time-close').value = '';
         document.getElementById('mkt-open-p').value = '';
         document.getElementById('mkt-open-d').value = '';
         document.getElementById('mkt-close-d').value = '';
         document.getElementById('mkt-close-p').value = '';
-        alert("Market configuration pushed successfully.");
+        document.getElementById('mkt-holiday').checked = false;
+        alert("Market parameters updated successfully.");
+    }
+
+    window.resetAllMarketResults = async function() {
+        if(confirm("Are you sure you want to clear all data metrics for every active market? (Timings and names will be preserved)")) {
+            const querySnapshot = await getDocs(collection(db, "markets"));
+            querySnapshot.forEach(async (mDoc) => {
+                await updateDoc(doc(db, "markets", mDoc.id), {
+                    openPana: "",
+                    openDigit: "",
+                    closeDigit: "",
+                    closePana: "",
+                    isHoliday: false
+                });
+            });
+            alert("All market numbers have been reset.");
+        }
     }
 
     window.deleteMarket = async function(id) {
-        if(confirm("Wipe market entity " + id + "?")) { await deleteDoc(doc(db, "markets", id)); }
+        if(confirm("Completely delete market registry configuration for " + id + "?")) { await deleteDoc(doc(db, "markets", id)); }
     }
 
     window.toggleUserSub = async function(id, current) {
