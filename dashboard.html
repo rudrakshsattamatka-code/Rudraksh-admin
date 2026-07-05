@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 850px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 450px) {
+            .app-container {
+                height: 100vh;
+                max-height: 100vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- APP HEADER -->
+    <div class="bg-green-600 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
+        <div class="flex items-center space-x-3">
+            <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-10 h-10 object-contain">
+            <div>
+                <h1 id="welcome-user" class="font-bold tracking-wide text-sm">Loading profile...</h1>
+                <!-- Live Clock running dynamically -->
+                <div id="live-clock" class="text-[11px] text-green-100 font-mono">00:00:00 AM</div>
+            </div>
+        </div>
+        <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 text-xs font-bold rounded-lg shadow transition-colors">
+            LOGOUT
+        </button>
+    </div>
+
+    <!-- MAIN APP BODY -->
+    <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
+
+        <!-- USER PROFILE & SUBSCRIPTION STATUS CARD -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Account Profile</p>
+                    <p id="profile-phone" class="text-gray-700 font-semibold text-sm mt-0.5">Mobile: --</p>
+                </div>
+                <!-- Interactive Subscription State Badge -->
+                <div id="sub-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600 animate-pulse">
+                    Checking...
+                </div>
+            </div>
+            
+            <!-- Dynamic Get Subscription Option Banner -->
+            <div id="get-sub-banner" class="hidden mt-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white p-3 rounded-lg flex justify-between items-center shadow-sm">
+                <div>
+                    <p class="font-bold text-xs">Unlock Market Results</p>
+                    <p class="text-[10px] text-orange-100">Get instant daily activation access</p>
+                </div>
+                <a href="https://wa.me/919113224019?text=Hello%2I%20want%20to%20activate%20my%20subscription" target="_blank" class="bg-white text-orange-600 text-[11px] font-bold px-3 py-1.5 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+                    Get Active
+                </a>
+            </div>
+        </div>
+
+        <!-- NOTICE BOARD -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm">
+            <div class="flex items-center space-x-2 text-amber-800 mb-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                <h3 class="font-bold text-xs uppercase tracking-wide">Notice Board</h3>
+            </div>
+            <p class="text-xs text-amber-900 leading-relaxed font-medium">
+                Welcome to Rudraksh App. Daily live astrology calculations and accurate number charts are updated directly here. Contact support immediately below if your subscription expires.
+            </p>
+        </div>
+
+        <!-- MARKET NAMES AND LIVE PREDICTIONS SECTION -->
+        <div class="space-y-3">
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Live Market Results</h2>
+
+            <!-- MARKET CARD 1: KALYAN -->
+            <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-gray-800 tracking-wide text-base">KALYAN</h3>
+                    <p class="text-[11px] text-green-600 font-semibold tracking-wide">Live Consolidated Chart</p>
+                </div>
+                <div class="text-right">
+                    <!-- Blur filter applies automatically if subscriber is inactive -->
+                    <div id="market-kalyan-val" class="font-mono text-lg font-bold tracking-widest text-gray-900 filter blur-sm select-none">
+                        123-65-780
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-0.5 font-medium">Updated Just Now</p>
+                </div>
+            </div>
+            
+            <!-- You can easily copy and paste the block below to add more markets later! -->
+        </div>
+
+        <!-- QUICK HELP CONTACT OPTIONS -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <!-- WhatsApp Access Link -->
+                <a href="https://wa.me/919113224019" target="_blank" class="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold shadow-sm transition-colors">
+                    <span>WhatsApp Chat</span>
+                </a>
+                
+                <!-- Native Device Calling Link -->
+                <a href="tel:9113224019" class="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-xs font-bold shadow-sm transition-colors">
+                    <span>Call Support</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Firebase Modular Operations logic layer -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
+        authDomain: "rudraksh-d74c3.firebaseapp.com",
+        databaseURL: "https://rudraksh-d74c3-default-rtdb.firebaseio.com",
+        projectId: "rudraksh-d74c3",
+        storageBucket: "rudraksh-d74c3.firebasestorage.app",
+        messagingSenderId: "270620722307",
+        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+        measurementId: "G-406NQEK3XV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Dynamic clock routine
+    setInterval(() => {
+        const now = new Date();
+        document.getElementById('live-clock').innerText = now.toLocaleTimeString();
+    }, 1000);
+
+    window.addEventListener('DOMContentLoaded', initializeDashboard);
+
+    async function initializeDashboard() {
+        const savedMobile = localStorage.getItem('app_user_mobile');
+        
+        if (!savedMobile) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
+
+        try {
+            const userDoc = await getDoc(doc(db, "users", savedMobile));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                document.getElementById('welcome-user').innerText = "Hi, " + userData.name;
+                
+                // Process current subscription parameter safely
+                const badge = document.getElementById('sub-badge');
+                const kalyanChart = document.getElementById('market-kalyan-val');
+                const banner = document.getElementById('get-sub-banner');
+
+                badge.classList.remove('animate-pulse', 'bg-gray-200', 'text-gray-600');
+
+                if (userData.subscription === "active") {
+                    badge.innerText = "Active";
+                    badge.classList.add('bg-green-100', 'text-green-700');
+                    // Remove blurring filter block for verified customers
+                    kalyanChart.classList.remove('blur-sm', 'select-none');
+                    banner.classList.add('hidden');
+                } else {
+                    badge.innerText = "Inactive";
+                    badge.classList.add('bg-orange-100', 'text-orange-700');
+                    banner.classList.remove('hidden');
+                }
+
+            } else {
+                handleLogout();
+            }
+        } catch (error) {
+            console.error("Failed loading customer data parameters:", error);
+            handleLogout();
+        }
+    }
+
+    window.handleLogout = function() {
+        localStorage.removeItem('app_user_mobile');
+        window.location.href = 'index.html';
+    }
+</script>
+
+</body>
+</html>
