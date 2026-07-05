@@ -42,11 +42,10 @@
     <!-- APP HEADER -->
     <div class="bg-green-600 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
         <div class="flex items-center space-x-3">
-            <!-- Dynamic Logo Controlled by Admin -->
             <img id="app-logo" src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-10 h-10 object-contain">
             <div>
-                <h1 id="welcome-user" class="font-bold tracking-wide text-sm">Loading profile...</h1>
-                <div id="live-clock" class="text-[11px] text-green-100 font-mono">00:00:00 AM</div>
+                <h1 id="welcome-user" class="font-bold tracking-wide text-sm">Loading...</h1>
+                <p class="text-[10px] text-green-200">Secure Live Dashboard</p>
             </div>
         </div>
         <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 text-xs font-bold rounded-lg shadow transition-colors">
@@ -57,51 +56,39 @@
     <!-- MAIN APP BODY -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
 
-        <!-- USER PROFILE & SUBSCRIPTION STATUS CARD -->
-        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Account Profile</p>
-                    <p id="profile-phone" class="text-gray-700 font-semibold text-sm mt-0.5">Mobile: --</p>
-                </div>
-                <div id="sub-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600 animate-pulse">
-                    Checking...
-                </div>
+        <!-- USER PROFILE & DYNAMIC CLOCK -->
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
+            <div>
+                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Account Profile</p>
+                <p id="profile-phone" class="text-gray-700 font-bold text-sm mt-0.5">Mobile: --</p>
+                <!-- Clock repositioned right under the user profile tracking -->
+                <div id="live-clock" class="text-[11px] text-gray-500 font-mono mt-1 font-semibold">00:00:00 AM</div>
             </div>
-            
-            <!-- Dynamic Activation Banner -->
-            <div id="get-sub-banner" class="hidden mt-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white p-3 rounded-lg flex justify-between items-center shadow-sm">
-                <div>
-                    <p class="font-bold text-xs">Unlock Market Results</p>
-                    <p class="text-[10px] text-orange-100">Get instant daily activation access</p>
-                </div>
-                <a href="https://wa.me/919113224019?text=Hello%20I%20want%20to%20activate%20my%20subscription" target="_blank" class="bg-white text-orange-600 text-[11px] font-bold px-3 py-1.5 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
-                    Get Active
-                </a>
+            <div id="sub-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600">
+                Syncing...
             </div>
         </div>
 
-        <!-- NOTICE BOARD (Admin Live Updates Stream Here) -->
+        <!-- NOTICE BOARD -->
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm">
             <div class="flex items-center space-x-2 text-amber-800 mb-1">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                 <h3 class="font-bold text-xs uppercase tracking-wide">Notice Board</h3>
             </div>
             <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-medium">
-                Loading system notice announcements...
+                Syncing live notices...
             </p>
         </div>
 
-        <!-- MARKET NAMES AND LIVE PREDICTIONS SECTION (Fully Real-time & Dynamic) -->
+        <!-- MARKET CODES SECTION (No Refresh Required - Automatic) -->
         <div class="space-y-3">
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Live Market Results</h2>
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Live Market Panel</h2>
             <div id="markets-container" class="space-y-3">
-                <!-- Admin created markets will populate completely dynamically here -->
-                <p class="text-xs text-center text-gray-400 py-4">Syncing live charts...</p>
+                <p class="text-xs text-center text-gray-400 py-4">Waiting on data streams...</p>
             </div>
         </div>
 
-        <!-- CUSTOMER SUPPORT DESK -->
+        <!-- CUSTOMER SERVICE TERMINAL -->
         <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <div class="grid grid-cols-2 gap-3">
@@ -135,14 +122,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Dynamic Live Clock
     setInterval(() => {
         document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
     }, 1000);
 
-    window.addEventListener('DOMContentLoaded', startRealtimeSync);
+    window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
-    function startRealtimeSync() {
+    function beginLiveEngine() {
         const savedMobile = localStorage.getItem('app_user_mobile');
         if (!savedMobile) {
             window.location.href = 'index.html';
@@ -150,42 +136,26 @@
         }
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
-        let userSubscriptionStatus = "inactive";
 
-        // 1. LISTEN TO USER DATA CHANGES REAL-TIME (Sub state, telemetry, blocks)
+        // 1. User Profile Listener
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
-            if (!snapshot.exists()) {
-                handleLogout();
-                return;
-            }
-
-            const userData = snapshot.data();
-            document.getElementById('welcome-user').innerText = "Hi, " + (userData.name || "User");
-            userSubscriptionStatus = userData.subscription || "inactive";
-
-            // Update Subscription UI Elements instantly
+            if (!snapshot.exists()) { handleLogout(); return; }
+            const u = snapshot.data();
+            document.getElementById('welcome-user').innerText = "Hi, " + (u.name || "User");
+            
             const badge = document.getElementById('sub-badge');
-            const banner = document.getElementById('get-sub-banner');
-            badge.classList.remove('animate-pulse', 'bg-gray-200', 'text-gray-600', 'bg-green-100', 'text-green-700', 'bg-orange-100', 'text-orange-700');
-
-            if (userSubscriptionStatus === "active") {
+            badge.className = "px-3 py-1 rounded-full text-xs font-bold ";
+            if (u.subscription === "active") {
                 badge.innerText = "Active";
                 badge.classList.add('bg-green-100', 'text-green-700');
-                banner.classList.add('hidden');
             } else {
                 badge.innerText = "Inactive";
                 badge.classList.add('bg-orange-100', 'text-orange-700');
-                banner.classList.remove('hidden');
             }
-
-            // Sync user online presence data silently
-            await setDoc(doc(db, "users", savedMobile), {
-                lastVisited: new Date().toLocaleString(),
-                isOnline: true
-            }, { merge: true });
+            await setDoc(doc(db, "users", savedMobile), { lastVisited: new Date().toLocaleString(), isOnline: true }, { merge: true });
         });
 
-        // 2. LISTEN TO GLOBAL APP SETTINGS REAL-TIME (Logo, Notices)
+        // 2. Global Configurations Listener
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -194,34 +164,45 @@
             }
         });
 
-        // 3. LISTEN TO MARKETS REAL-TIME (Add, remove, change results instantly)
+        // 3. Realtime Market Updates Streamer
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             const container = document.getElementById('markets-container');
-            container.innerHTML = ''; // Clear stale UI items
+            container.innerHTML = '';
 
             if (querySnapshot.empty) {
-                container.innerHTML = `<p class="text-xs text-center text-gray-400 py-4">No active markets configured.</p>`;
+                container.innerHTML = `<p class="text-xs text-center text-gray-400 py-4">No active markets streaming.</p>`;
                 return;
             }
 
-            querySnapshot.forEach((marketDoc) => {
-                const marketName = marketDoc.id;
-                const marketValue = marketDoc.data().value || "---";
+            querySnapshot.forEach((mDoc) => {
+                const m = mDoc.data();
+                
+                // Extract parameters safely
+                const openPana = m.openPana || "•••";
+                const openDigit = m.openDigit !== undefined && m.openDigit !== "" ? m.openDigit : "•";
+                const closeDigit = m.closeDigit !== undefined && m.closeDigit !== "" ? m.closeDigit : "•";
+                const closePana = m.closePana || "•••";
+                
+                const timeOpen = m.timeOpen || "12:30 PM";
+                const timeClose = m.timeClose || "02:30 PM";
 
-                // Check if we apply blurred masking overlay based on current real-time subscription evaluation
-                const blurClass = userSubscriptionStatus === "active" ? "" : "filter blur-sm select-none";
-
+                // Generate centered market view card logic
                 container.innerHTML += `
-                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center transition-all">
-                        <div>
-                            <h3 class="font-bold text-gray-800 tracking-wide text-base">${marketName}</h3>
-                            <p class="text-[11px] text-green-600 font-semibold tracking-wide">Live Consolidated Chart</p>
+                    <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                        <!-- Centered Market Name -->
+                        <h3 class="font-black text-gray-800 tracking-wide text-lg uppercase">${mDoc.id}</h3>
+                        
+                        <!-- Combined Mathematical Data Display directly under name -->
+                        <div class="mt-2 bg-gray-50 border border-gray-100 rounded-xl px-6 py-2 font-mono text-xl font-bold tracking-widest text-orange-600 shadow-inner">
+                            <span>${openPana}</span>
+                            <span class="text-gray-900 mx-1">-${openDigit}${closeDigit}-</span>
+                            <span>${closePana}</span>
                         </div>
-                        <div class="text-right">
-                            <div class="font-mono text-lg font-bold tracking-widest text-gray-900 ${blurClass}">
-                                ${marketValue}
-                            </div>
-                            <p class="text-[10px] text-gray-400 mt-0.5 font-medium">Updated Live</p>
+
+                        <!-- Timing layout array pinned at the base -->
+                        <div class="w-full border-t border-gray-100 mt-4 pt-3 flex justify-between text-[11px] font-semibold text-gray-400">
+                            <div>Open: <span class="text-green-600 font-mono">${timeOpen}</span></div>
+                            <div>Close: <span class="text-red-500 font-mono">${timeClose}</span></div>
                         </div>
                     </div>
                 `;
@@ -231,11 +212,7 @@
 
     window.handleLogout = async function() {
         const savedMobile = localStorage.getItem('app_user_mobile');
-        if (savedMobile) {
-            try {
-                await setDoc(doc(db, "users", savedMobile), { isOnline: false }, { merge: true });
-            } catch(e) {}
-        }
+        if (savedMobile) { try { await setDoc(doc(db, "users", savedMobile), { isOnline: false }, { merge: true }); } catch(e) {} }
         localStorage.removeItem('app_user_mobile');
         window.location.href = 'index.html';
     }
