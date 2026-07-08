@@ -205,7 +205,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // TYPO FIXED: Cleaned measurementId and configuration links
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
         authDomain: "rudraksh-d74c3.firebaseapp.com",
@@ -304,7 +303,7 @@
             renderGameCards();
         });
 
-        // Auto render tick
+        // Auto render tracker
         setInterval(renderGameCards, 2000);
     }
 
