@@ -58,14 +58,14 @@
                     <input type="password" id="cfg-pin" maxlength="4" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none">
                 </div>
 
-                <div class="border-t border-gray-700 pt-3 space-y-2">
-                    <label class="block text-xs text-orange-400 font-bold uppercase tracking-wider">Sliding Banners (5-6 Image URLs)</label>
-                    <input type="text" id="slide-1" placeholder="Image URL 1" class="w-full bg-gray-950 border border-gray-700 rounded-md p-1.5 text-[11px] text-white focus:outline-none">
-                    <input type="text" id="slide-2" placeholder="Image URL 2" class="w-full bg-gray-950 border border-gray-700 rounded-md p-1.5 text-[11px] text-white focus:outline-none">
-                    <input type="text" id="slide-3" placeholder="Image URL 3" class="w-full bg-gray-950 border border-gray-700 rounded-md p-1.5 text-[11px] text-white focus:outline-none">
-                    <input type="text" id="slide-4" placeholder="Image URL 4" class="w-full bg-gray-950 border border-gray-700 rounded-md p-1.5 text-[11px] text-white focus:outline-none">
-                    <input type="text" id="slide-5" placeholder="Image URL 5" class="w-full bg-gray-950 border border-gray-700 rounded-md p-1.5 text-[11px] text-white focus:outline-none">
-                    <input type="text" id="slide-6" placeholder="Image URL 6" class="w-full bg-gray-950 border border-gray-700 rounded-md p-1.5 text-[11px] text-white focus:outline-none">
+                <!-- DYNAMIC FILE UPLOAD INPUT ARRAY FOR GALLERY ACCESS -->
+                <div class="border-t border-gray-700 pt-3 space-y-3">
+                    <label class="block text-xs text-orange-400 font-bold uppercase tracking-wider">Sliding Banners (Direct Gallery Upload)</label>
+                    
+                    <!-- Loop generation for 6 slots with file pickup hooks -->
+                    <div class="space-y-2" id="slider-inputs-zone">
+                        <!-- Javascript hooks fill values here dynamically -->
+                    </div>
                 </div>
 
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 hover:bg-green-700 text-xs font-bold py-2.5 rounded-xl text-white shadow-md">
@@ -155,6 +155,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    // Import Storage SDK elements directly
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
@@ -169,8 +171,26 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const storage = getStorage(app); // Storage initialization hook up
+    
     let masterAdminPin = "9999"; 
     let globalMarketsCache = {};
+
+    // Programmatically construct input elements with direct file selectors
+    const inputsZone = document.getElementById('slider-inputs-zone');
+    inputsZone.innerHTML = '';
+    for(let i=1; i<=6; i++) {
+        inputsZone.innerHTML += `
+            <div class="bg-gray-900 p-2 rounded-lg border border-gray-800 space-y-1">
+                <div class="flex justify-between items-center text-[10px] text-gray-400 font-bold">
+                    <span>SLIDER SLOT ${i}</span>
+                    <span id="status-${i}" class="text-gray-600">No File</span>
+                </div>
+                <input type="text" id="slide-${i}" placeholder="Paste URL or upload file below..." class="w-full bg-gray-950 border border-gray-700 rounded p-1 text-[11px] text-white focus:outline-none">
+                <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="w-full text-[10px] text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500/10 file:text-orange-400 file:cursor-pointer hover:file:bg-orange-500/20">
+            </div>
+        `;
+    }
 
     window.addEventListener('DOMContentLoaded', checkAdminPersistence);
 
@@ -207,8 +227,41 @@
         document.getElementById('tab-'+tabId).classList.remove('hidden');
     }
 
+    // AUTOMATED FIREBASE STORAGE INTERACTION LOGIC
+    window.uploadImageFromGallery = async function(slotNumber) {
+        const fileInput = document.getElementById(`file-${slotNumber}`);
+        const statusLabel = document.getElementById(`status-${slotNumber}`);
+        const urlInput = document.getElementById(`slide-${slotNumber}`);
+        
+        const file = fileInput.files[0];
+        if(!file) return;
+
+        statusLabel.innerText = "UPLOADING...";
+        statusLabel.className = "text-yellow-500 font-bold animate-pulse";
+
+        try {
+            // Create target reference path inside cloud bucket
+            const storageRef = ref(storage, `slider_banners/slot_${slotNumber}_${Date.now()}`);
+            
+            // Execute file byte array transfers
+            const snapshot = await uploadBytes(storageRef, file);
+            
+            // Acquire fully secure public download URL signature
+            const downloadUrl = await getDownloadURL(snapshot.ref);
+            
+            // Update UI tracking controls natively
+            urlInput.value = downloadUrl;
+            statusLabel.innerText = "✓ UPLOADED";
+            statusLabel.className = "text-green-400 font-bold";
+        } catch (error) {
+            console.error(error);
+            statusLabel.innerText = "❌ FAILED";
+            statusLabel.className = "text-red-500 font-bold";
+            alert("Upload failed. Verify Firebase Storage test rules are turned on.");
+        }
+    }
+
     function loadLiveHooks() {
-        // Live configurations document monitor loop
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if(snapshot.exists()) {
                 const s = snapshot.data();
@@ -216,15 +269,17 @@
                 document.getElementById('cfg-phone').value = s.support_phone || '9113224019';
                 document.getElementById('cfg-pin').value = s.admin_pin || '';
                 
-                // Read sliding images array elements safely to pre-fill inputs
                 const imgs = s.slider_images || [];
                 for(let i=1; i<=6; i++) {
-                    document.getElementById(`slide-${i}`).value = imgs[i-1] || '';
+                    // Only overwrite values if the admin isn't actively performing a file upload pipeline
+                    const statusLabel = document.getElementById(`status-${i}`);
+                    if(statusLabel.innerText !== "UPLOADING...") {
+                        document.getElementById(`slide-${i}`).value = imgs[i-1] || '';
+                    }
                 }
             }
         });
 
-        // Realtime sorting system logic based strictly on custom numerical serial identifiers
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             const mktBody = document.getElementById('market-table-body');
             mktBody.innerHTML = '';
@@ -255,7 +310,6 @@
             });
         });
 
-        // Realtime Users Directory telemetry monitor setup
         onSnapshot(collection(db, "users"), (querySnapshot) => {
             const userBody = document.getElementById('user-table-body');
             userBody.innerHTML = '';
@@ -291,7 +345,6 @@
     }
 
     window.saveSystemConfig = async function() {
-        // Collect sliding images sequentially into a clean runtime array array
         const slider_images = [];
         for(let i=1; i<=6; i++) {
             const val = document.getElementById(`slide-${i}`).value.trim();
@@ -309,7 +362,14 @@
             slider_images 
         }, { merge: true });
         
-        alert("Global systems configuration and sliding image arrays deployed successfully.");
+        alert("Global platform parameter configurations saved successfully.");
+        
+        // Reset file element rows tracking label states cleanly
+        for(let i=1; i<=6; i++) {
+            document.getElementById(`status-${i}`).innerText = "No File";
+            document.getElementById(`status-${i}`).className = "text-gray-600";
+            document.getElementById(`file-${i}`).value = "";
+        }
     }
 
     window.addOrUpdateMarket = async function() {
@@ -326,7 +386,6 @@
 
         await setDoc(doc(db, "markets", name), marketPayload, { merge: true });
         
-        // Reset input form elements cleanly
         document.getElementById('mkt-name').value = '';
         document.getElementById('mkt-serial').value = '';
         document.getElementById('mkt-date').value = '';
