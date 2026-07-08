@@ -32,7 +32,7 @@
             .app-container { height: 100vh; max-height: 100vh; }
         }
         
-        /* New Professional Watermark Array Grid Overlay */
+        /* Premium Background Repeating Watermark Grid */
         .watermark-container {
             position: relative;
             overflow: hidden;
@@ -75,28 +75,27 @@
         <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 text-xs font-bold rounded-lg shadow transition-colors">LOGOUT</button>
     </div>
 
-    <!-- MAIN DASHBOARD SCROLLER -->
+    <!-- MAIN DASHBOARD CONTENT PANEL SCROLLER -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
 
-        <!-- USER PROFILE CARD WITH NAME -->
+        <!-- USER PROFILE CARD -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
             <div>
                 <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Subscriber Profile</p>
-                <!-- Shows User Name cleanly alongside mobile details -->
                 <p id="profile-name" class="text-gray-900 font-black text-base mt-0.5">Loading User...</p>
                 <p id="profile-phone" class="text-gray-500 font-semibold text-xs font-mono">Mobile: --</p>
             </div>
             <div id="membership-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gray-200 text-gray-600">Checking...</div>
         </div>
 
-        <!-- IMAGE SLIDER -->
+        <!-- IMAGE BANNER SLIDER -->
         <div class="relative w-full h-40 bg-gray-200 rounded-2xl overflow-hidden shadow-sm border border-gray-100">
             <div id="slider-container" class="w-full h-full flex transition-transform duration-700 ease-in-out">
                 <img src="https://i.imgur.com/hWJLthc.png" class="w-full h-full object-cover shrink-0" alt="Banner">
             </div>
         </div>
 
-        <!-- GET MEMBERSHIP ACTION BUTTON -->
+        <!-- GET MEMBERSHIP ACCESS ACTION LINK -->
         <div id="membership-banner" class="hidden">
             <button onclick="openPlanModal()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-center py-3.5 rounded-2xl block shadow-md transition-all text-sm tracking-wider uppercase">
                 👑 Get Membership Access
@@ -112,13 +111,20 @@
             <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-semibold">Syncing announcements...</p>
         </div>
 
-        <!-- GAME SECTION CONTAINER -->
+        <!-- NEW POSITIONED: BIG ATTRACTIVE LIVE CLOCK WITH DATE (PLACED AFTER NOTICE BOARD) -->
+        <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-4 shadow-md text-center border border-green-500/20 relative overflow-hidden">
+            <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
+            <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">00 MONTH 2026</div>
+            <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">00:00:00 AM</div>
+        </div>
+
+        <!-- GAME SECTION PANEL CONTAINER -->
         <div class="space-y-3">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Game Section</h2>
             <div id="games-container" class="space-y-4"></div>
         </div>
 
-        <!-- SUPPORT FOOTER -->
+        <!-- HELP AND TELEPHONY BUTTONS DESK -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <div class="grid grid-cols-2 gap-3">
@@ -230,13 +236,19 @@
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
-        // 1. Live User Account Access Monitor (Gets user name details directly)
+        // Clock & Date Tick Engine
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('live-clock').innerText = now.toLocaleTimeString();
+            document.getElementById('live-calendar-text').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+        }, 1000);
+
+        // 1. Live User Account Access Monitor
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
             if (!snapshot.exists()) { handleLogout(); return; }
             const uData = snapshot.data();
             userSubscriptionStatus = uData.subscription || "inactive";
             
-            // Assign name text property safely 
             document.getElementById('profile-name').innerText = uData.name || "Rudraksh User";
             
             const badge = document.getElementById('membership-badge');
@@ -255,10 +267,10 @@
                 badge.classList.add('bg-orange-100', 'text-orange-700');
                 banner.classList.remove('hidden');
             }
-            renderGameCards(); // Re-render numbers instantly if subscription profile transitions live
+            renderGameCards();
         });
 
-        // 2. Global System Settings Monitor
+        // 2. Global System Settings Monitor (Tracks Token URLs safely)
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -279,7 +291,7 @@
                 if (data.slider_images && Array.isArray(data.slider_images)) {
                     setupAutoImageSlider(data.slider_images);
                 }
-                renderGameCards(); // Updates watermarks layout parameters cleanly
+                renderGameCards();
             }
         });
 
@@ -289,13 +301,10 @@
             renderGameCards();
         });
 
-        // AUTO FORCE SYNC MECHANIC: Runs background calculations verification checks every 2 seconds automatically
-        setInterval(() => {
-            renderGameCards();
-        }, 2000);
+        // Auto Sync loop
+        setInterval(renderGameCards, 2000);
     }
 
-    // High performance DOM painter layer loop
     function renderGameCards() {
         const container = document.getElementById('games-container');
         if(!container) return;
@@ -310,7 +319,6 @@
             const panelText = isPremiumUser ? (m.panelValue || "••• •••") : "only for members";
             const dataStyle = isPremiumUser ? "font-sans font-extrabold text-base tracking-wide" : "font-semibold italic text-xs tracking-normal text-orange-300";
 
-            // Creates 4 repeating positions inside the overlay box grid array matrix for optimal protection layout
             const watermarkOverlayHtml = watermarkNumber ? `
                 <div class="watermark-overlay">
                     <div class="watermark-item">${watermarkNumber}</div>
