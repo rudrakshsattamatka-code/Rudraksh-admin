@@ -3,159 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Master Admin Control Console</title>
+    <title>Rudraksh Admin App</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 100vh;
+            max-height: 850px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .app-container::-webkit-scrollbar { display: none; }
+        @media (max-width: 450px) {
+            .app-container { height: 100vh; max-height: 100vh; }
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen font-sans p-4 md:p-8">
+<body>
 
-    <!-- ADMIN PIN LOCKOUT SCREEN -->
-    <div id="admin-gate" class="fixed inset-0 bg-gray-950 flex flex-col items-center justify-center p-6 z-50">
-        <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 w-full max-w-sm text-center shadow-2xl">
-            <h1 class="text-xl font-bold text-orange-500 mb-2">System Admin Gate</h1>
-            <p class="text-xs text-gray-400 mb-6">Enter Secure Master 4-Digit PIN</p>
-            <input type="password" id="gate-pin" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-gray-950 border border-gray-700 text-white rounded-lg p-3 text-center tracking-widest text-2xl focus:outline-none focus:border-orange-500 mb-4">
-            <button onclick="unlockAdminPanel()" class="w-full bg-orange-500 hover:bg-orange-600 font-bold py-3 rounded-lg transition-colors shadow-md text-white text-sm">
-                Verify Secure Access
-            </button>
+<div class="app-container">
+
+    <!-- ADMIN GATE PIN SCREEN -->
+    <div id="admin-gate" class="absolute inset-0 bg-gray-950 flex flex-col items-center justify-center p-6 z-50">
+        <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800 w-full max-w-xs text-center">
+            <h1 class="text-lg font-black text-orange-500 mb-1">Admin App Portal</h1>
+            <p class="text-[11px] text-gray-400 mb-5">Enter Master 4-Digit Security PIN</p>
+            <input type="password" id="gate-pin" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-gray-950 border border-gray-700 text-white rounded-xl p-2.5 text-center tracking-widest text-xl focus:outline-none mb-4">
+            <button onclick="unlockAdminPanel()" class="w-full bg-orange-500 text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider">Verify Session</button>
         </div>
     </div>
 
-    <!-- MAIN CONTROL PANEL LAYOUT -->
-    <div class="max-w-6xl mx-auto space-y-6 hidden" id="admin-dashboard">
-        <!-- Main Top Bar -->
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-                <h2 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                    Rudraksh Control Engine <span class="text-xs bg-green-500/20 text-green-400 font-mono px-2 py-0.5 rounded-full border border-green-500/30">Live Terminal</span>
-                </h2>
-                <p class="text-xs text-gray-400 mt-1">Manage image sliders, support lines, subscriber memberships, and live Game sections.</p>
-            </div>
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <button onclick="openTab('system')" class="bg-gray-700 hover:bg-gray-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors">Global App Settings</button>
-                <button onclick="openTab('users')" class="bg-gray-700 hover:bg-gray-600 text-xs font-bold px-4 py-2.5 rounded-xl transition-colors">Subscribers</button>
-                <button onclick="handleAdminLogout()" class="bg-red-600 hover:bg-red-700 text-xs font-bold px-4 py-2.5 rounded-xl text-white shadow-md transition-colors">
-                    LOGOUT ADMIN
-                </button>
-            </div>
+    <!-- MAIN NAV HEADER -->
+    <div class="bg-gray-900 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
+        <div>
+            <h2 class="font-black text-sm tracking-wide text-orange-500">RUDRAKSH ADMIN</h2>
+            <p class="text-[9px] text-gray-400">Mobile Console Interface</p>
         </div>
+        <div class="flex items-center space-x-2">
+            <button onclick="handleAdminLogout()" class="bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 text-[10px] font-bold rounded-lg">LOGOUT</button>
+        </div>
+    </div>
 
-        <!-- TAB SECTION 1: SYSTEM CONTROLS & DYNAMIC ADVANCED MARKETS -->
-        <div id="tab-system" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- App Variables Form & Image Slider configuration -->
-            <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 space-y-4 h-fit">
-                <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">System Parameters</h3>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Notice Board Broadcast Text</label>
-                    <textarea id="cfg-notice" rows="2" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Customer Support Phone/WhatsApp Number</label>
-                    <input type="text" id="cfg-phone" placeholder="e.g. 919113224019" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">Change Admin Master PIN (4 digits)</label>
-                    <input type="password" id="cfg-pin" maxlength="4" class="w-full bg-gray-950 border border-gray-700 rounded-lg p-2 text-xs text-white focus:outline-none">
-                </div>
+    <!-- BOTTOM APP BAR NAVIGATION SELECTOR TAB -->
+    <div class="bg-white border-t border-gray-100 grid grid-cols-3 text-center text-[11px] font-bold text-gray-400 sticky bottom-0 z-40 shadow-inner">
+        <button onclick="openTab('system')" id="nav-system" class="py-3 border-t-2 border-orange-500 text-orange-500">Settings</button>
+        <button onclick="openTab('games')" id="nav-games" class="py-3 border-t-2 border-transparent">Games</button>
+        <button onclick="openTab('users')" id="nav-users" class="py-3 border-t-2 border-transparent relative">Users <span id="req-dot" class="hidden absolute top-2 right-6 w-2 h-2 bg-red-500 rounded-full"></span></button>
+    </div>
 
-                <!-- DYNAMIC FILE UPLOAD INPUT ARRAY FOR GALLERY ACCESS -->
-                <div class="border-t border-gray-700 pt-3 space-y-3">
-                    <label class="block text-xs text-orange-400 font-bold uppercase tracking-wider">Sliding Banners (Direct Gallery Upload)</label>
-                    
-                    <!-- Loop generation for 6 slots with file pickup hooks -->
-                    <div class="space-y-2" id="slider-inputs-zone">
-                        <!-- Javascript hooks fill values here dynamically -->
-                    </div>
-                </div>
+    <!-- APP SCROLLER AREA -->
+    <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-12">
 
-                <button onclick="saveSystemConfig()" class="w-full bg-green-600 hover:bg-green-700 text-xs font-bold py-2.5 rounded-xl text-white shadow-md">
-                    Apply Global System Parameter Changes
-                </button>
-            </div>
-
-            <!-- Enhanced Game Section console matrix -->
-            <div class="lg:col-span-2 bg-gray-800 border border-gray-700 rounded-2xl p-6 flex flex-col space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase">Game Section Panel</h3>
-                    <span class="text-[11px] text-gray-400 font-medium">* Click any market row in the list below to edit it instantly</span>
-                </div>
-                
-                <div class="bg-gray-950 p-4 rounded-xl border border-gray-800 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs text-gray-400 mb-1 font-bold">Market Game Name</label>
-                        <input type="text" id="mkt-name" placeholder="E.g. SRIDEVI" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none uppercase">
+        <!-- TAB SECTION 1: GLOBAL CONFIGURATIONS -->
+        <div id="tab-system" class="space-y-4">
+            <!-- Price and Parameter Inputs -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">Subscription Control & Pricing</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">1 Day Price (₹)</label>
+                        <input type="number" id="cfg-p-day" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-bold">
                     </div>
                     <div>
-                        <label class="block text-xs text-orange-400 mb-1 font-bold">Serial No. (Sorting Index)</label>
-                        <input type="number" id="mkt-serial" placeholder="E.g. 1" class="w-full bg-gray-900 border border-orange-500/40 text-orange-400 font-bold rounded-lg p-2 text-xs focus:outline-none">
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">1 Week Price (₹)</label>
+                        <input type="number" id="cfg-p-week" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-bold">
                     </div>
-                    <div class="sm:col-span-3">
-                        <label class="block text-xs text-gray-400 mb-1">Display Date and Time String</label>
-                        <input type="text" id="mkt-date" placeholder="E.g. 17/06/2026 9:35 AM" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none font-mono">
-                    </div>
-                    
-                    <div class="border-t border-gray-800 sm:col-span-3 pt-2 text-xs text-orange-500 font-bold tracking-wider uppercase">Game Panel Calculations Input</div>
-                    
-                    <div class="sm:col-span-3">
-                        <label class="block text-xs text-gray-400 mb-1">🎲 OTC Values</label>
-                        <input type="text" id="mkt-otc" placeholder="E.g. 0 5" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none font-mono tracking-widest">
-                    </div>
-                    <div class="sm:col-span-3">
-                        <label class="block text-xs text-gray-400 mb-1">🔗 Jodi Numbers</label>
-                        <input type="text" id="mkt-jodi" placeholder="E.g. 02 03 07 08 58 52" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none font-mono tracking-wider">
-                    </div>
-                    <div class="sm:col-span-3">
-                        <label class="block text-xs text-gray-400 mb-1">📊 Panel Numbers</label>
-                        <input type="text" id="mkt-panel" placeholder="E.g. 370 127 334 168" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 text-xs focus:outline-none font-mono tracking-wider">
-                    </div>
-                    
-                    <button onclick="addOrUpdateMarket()" class="sm:col-span-3 bg-orange-500 hover:bg-orange-600 text-xs font-bold rounded-xl text-white py-3 shadow-md transition-all">
-                        Publish/Update Game Section Card
-                    </button>
                 </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Receiver UPI ID Address</label>
+                    <input type="text" id="cfg-upi" placeholder="rudraksh@upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Notice Text Broadcast</label>
+                    <textarea id="cfg-notice" rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800"></textarea>
+                </div>
+                <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
+            </div>
 
-                <!-- Live Registry Table -->
-                <div class="flex-1 overflow-x-auto">
-                    <table class="w-full text-left text-xs text-gray-300">
-                        <thead>
-                            <tr class="border-b border-gray-700 text-gray-400">
-                                <th class="py-2 px-1">Serial</th>
-                                <th class="py-2">Market Target</th>
-                                <th class="py-2">Display Stamp</th>
-                                <th class="py-2">Calculations Preview (OTC | Jodi | Panel)</th>
-                                <th class="py-2 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="market-table-body"></tbody>
-                    </table>
-                </div>
+            <!-- Image Sliders Gallery Storage Bucket Inputs -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-2">
+                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider mb-2">Gallery Image Banners (1-6)</h3>
+                <div class="space-y-2" id="slider-inputs-zone"></div>
             </div>
         </div>
 
-        <!-- TAB SECTION 2: SUBSCRIBER ACCOUNT DIRECTORY -->
-        <div id="tab-users" class="bg-gray-800 border border-gray-700 rounded-2xl p-6 hidden">
-            <h3 class="font-bold text-sm tracking-wide text-orange-400 uppercase mb-4">User Master Directory</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-gray-300">
-                    <thead>
-                        <tr class="border-b border-gray-700 text-gray-400">
-                            <th class="py-2.5">Name / Mobile Reference</th>
-                            <th class="py-2.5">Realtime Status</th>
-                            <th class="py-2.5">Telemetry Logging</th>
-                            <th class="py-2.5">Membership State</th>
-                            <th class="py-2.5 text-right">Operational Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="user-table-body"></tbody>
-                </table>
+        <!-- TAB SECTION 2: GAME MODIFICATION ENGINE -->
+        <div id="tab-games" class="space-y-4 hidden">
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">Add/Edit Game Target</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="col-span-2">
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Game Name</label>
+                        <input type="text" id="mkt-name" placeholder="SRIDEVI" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Serial Sort</label>
+                        <input type="number" id="mkt-serial" placeholder="1" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Display Timestamp</label>
+                    <input type="text" id="mkt-date" placeholder="17/06/2026 9:35 AM" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">OTC</label>
+                        <input type="text" id="mkt-otc" placeholder="0 5" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Jodi</label>
+                        <input type="text" id="mkt-jodi" placeholder="02 58" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Panel</label>
+                        <input type="text" id="mkt-panel" placeholder="370 127" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                    </div>
+                </div>
+                <button onclick="addOrUpdateMarket()" class="w-full bg-orange-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Publish Game Update</button>
+            </div>
+
+            <!-- Realtime active markets listed below -->
+            <div id="admin-markets-list" class="space-y-2"></div>
+        </div>
+
+        <!-- TAB SECTION 3: SUBSCRIPTION SYSTEM QUEUE -->
+        <div id="tab-users" class="space-y-4 hidden">
+            <!-- LIVE REQUEST PAYMENTS QUEUE BOX -->
+            <div class="bg-orange-50 rounded-2xl p-4 border border-orange-200 space-y-2">
+                <h3 class="font-black text-xs text-orange-800 uppercase tracking-wider">⚠️ Pending Payments Queue (3 min Timer)</h3>
+                <div id="deposit-queue-zone" class="space-y-2">
+                    <p class="text-[11px] text-orange-600 font-semibold italic">No active requests floating in verification.</p>
+                </div>
+            </div>
+
+            <!-- MASTER SUBSCRIBERS DIRECTORY -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-black text-xs text-gray-400 uppercase tracking-wider">Subscribers Directory</h3>
+                <div id="users-directory-zone" class="space-y-3"></div>
             </div>
         </div>
+
     </div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    // Import Storage SDK elements directly
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
     const firebaseConfig = {
@@ -171,172 +178,147 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app); // Storage initialization hook up
-    
-    let masterAdminPin = "9999"; 
+    const storage = getStorage(app);
+    let masterAdminPin = "9999";
     let globalMarketsCache = {};
 
-    // Programmatically construct input elements with direct file selectors
+    // Dynamic slider input boxes generation code
     const inputsZone = document.getElementById('slider-inputs-zone');
     inputsZone.innerHTML = '';
     for(let i=1; i<=6; i++) {
         inputsZone.innerHTML += `
-            <div class="bg-gray-900 p-2 rounded-lg border border-gray-800 space-y-1">
-                <div class="flex justify-between items-center text-[10px] text-gray-400 font-bold">
-                    <span>SLIDER SLOT ${i}</span>
-                    <span id="status-${i}" class="text-gray-600">No File</span>
-                </div>
-                <input type="text" id="slide-${i}" placeholder="Paste URL or upload file below..." class="w-full bg-gray-950 border border-gray-700 rounded p-1 text-[11px] text-white focus:outline-none">
-                <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="w-full text-[10px] text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-orange-500/10 file:text-orange-400 file:cursor-pointer hover:file:bg-orange-500/20">
+            <div class="bg-gray-50 p-2 rounded-xl border border-gray-200 flex flex-col space-y-1">
+                <div class="flex justify-between items-center text-[9px] text-gray-400 font-bold"><span>SLOT ${i}</span><span id="status-${i}" class="text-gray-400">Empty</span></div>
+                <input type="text" id="slide-${i}" class="w-full bg-white border border-gray-200 rounded-lg p-1 text-[11px] text-gray-800 focus:outline-none">
+                <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-500/10 file:text-orange-600 font-bold cursor-pointer">
             </div>
         `;
     }
 
     window.addEventListener('DOMContentLoaded', checkAdminPersistence);
 
-    async function checkAdminPersistence() {
-        const token = localStorage.getItem('admin_session_auth');
-        if (token === "verified") {
+    function checkAdminPersistence() {
+        if (localStorage.getItem('admin_session_auth') === "verified") {
             document.getElementById('admin-gate').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.remove('hidden');
             loadLiveHooks();
         }
     }
 
     window.unlockAdminPanel = async function() {
         const pinInput = document.getElementById('gate-pin').value.trim();
-        try {
-            const configDoc = await getDoc(doc(db, "system_config", "settings"));
-            if(configDoc.exists()) { masterAdminPin = configDoc.data().admin_pin || "9999"; }
-            if(pinInput === masterAdminPin) {
-                localStorage.setItem('admin_session_auth', 'verified');
-                document.getElementById('admin-gate').classList.add('hidden');
-                document.getElementById('admin-dashboard').classList.remove('hidden');
-                loadLiveHooks();
-            } else { alert("Unauthorized Entry PIN Setup."); }
-        } catch(e) { console.error(e); }
+        const configDoc = await getDoc(doc(db, "system_config", "settings"));
+        if(configDoc.exists()) { masterAdminPin = configDoc.data().admin_pin || "9999"; }
+        if(pinInput === masterAdminPin) {
+            localStorage.setItem('admin_session_auth', 'verified');
+            document.getElementById('admin-gate').classList.add('hidden');
+            loadLiveHooks();
+        } else { alert("Incorrect administrative safety PIN."); }
     }
 
-    window.handleAdminLogout = function() {
-        localStorage.removeItem('admin_session_auth');
-        window.location.reload();
-    }
+    window.handleAdminLogout = () => { localStorage.removeItem('admin_session_auth'); window.location.reload(); }
 
     window.openTab = function(tabId) {
-        ['system', 'users'].forEach(t => document.getElementById('tab-'+t).classList.add('hidden'));
+        ['system', 'games', 'users'].forEach(t => {
+            document.getElementById('tab-'+t).classList.add('hidden');
+            document.getElementById('nav-'+t).className = "py-3 border-t-2 border-transparent";
+        });
         document.getElementById('tab-'+tabId).classList.remove('hidden');
+        document.getElementById('nav-'+tabId).className = "py-3 border-t-2 border-orange-500 text-orange-500";
     }
 
-    // AUTOMATED FIREBASE STORAGE INTERACTION LOGIC
-    window.uploadImageFromGallery = async function(slotNumber) {
-        const fileInput = document.getElementById(`file-${slotNumber}`);
-        const statusLabel = document.getElementById(`status-${slotNumber}`);
-        const urlInput = document.getElementById(`slide-${slotNumber}`);
-        
-        const file = fileInput.files[0];
+    window.uploadImageFromGallery = async function(slot) {
+        const file = document.getElementById(`file-${slot}`).files[0];
+        const label = document.getElementById(`status-${slot}`);
         if(!file) return;
-
-        statusLabel.innerText = "UPLOADING...";
-        statusLabel.className = "text-yellow-500 font-bold animate-pulse";
-
+        label.innerText = "UPLOADING..."; label.className = "text-orange-500 font-bold animate-pulse";
         try {
-            // Create target reference path inside cloud bucket
-            const storageRef = ref(storage, `slider_banners/slot_${slotNumber}_${Date.now()}`);
-            
-            // Execute file byte array transfers
-            const snapshot = await uploadBytes(storageRef, file);
-            
-            // Acquire fully secure public download URL signature
+            const snapshot = await uploadBytes(ref(storage, `slider_banners/slot_${slot}_${Date.now()}`), file);
             const downloadUrl = await getDownloadURL(snapshot.ref);
-            
-            // Update UI tracking controls natively
-            urlInput.value = downloadUrl;
-            statusLabel.innerText = "✓ UPLOADED";
-            statusLabel.className = "text-green-400 font-bold";
-        } catch (error) {
-            console.error(error);
-            statusLabel.innerText = "❌ FAILED";
-            statusLabel.className = "text-red-500 font-bold";
-            alert("Upload failed. Verify Firebase Storage test rules are turned on.");
-        }
+            document.getElementById(`slide-${slot}`).value = downloadUrl;
+            label.innerText = "✓ UPLOADED"; label.className = "text-green-600 font-bold";
+        } catch(e) { label.innerText = "❌ FAILED"; label.className = "text-red-500 font-bold"; }
     }
 
     function loadLiveHooks() {
-        onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
-            if(snapshot.exists()) {
-                const s = snapshot.data();
+        // 1. Live settings hooks sync
+        onSnapshot(doc(db, "system_config", "settings"), (snap) => {
+            if(snap.exists()) {
+                const s = snap.data();
                 document.getElementById('cfg-notice').value = s.notice_text || '';
-                document.getElementById('cfg-phone').value = s.support_phone || '9113224019';
+                document.getElementById('cfg-phone').value = s.support_phone || '';
+                document.getElementById('cfg-p-day').value = s.price_day || "1100";
+                document.getElementById('cfg-p-week').value = s.price_week || "5100";
+                document.getElementById('cfg-upi').value = s.upi_address || "rudraksh@upi";
                 document.getElementById('cfg-pin').value = s.admin_pin || '';
-                
                 const imgs = s.slider_images || [];
-                for(let i=1; i<=6; i++) {
-                    // Only overwrite values if the admin isn't actively performing a file upload pipeline
-                    const statusLabel = document.getElementById(`status-${i}`);
-                    if(statusLabel.innerText !== "UPLOADING...") {
-                        document.getElementById(`slide-${i}`).value = imgs[i-1] || '';
-                    }
-                }
+                for(let i=1; i<=6; i++) { if(document.getElementById(`status-${i}`).innerText !== "UPLOADING...") document.getElementById(`slide-${i}`).value = imgs[i-1] || ''; }
             }
         });
 
+        // 2. Realtime Game sorting engine listed cards loops
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
-            const mktBody = document.getElementById('market-table-body');
-            mktBody.innerHTML = '';
-            globalMarketsCache = {};
-
-            const sortedDocs = querySnapshot.docs.sort((a, b) => {
-                return (Number(a.data().serialNo) || 999) - (Number(b.data().serialNo) || 999);
-            });
-
-            sortedDocs.forEach(doc => {
+            const list = document.getElementById('admin-markets-list');
+            list.innerHTML = '';
+            const sorted = querySnapshot.docs.sort((a,b) => (Number(a.data().serialNo)||999) - (Number(b.data().serialNo)||999));
+            sorted.forEach(doc => {
                 const m = doc.data();
                 globalMarketsCache[doc.id] = m;
-                
-                mktBody.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-800/50 cursor-pointer transition-colors" onclick="populateMarketForm('${doc.id}')">
-                        <td class="py-3 px-2 font-mono text-orange-400 font-bold text-center">${m.serialNo || '0'}</td>
-                        <td class="py-3 font-bold text-white uppercase tracking-wider">${doc.id}</td>
-                        <td class="py-3 font-mono text-[11px] text-emerald-400">${m.gameDate || '--'}</td>
-                        <td class="py-3 text-[11px] space-y-0.5">
-                            <div>OTC: <span class="text-white font-mono font-bold">${m.otcValue || '--'}</span></div>
-                            <div>Jodi: <span class="text-white font-mono">${m.jodiValue || '--'}</span></div>
-                            <div>Panel: <span class="text-white font-mono text-gray-400">${m.panelValue || '--'}</span></div>
-                        </td>
-                        <td class="py-3 text-right" onclick="event.stopPropagation();">
-                            <button onclick="deleteMarket('${doc.id}')" class="text-red-500 font-bold hover:underline px-2">Delete</button>
-                        </td>
-                    </tr>`;
+                list.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center cursor-pointer" onclick="populateMarketForm('${doc.id}')">
+                        <div><span class="text-xs font-black text-orange-500 font-mono mr-1">[${m.serialNo}]</span><span class="font-bold text-gray-800 text-xs uppercase">${doc.id}</span></div>
+                        <div class="text-right space-x-2">
+                            <button onclick="event.stopPropagation(); deleteMarket('${doc.id}')" class="text-red-500 text-xs font-bold">Delete</button>
+                        </div>
+                    </div>`;
             });
         });
 
+        // 3. Telemetry subscribers directory
         onSnapshot(collection(db, "users"), (querySnapshot) => {
-            const userBody = document.getElementById('user-table-body');
-            userBody.innerHTML = '';
+            const container = document.getElementById('users-directory-zone');
+            container.innerHTML = '';
             querySnapshot.forEach(uDoc => {
                 const u = uDoc.data();
-                const onlineState = u.isOnline ? '<span class="text-green-400 font-bold">● Online</span>' : '<span class="text-gray-500">○ Offline</span>';
-                const subBadge = u.subscription === "active" ? '<span class="bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded text-[11px] font-bold">Active</span>' : '<span class="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-[11px] font-bold">Inactive</span>';
-                
-                userBody.innerHTML += `
-                    <tr class="border-b border-gray-800 hover:bg-gray-800/40">
-                        <td class="py-3"><div class="font-bold text-white">${u.name || 'User'}</div><div class="text-gray-500 text-[11px]">${uDoc.id}</div></td>
-                        <td class="py-3 text-xs">${onlineState}</td>
-                        <td class="py-3 text-[11px] text-gray-400 font-mono">${u.lastVisited || 'Never'}</td>
-                        <td class="py-3">${subBadge}</td>
-                        <td class="py-3 text-right">
-                            <button onclick="toggleUserSub('${uDoc.id}', '${u.subscription}')" class="text-blue-400 font-bold hover:underline text-xs bg-blue-500/5 px-2.5 py-1 rounded-md border border-blue-500/10">Toggle Membership</button>
-                            <button onclick="deleteUser('${uDoc.id}')" class="text-red-500 font-bold hover:underline text-xs ml-2">Wipe</button>
-                        </td>
-                    </tr>`;
+                const subBadge = u.subscription === "active" ? '<span class="text-green-600 bg-green-50 px-2 py-0.5 rounded font-bold text-[10px]">Active</span>' : '<span class="text-red-500 bg-red-50 px-2 py-0.5 rounded font-bold text-[10px]">Inactive</span>';
+                container.innerHTML += `
+                    <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex justify-between items-center text-xs">
+                        <div><p class="font-bold text-gray-800">${u.name || 'User'}</p><p class="text-[10px] text-gray-400 font-mono">${uDoc.id}</p></div>
+                        <div class="flex items-center space-x-2">${subBadge}<button onclick="toggleMembership('${uDoc.id}', '${u.subscription}')" class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Toggle</button></div>
+                    </div>`;
+            });
+        });
+
+        // 4. Verification Queue Monitor (The 3 Minute lockdown interceptor handler)
+        onSnapshot(collection(db, "deposits"), (querySnapshot) => {
+            const zone = document.getElementById('deposit-queue-zone');
+            const dot = document.getElementById('req-dot');
+            zone.innerHTML = '';
+            
+            if(querySnapshot.empty) {
+                zone.innerHTML = `<p class="text-[11px] text-orange-600 font-semibold italic">No active validation requests floating.</p>`;
+                dot.classList.add('hidden');
+                return;
+            }
+            
+            dot.classList.remove('hidden');
+            querySnapshot.forEach(dDoc => {
+                const d = dDoc.data();
+                if(d.status !== "pending") return;
+                zone.innerHTML += `
+                    <div class="bg-white p-3 rounded-xl border border-orange-200 flex flex-col space-y-2 text-xs">
+                        <div class="flex justify-between font-bold"><span>User: <span class="font-mono text-gray-800">${d.userMobile}</span></span><span class="text-green-600">Amount: ₹${d.amount}</span></div>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px] uppercase">Approve Access</button>
+                            <button onclick="rejectPaymentRequest('${dDoc.id}')" class="bg-red-600 text-white py-1.5 rounded-lg font-bold text-[11px] uppercase">Reject/Cancel</button>
+                        </div>
+                    </div>`;
             });
         });
     }
 
-    window.populateMarketForm = function(marketId) {
-        const m = globalMarketsCache[marketId];
-        if(!m) return;
-        document.getElementById('mkt-name').value = marketId;
+    window.populateMarketForm = function(id) {
+        const m = globalMarketsCache[id]; if(!m) return;
+        document.getElementById('mkt-name').value = id;
         document.getElementById('mkt-serial').value = m.serialNo || '';
         document.getElementById('mkt-date').value = m.gameDate || '';
         document.getElementById('mkt-otc').value = m.otcValue || '';
@@ -346,66 +328,44 @@
 
     window.saveSystemConfig = async function() {
         const slider_images = [];
-        for(let i=1; i<=6; i++) {
-            const val = document.getElementById(`slide-${i}`).value.trim();
-            if(val) slider_images.push(val);
-        }
-
-        const notice_text = document.getElementById('cfg-notice').value.trim();
-        const support_phone = document.getElementById('cfg-phone').value.trim();
-        const admin_pin = document.getElementById('cfg-pin').value.trim();
-
-        await setDoc(doc(db, "system_config", "settings"), { 
-            notice_text, 
-            support_phone, 
-            admin_pin, 
-            slider_images 
+        for(let i=1; i<=6; i++) { const v = document.getElementById(`slide-${i}`).value.trim(); if(v) slider_images.push(v); }
+        await setDoc(doc(db, "system_config", "settings"), {
+            notice_text: document.getElementById('cfg-notice').value.trim(),
+            support_phone: document.getElementById('cfg-phone').value.trim(),
+            price_day: document.getElementById('cfg-p-day').value.trim(),
+            price_week: document.getElementById('cfg-p-week').value.trim(),
+            upi_address: document.getElementById('cfg-upi').value.trim(),
+            admin_pin: document.getElementById('cfg-pin').value.trim(),
+            slider_images
         }, { merge: true });
-        
-        alert("Global platform parameter configurations saved successfully.");
-        
-        // Reset file element rows tracking label states cleanly
-        for(let i=1; i<=6; i++) {
-            document.getElementById(`status-${i}`).innerText = "No File";
-            document.getElementById(`status-${i}`).className = "text-gray-600";
-            document.getElementById(`file-${i}`).value = "";
-        }
+        alert("Global platform configurations successfully saved.");
     }
 
     window.addOrUpdateMarket = async function() {
-        const name = document.getElementById('mkt-name').value.trim().toUpperCase();
-        if(!name) return alert("Please specify a valid Market Game Name first.");
-
-        const marketPayload = {
+        const name = document.getElementById('mkt-name').value.trim().toUpperCase(); if(!name) return alert("Enter Game Name.");
+        await setDoc(doc(db, "markets", name), {
             serialNo: Number(document.getElementById('mkt-serial').value) || 0,
             gameDate: document.getElementById('mkt-date').value.trim(),
             otcValue: document.getElementById('mkt-otc').value.trim(),
             jodiValue: document.getElementById('mkt-jodi').value.trim(),
             panelValue: document.getElementById('mkt-panel').value.trim()
-        };
-
-        await setDoc(doc(db, "markets", name), marketPayload, { merge: true });
-        
-        document.getElementById('mkt-name').value = '';
-        document.getElementById('mkt-serial').value = '';
-        document.getElementById('mkt-date').value = '';
-        document.getElementById('mkt-otc').value = '';
-        document.getElementById('mkt-jodi').value = '';
-        document.getElementById('mkt-panel').value = '';
-        alert("Game Section Card pushed to client live streaming pipelines.");
+        }, { merge: true });
+        alert("Game Section template published.");
     }
 
-    window.deleteMarket = async function(id) {
-        if(confirm("Completely remove market entry: " + id + "?")) { await deleteDoc(doc(db, "markets", id)); }
+    window.approvePaymentRequest = async function(userMobile, docId) {
+        await updateDoc(doc(db, "users", userMobile), { subscription: "active" });
+        await deleteDoc(doc(db, "deposits", docId));
+        alert("Access approved. Client unlocked instantly.");
     }
 
-    window.toggleUserSub = async function(id, current) {
-        await updateDoc(doc(db, "users", id), { subscription: current === "active" ? "inactive" : "active" });
+    window.rejectPaymentRequest = async function(docId) {
+        await updateDoc(doc(db, "deposits", docId), { status: "rejected" });
+        alert("Request rejected. Lockdown screen dismissed on user side.");
     }
 
-    window.deleteUser = async function(id) {
-        if(confirm("Permanently wipe profile account " + id + "?")) { await deleteDoc(doc(db, "users", id)); }
-    }
+    window.toggleMembership = async function(id, cur) { await updateDoc(doc(db, "users", id), { subscription: cur === "active" ? "inactive" : "active" }); }
+    window.deleteMarket = async function(id) { if(confirm("Wipe market?")) await deleteDoc(doc(db, "markets", id)); }
 </script>
 </body>
 </html>
