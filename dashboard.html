@@ -82,6 +82,17 @@
             <div id="games-container" class="space-y-4"></div>
         </div>
 
+        <!-- MANDATORY LEGAL DISCLAIMER BOARD PANEL -->
+        <div class="bg-gray-100 border border-gray-200 rounded-2xl p-4 shadow-sm text-center">
+            <h4 class="text-red-600 font-black text-xs uppercase tracking-widest border-b border-gray-200 pb-2 mb-2">-: DISCLAIMER :-</h4>
+            <p class="text-[10px] text-gray-500 font-semibold leading-relaxed text-justify">
+                Visiting this site and browsing it is strictly recommended at your own risk. Every information available here is only according to informational purpose and based on astrology and number calculations. We are no associated or affiliated with any illegal Matka business. We make sure we follow all rules and regulations of the regions where you are accessing the website. There are also chances that the website may be banned in your area and after that if you are using it, you are solely dependable and responsible for any damage, loss or legal action taken.
+            </p>
+            <p class="text-[10px] text-gray-500 font-semibold leading-relaxed text-justify mt-2">
+                If you are the one who does not like our disclaimer it is advised that you leave our website immediately. Copying of any information/contents posted on the website is strictly prohibited and against the law.
+            </p>
+        </div>
+
         <!-- SUPPORT SYSTEM DESK -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
@@ -290,7 +301,6 @@
 
         slider.innerHTML = '';
         cleanImages.forEach(url => { 
-            // FIXED LINK RE-ENCODER PIECE: Fixes raw sub-directory formatting path read errors automatically
             let formattedUrl = url;
             if(url.includes("firebasestorage.googleapis.com") && !url.includes("%2F")) {
                 formattedUrl = url.replace("/o/slider_banners", "/o/slider_banners%2F");
