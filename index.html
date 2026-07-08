@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rudraksh Satta Matka - Login</title>
+    <title>Rudraksh - Secure Entry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            background-color: #f3f4f6;
+            background: linear-gradient(135deg, #f0fdf4 0%, #fff7ed 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -24,11 +24,12 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
+            border-radius: 24px;
         }
         
-        /* Interactive Auto Slideshow Framework */
+        /* Interactive Auto Slideshow with Full-Image Containment rules */
         .slider-wrapper {
             display: flex;
             width: 100%;
@@ -43,7 +44,8 @@
             width: 100%;
             height: 100%;
             scroll-snap-align: start;
-            object-fit: cover;
+            object-fit: contain; /* FIX: Images will never look cut out */
+            background-color: #f9fafb;
         }
 
         /* Professional Premium Loading Animation Overlay */
@@ -56,7 +58,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+            transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
         }
         .loader-bar-container {
             width: 160px;
@@ -70,7 +72,7 @@
         .loader-bar-progress {
             width: 40%;
             height: 100%;
-            background: linear-gradient(to right, #16a34a, #10b981);
+            background: linear-gradient(to right, #ea580c, #16a34a);
             border-radius: 9999px;
             position: absolute;
             animation: modern-loading 1.6s infinite ease-in-out;
@@ -86,62 +88,74 @@
 
 <div class="app-container">
 
-    <!-- PROFESSIONAL LOADING SCREEN OVERLAY -->
+    <!-- OVERLAY LOADER TERMINAL -->
     <div id="loading-screen">
         <div class="flex flex-col items-center">
-            <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-20 h-20 object-contain animate-pulse">
-            <h2 class="text-xl font-black text-gray-800 tracking-widest uppercase mt-4">RUDRAKSH</h2>
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Connecting to Cloud Securely</p>
+            <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-24 h-24 object-contain animate-bounce">
+            <h2 class="text-2xl font-black bg-gradient-to-r from-orange-600 to-green-600 bg-clip-text text-transparent tracking-widest uppercase mt-4">RUDRAKSH</h2>
+            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Establishing Private Sync Network</p>
             <div class="loader-bar-container">
                 <div class="loader-bar-progress"></div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN APP HEADER APPBAR -->
-    <div class="bg-green-600 text-white px-4 py-3.5 flex items-center space-x-3 shadow-md sticky top-0 z-40">
-        <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-9 h-9 object-contain">
-        <h1 class="font-black tracking-wider text-xl uppercase">RUDRAKSH</h1>
-    </div>
-
-    <!-- CONTENT FRAME SCROLLER -->
+    <!-- MAIN INTERFACE SCROLLER SCENE -->
     <div class="flex-1 bg-gray-50 flex flex-col justify-between overflow-y-auto">
         
         <div class="p-4 space-y-5">
-            <!-- SAME ATTRACTIVE REALTIME IMAGE SLIDER AS DASHBOARD -->
-            <div class="relative w-full h-44 bg-gray-100 rounded-2xl overflow-hidden shadow-sm border border-gray-200/60">
-                <div id="index-slider-container" class="slider-wrapper">
-                    <img src="https://i.imgur.com/hWJLthc.png" class="slide-frame shrink-0" alt="Banner Placeholder">
+            
+            <!-- LOGO SECTION (ENLARGED & CENTERED WITH PREMIUM STYLING) -->
+            <div class="flex flex-col items-center justify-center pt-6 pb-2 text-center">
+                <div class="p-3 bg-gradient-to-br from-amber-50 to-orange-100/50 rounded-full shadow-inner mb-3">
+                    <img src="https://i.imgur.com/hWJLthc.png" alt="Rudraksh Premium Logo" class="w-24 h-24 object-contain drop-shadow-md">
+                </div>
+                <h1 class="text-3xl font-black bg-gradient-to-r from-orange-600 via-amber-500 to-green-600 bg-clip-text text-transparent tracking-widest uppercase">RUDRAKSH</h1>
+                <div class="flex items-center space-x-2 mt-1">
+                    <span class="h-[1px] w-6 bg-orange-300"></span>
+                    <p class="text-[10px] text-green-700 font-extrabold tracking-widest uppercase bg-green-50 px-2 py-0.5 rounded-full border border-green-200/50">Founded in 2018</p>
+                    <span class="h-[1px] w-6 bg-green-300"></span>
                 </div>
             </div>
 
-            <!-- LOGIN CREDENTIALS CONTAINER FORM -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
-                <div class="text-center">
-                    <h3 class="text-gray-800 font-black text-lg uppercase tracking-wide">Welcome Subscriber</h3>
-                    <p class="text-xs text-gray-400 font-medium">Log in with your details to view calculations</p>
+            <!-- RESPONSIVE AUTO BANNER SLIDER SHOW -->
+            <div class="relative w-full h-44 bg-gray-100 rounded-2xl overflow-hidden shadow-inner border border-gray-200/50">
+                <div id="index-slider-container" class="slider-wrapper">
+                    <img src="https://i.imgur.com/hWJLthc.png" class="slide-frame shrink-0" alt="Banner Slider Frame">
+                </div>
+            </div>
+
+            <!-- DYNAMIC USER SIGN-IN / ACCOUNT SETUP INTERFACE PANEL -->
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 space-y-4">
+                <div class="border-b border-gray-100 pb-3 text-center">
+                    <h3 class="text-gray-800 font-black text-sm uppercase tracking-wider">Subscriber Terminal Login</h3>
+                    <p class="text-[11px] text-gray-400 font-medium mt-0.5">Enter details below. New profiles will auto-create securely.</p>
                 </div>
 
-                <div class="space-y-3 pt-2">
+                <div class="space-y-3">
                     <div>
-                        <label class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">Your Full Name</label>
-                        <input type="text" id="user-name" placeholder="Enter full name" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 font-bold focus:outline-none focus:border-green-500">
+                        <label class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">Full Name</label>
+                        <input type="text" id="user-name" placeholder="e.g. Ganesh Kumar" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs text-gray-800 font-bold focus:outline-none focus:border-orange-500 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">10-Digit Mobile Number</label>
-                        <input type="tel" id="user-mobile" inputmode="numeric" maxlength="10" placeholder="Enter mobile number" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 font-mono font-bold tracking-widest focus:outline-none focus:border-green-500">
+                        <label class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">10-Digit Mobile Phone</label>
+                        <input type="tel" id="user-mobile" inputmode="numeric" maxlength="10" placeholder="9113224019" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-xs text-gray-800 font-mono font-bold tracking-widest focus:outline-none focus:border-orange-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">Secure Account Access PIN (4-Digits)</label>
+                        <input type="password" id="user-pin" inputmode="numeric" maxlength="4" placeholder="••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-center text-lg text-gray-800 font-mono font-bold tracking-widest focus:outline-none focus:border-green-600 transition-colors">
                     </div>
                 </div>
 
-                <button onclick="handleUserAuthentication()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3.5 rounded-2xl tracking-wider text-xs uppercase shadow-md transition-colors mt-2">
-                    🔓 Access System Dashboard
+                <button onclick="handleUserAuthentication()" class="w-full bg-gradient-to-r from-orange-500 to-green-600 hover:from-orange-600 hover:to-green-700 text-white font-black py-3.5 rounded-2xl tracking-wider text-xs uppercase shadow-md transition-all transform active:scale-[0.99] mt-2">
+                    🔓 Verify credentials & Enter Dashboard
                 </button>
             </div>
         </div>
 
         <!-- FOOTER BRAND TRADEMARK TAG -->
         <div class="p-4 text-center">
-            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">© 2026 Rudraksh. All Rights Reserved.</p>
+            <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">© 2026 Rudraksh Analytics Console. All rights reserved.</p>
         </div>
     </div>
 
@@ -149,7 +163,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
@@ -168,22 +182,19 @@
 
     window.addEventListener('DOMContentLoaded', initializeLandingPage);
 
-    function initializeAppCoresLoader() {
-        const loadingOverlay = document.getElementById('loading-screen');
-        setTimeout(() => {
-            loadingOverlay.style.opacity = '0';
-            loadingOverlay.style.visibility = 'hidden';
-        }, 1200); // Gives a beautifully balanced 1.2s authentic transition lag
-    }
-
     function initializeLandingPage() {
-        // Safe Session Routing Skip Link
+        // AUTO-SKIP CONSOLE INTERACTION LOGIC
         if (localStorage.getItem('app_user_mobile')) {
             window.location.href = 'dashboard.html';
             return;
         }
 
-        initializeAppCoresLoader();
+        // Remove loading overlay smoothly once screen weights load
+        setTimeout(() => {
+            const overlay = document.getElementById('loading-screen');
+            overlay.style.opacity = '0';
+            overlay.style.visibility = 'hidden';
+        }, 1200);
 
         // Realtime Synchronized System Settings Listener for Slide URLs
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
@@ -229,36 +240,48 @@
     window.handleUserAuthentication = async function() {
         const nameInput = document.getElementById('user-name').value.trim();
         const mobileInput = document.getElementById('user-mobile').value.trim();
+        const pinInput = document.getElementById('user-pin').value.trim();
 
         if (!nameInput) return alert("Please enter your Full Name.");
         if (mobileInput.length !== 10 || isNaN(mobileInput)) return alert("Please enter a valid 10-Digit Mobile Number.");
+        if (pinInput.length !== 4 || isNaN(pinInput)) return alert("Please establish a secure 4-Digit Account Entry PIN.");
 
-        // Show professional loading block animation state during registration tracking
+        // Lock form during authentication processing
         document.getElementById('loading-screen').style.visibility = 'visible';
         document.getElementById('loading-screen').style.opacity = '1';
 
         try {
             const userRef = doc(db, "users", mobileInput);
-            
-            // Checks if user profile records already sit on cloud tracks
-            onSnapshot(userRef, async (snap) => {
-                if (!snap.exists()) {
-                    // Create an inactive subscription template cleanly for new users
-                    await setDoc(userRef, {
-                        name: nameInput,
-                        mobile: mobileInput,
-                        subscription: "inactive",
-                        joinedAt: Date.now()
-                    });
+            const userSnap = await getDoc(userRef);
+
+            if (userSnap.exists()) {
+                const existingUser = userSnap.data();
+                // Validate existing profile PIN match rules
+                if (existingUser.pin && existingUser.pin !== pinInput) {
+                    throw new Error("Incorrect secure PIN entered for this account profile sequence.");
                 }
-                
-                localStorage.setItem('app_user_mobile', mobileInput);
-                window.location.href = 'dashboard.html';
-            });
+                // If profile had no pin established previously, lock it down now
+                if (!existingUser.pin) {
+                    await setDoc(userRef, { pin: pinInput }, { merge: true });
+                }
+            } else {
+                // Register absolute brand new subscriber credentials template
+                await setDoc(userRef, {
+                    name: nameInput,
+                    mobile: mobileInput,
+                    pin: pinInput,
+                    subscription: "inactive",
+                    joinedAt: Date.now()
+                });
+            }
+
+            localStorage.setItem('app_user_mobile', mobileInput);
+            window.location.href = 'dashboard.html';
+
         } catch(e) {
             document.getElementById('loading-screen').style.opacity = '0';
             document.getElementById('loading-screen').style.visibility = 'hidden';
-            alert("Network error. Try launching your browser loop terminal session again.");
+            alert(e.message || "Network validation break. Check data connections.");
         }
     }
 </script>
