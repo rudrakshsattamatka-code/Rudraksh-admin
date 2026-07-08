@@ -32,6 +32,7 @@
             .app-container { height: 100vh; max-height: 100vh; }
         }
         
+        /* High-Visibility Repeating Watermark Grid Array Overlay */
         .watermark-container {
             position: relative;
             overflow: hidden;
@@ -74,7 +75,7 @@
         <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 text-xs font-bold rounded-lg shadow transition-colors">LOGOUT</button>
     </div>
 
-    <!-- MAIN DASHBOARD SCROLLER -->
+    <!-- MAIN DASHBOARD CONTENT PANEL SCROLLER -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
 
         <!-- USER PROFILE CARD -->
@@ -94,7 +95,7 @@
             </div>
         </div>
 
-        <!-- GET MEMBERSHIP ACCESS -->
+        <!-- GET MEMBERSHIP ACCESS ACTION LINK -->
         <div id="membership-banner" class="hidden">
             <button onclick="openPlanModal()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-center py-3.5 rounded-2xl block shadow-md transition-all text-sm tracking-wider uppercase">
                 👑 Get Membership Access
@@ -110,20 +111,20 @@
             <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-semibold">Welcome to Rudraksh App.</p>
         </div>
 
-        <!-- LIVE CLOCK -->
+        <!-- BIG ATTRACTIVE LIVE CLOCK WITH DATE AFTER NOTICE BOARD -->
         <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-4 shadow-md text-center border border-green-500/20 relative overflow-hidden">
             <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
             <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">08 JULY 2026</div>
             <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">11:18:35</div>
         </div>
 
-        <!-- GAME SECTION CONTAINER -->
+        <!-- GAME SECTION PANEL CONTAINER -->
         <div class="space-y-3">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Game Section</h2>
             <div id="games-container" class="space-y-4"></div>
         </div>
 
-        <!-- SUPPORT FOOTER -->
+        <!-- HELP AND TELEPHONY BUTTONS DESK -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <div class="grid grid-cols-2 gap-3">
@@ -133,7 +134,7 @@
         </div>
     </div>
 
-    <!-- PLAN SELECTOR MODAL -->
+    <!-- MEMBERSHIP SELECTOR MODAL -->
     <div id="plan-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end justify-center hidden">
         <div class="bg-white rounded-t-3xl p-6 w-full max-w-[450px] space-y-5 animate-slide-up">
             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
@@ -187,7 +188,7 @@
         </div>
     </div>
 
-    <!-- LOCKDOWN VERIFICATION SCREEN -->
+    <!-- LOCKDOWN ADMIN VERIFICATION SCREEN -->
     <div id="lockdown-modal" class="fixed inset-0 bg-gray-950 z-50 flex flex-col items-center justify-center p-6 text-center hidden">
         <div class="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-6"></div>
         <h2 class="text-xl font-black text-white uppercase tracking-wide">Verifying Your Payment</h2>
@@ -237,13 +238,14 @@
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
+        // Clock & Date Tick Engine
         setInterval(() => {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toLocaleTimeString();
             document.getElementById('live-calendar-text').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         }, 1000);
 
-        // 1. Live Subscriber Access Listener
+        // 1. Live User Account Access Monitor
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
             if (!snapshot.exists()) { handleLogout(); return; }
             const uData = snapshot.data();
@@ -270,7 +272,7 @@
             renderGameCards();
         });
 
-        // 2. Configurations Engine Listener
+        // 2. Global System Settings Monitor
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -295,7 +297,7 @@
             }
         });
 
-        // 3. Realtime Market Cards Sync Listener
+        // 3. Realtime Markets Streaming Sync Hook
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             cachedMarkets = querySnapshot.docs.sort((a, b) => (Number(a.data().serialNo) || 999) - (Number(b.data().serialNo) || 999));
             renderGameCards();
@@ -417,13 +419,12 @@
         else alert("⏱️ Verification timed out. Please link up with support via WhatsApp.");
     }
 
-    // Failsafe image parsing handler engine
+    // High performance anti-CORS proxy image engine parser
     function setupAutoImageSlider(images) {
         const slider = document.getElementById('slider-container');
         if (!slider) return;
         clearInterval(activeSliderTimer);
         
-        // Clean and accept raw firebase URLs
         const cleanImages = images.filter(url => url && url.trim() !== "" && url.startsWith('http'));
         if (cleanImages.length === 0) {
             slider.innerHTML = `<img src="https://i.imgur.com/hWJLthc.png" class="w-full h-full object-cover shrink-0">`;
@@ -432,7 +433,12 @@
 
         slider.innerHTML = '';
         cleanImages.forEach(url => {
-            slider.innerHTML += `<img src="${url}" class="w-full h-full object-cover shrink-0" onerror="this.src='https://i.imgur.com/hWJLthc.png'">`;
+            // Automatically proxy firebase cloud paths through a free open gateway to bypass CORS blocks 
+            let proxyUrl = url;
+            if(url.includes("firebasestorage.googleapis.com")) {
+                proxyUrl = "https://images.weserv.nl/?url=" + encodeURIComponent(url);
+            }
+            slider.innerHTML += `<img src="${proxyUrl}" class="w-full h-full object-cover shrink-0" onerror="this.src='https://i.imgur.com/hWJLthc.png'">`;
         });
 
         let index = 0;
