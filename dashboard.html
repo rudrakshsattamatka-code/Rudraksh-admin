@@ -180,9 +180,11 @@
                     💡 **Instructions:** Scan this QR using PhonePe, Google Pay, or Paytm. Once your money is debited successfully, click the green button below immediately.
                 </p>
             </div>
-            <button onclick="submitDepositValidation()" class="w-full max-w-xs bg-green-600 text-white font-bold py-4 rounded-xl shadow-md uppercase text-xs tracking-wider">
-                ✅ Payment Done Successfully
-            </button>
+            <div class="w-full max-w-xs pt-2">
+                <button onclick="submitDepositValidation()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl shadow-md uppercase text-xs tracking-wider">
+                    ✅ Payment Done Successfully
+                </button>
+            </div>
         </div>
     </div>
 
@@ -203,6 +205,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // TYPO FIXED: Cleaned measurementId and configuration links
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
         authDomain: "rudraksh-d74c3.firebaseapp.com",
@@ -211,7 +214,7 @@
         storageBucket: "rudraksh-d74c3.firebasestorage.app",
         messagingSenderId: "270620722307",
         appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
-        measurementId: "G-406NQNQEK3XV"
+        measurementId: "G-406NQEK3XV"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -223,7 +226,7 @@
     let priceWeek = "5100";
     let selectedAmount = 0;
     let upiAddress = "rudraksh@upi";
-    let watermarkNumber = "9113224019"; // Failsafe default watermark number if firestore isn't set yet
+    let watermarkNumber = "9113224019"; 
     let countdownInterval = null;
     let requestUnsubscribe = null;
     let cachedMarkets = [];
@@ -301,7 +304,7 @@
             renderGameCards();
         });
 
-        // Auto Refresh every 2 seconds (Flicker-free data painter template)
+        // Auto render tick
         setInterval(renderGameCards, 2000);
     }
 
