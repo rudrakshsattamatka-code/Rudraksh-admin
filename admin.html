@@ -85,10 +85,9 @@
                     <input type="text" id="cfg-upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
                 </div>
                 
-                <!-- NEW WATERMARK NUMBER FIELD SELECTION -->
                 <div>
                     <label class="block text-[10px] text-orange-500 font-black uppercase tracking-wider mb-1">Game Card Background Watermark Number</label>
-                    <input type="text" id="cfg-watermark" placeholder="e.g. +91 91132 24019" class="w-full bg-orange-50/50 border border-orange-200 rounded-xl p-2.5 text-xs text-gray-800 font-bold focus:outline-none focus:border-orange-500">
+                    <input type="text" id="cfg-watermark" placeholder="e.g. 9113224019" class="w-full bg-orange-50/50 border border-orange-200 rounded-xl p-2.5 text-xs text-gray-800 font-bold focus:outline-none focus:border-orange-500">
                 </div>
 
                 <div>
@@ -186,7 +185,7 @@
             <div class="bg-gray-50 p-2 rounded-xl border border-gray-200 flex flex-col space-y-1">
                 <div class="flex justify-between items-center text-[9px] text-gray-400 font-bold"><span>SLOT ${i}</span><span id="status-${i}" class="text-gray-400">Empty</span></div>
                 <input type="text" id="slide-${i}" class="w-full bg-white border border-gray-200 rounded-lg p-1 text-[11px] text-gray-800 focus:outline-none">
-                <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-500/10 file:text-orange-600 font-bold cursor-pointer">
+                <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-50/10 file:text-orange-600 font-bold cursor-pointer">
             </div>
         `;
     }
@@ -245,7 +244,7 @@
                 document.getElementById('cfg-p-week').value = s.price_week || "5100";
                 document.getElementById('cfg-upi').value = s.upi_address || "rudraksh@upi";
                 document.getElementById('cfg-pin').value = s.admin_pin || '';
-                document.getElementById('cfg-watermark').value = s.watermark_phone || '+919113224019'; // Fill watermark text
+                document.getElementById('cfg-watermark').value = s.watermark_phone || ''; 
                 
                 const imgs = s.slider_images || [];
                 for(let i=1; i<=6; i++) { if(document.getElementById(`status-${i}`).innerText !== "UPLOADING...") document.getElementById(`slide-${i}`).value = imgs[i-1] || ''; }
@@ -322,7 +321,7 @@
             price_week: document.getElementById('cfg-p-week').value.trim(),
             upi_address: document.getElementById('cfg-upi').value.trim(),
             admin_pin: document.getElementById('cfg-pin').value.trim(),
-            watermark_phone: document.getElementById('cfg-watermark').value.trim(), // Save Watermark changes
+            watermark_phone: document.getElementById('cfg-watermark').value.trim(), 
             slider_images
         }, { merge: true });
         alert("Parameters saved successfully.");
