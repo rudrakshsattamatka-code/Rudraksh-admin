@@ -94,6 +94,12 @@
                     <label class="block text-[10px] text-gray-400 font-bold mb-1">Notice Text Broadcast</label>
                     <textarea id="cfg-notice" rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800"></textarea>
                 </div>
+
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Change Admin Master PIN (4 Digits)</label>
+                    <input type="password" id="cfg-pin" maxlength="4" placeholder="••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
+                </div>
+
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
@@ -243,8 +249,8 @@
                 document.getElementById('cfg-p-day').value = s.price_day || "1100";
                 document.getElementById('cfg-p-week').value = s.price_week || "5100";
                 document.getElementById('cfg-upi').value = s.upi_address || "rudraksh@upi";
-                document.getElementById('cfg-pin').value = s.admin_pin || '';
-                document.getElementById('cfg-watermark').value = s.watermark_phone || ''; 
+                document.getElementById('cfg-pin').value = s.admin_pin || '9999';
+                document.getElementById('cfg-watermark').value = s.watermark_phone || '';
                 
                 const imgs = s.slider_images || [];
                 for(let i=1; i<=6; i++) { if(document.getElementById(`status-${i}`).innerText !== "UPLOADING...") document.getElementById(`slide-${i}`).value = imgs[i-1] || ''; }
@@ -312,19 +318,29 @@
     }
 
     window.saveSystemConfig = async function() {
-        const slider_images = [];
-        for(let i=1; i<=6; i++) { const v = document.getElementById(`slide-${i}`).value.trim(); if(v) slider_images.push(v); }
-        await setDoc(doc(db, "system_config", "settings"), {
-            notice_text: document.getElementById('cfg-notice').value.trim(),
-            support_phone: document.getElementById('cfg-phone').value.trim(),
-            price_day: document.getElementById('cfg-p-day').value.trim(),
-            price_week: document.getElementById('cfg-p-week').value.trim(),
-            upi_address: document.getElementById('cfg-upi').value.trim(),
-            admin_pin: document.getElementById('cfg-pin').value.trim(),
-            watermark_phone: document.getElementById('cfg-watermark').value.trim(), 
-            slider_images
-        }, { merge: true });
-        alert("Parameters saved successfully.");
+        try {
+            const slider_images = [];
+            for(let i=1; i<=6; i++) { const v = document.getElementById(`slide-${i}`).value.trim(); if(v) slider_images.push(v); }
+            
+            let pinVal = document.getElementById('cfg-pin').value.trim();
+            if(!pinVal) pinVal = "9999";
+
+            await setDoc(doc(db, "system_config", "settings"), {
+                notice_text: document.getElementById('cfg-notice').value.trim(),
+                support_phone: document.getElementById('cfg-phone').value.trim(),
+                price_day: document.getElementById('cfg-p-day').value.trim(),
+                price_week: document.getElementById('cfg-p-week').value.trim(),
+                upi_address: document.getElementById('cfg-upi').value.trim(),
+                admin_pin: pinVal,
+                watermark_phone: document.getElementById('cfg-watermark').value.trim(), 
+                slider_images: slider_images
+            }, { merge: true });
+            
+            alert("Parameters saved successfully across the real-time cloud engine!");
+        } catch(e) {
+            alert("Save failed: Check Firestore Database rules allow write actions.");
+            console.error(e);
+        }
     }
 
     window.addOrUpdateMarket = async function() {
