@@ -336,9 +336,9 @@
                 slider_images: slider_images
             }, { merge: true });
             
-            alert("Parameters saved successfully across the real-time cloud engine!");
+            alert("Parameters successfully saved!");
         } catch(e) {
-            alert("Save failed: Check Firestore Database rules allow write actions.");
+            alert("Save failed. Re-verify Firestore Rules tab contains the root catch-all wrapper configuration.");
             console.error(e);
         }
     }
