@@ -6,31 +6,10 @@
     <title>Rudraksh Admin App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
-        }
-        .app-container {
-            width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            max-height: 850px;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+        body { background-color: #f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+        .app-container { width: 100%; max-width: 450px; height: 100vh; max-height: 850px; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .app-container::-webkit-scrollbar { display: none; }
-        @media (max-width: 450px) {
-            .app-container { height: 100vh; max-height: 100vh; }
-        }
+        @media (max-width: 450px) { .app-container { height: 100vh; max-height: 100vh; } }
     </style>
 </head>
 <body>
@@ -47,7 +26,7 @@
         </div>
     </div>
 
-    <!-- MAIN NAV HEADER -->
+    <!-- MAIN HEADER -->
     <div class="bg-gray-900 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
         <div>
             <h2 class="font-black text-sm tracking-wide text-orange-500">RUDRAKSH ADMIN</h2>
@@ -56,17 +35,17 @@
         <button onclick="handleAdminLogout()" class="bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 text-[10px] font-bold rounded-lg">LOGOUT</button>
     </div>
 
-    <!-- BOTTOM APP BAR NAVIGATION -->
+    <!-- NAVIGATION TABS -->
     <div class="bg-white border-t border-gray-100 grid grid-cols-3 text-center text-[11px] font-bold text-gray-400 sticky bottom-0 z-40 shadow-inner">
         <button onclick="openTab('system')" id="nav-system" class="py-3 border-t-2 border-orange-500 text-orange-500">Settings</button>
         <button onclick="openTab('games')" id="nav-games" class="py-3 border-t-2 border-transparent">Games</button>
         <button onclick="openTab('users')" id="nav-users" class="py-3 border-t-2 border-transparent relative">Users <span id="req-dot" class="hidden absolute top-2 right-6 w-2 h-2 bg-red-500 rounded-full"></span></button>
     </div>
 
-    <!-- APP SCROLLER AREA -->
+    <!-- SCROLLER AREA -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-12">
 
-        <!-- TAB SECTION 1: GLOBAL CONFIGURATIONS -->
+        <!-- SETTINGS TAB -->
         <div id="tab-system" class="space-y-4">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">Subscription Control & Pricing</h3>
@@ -84,22 +63,18 @@
                     <label class="block text-[10px] text-gray-400 font-bold mb-1">Receiver UPI ID Address</label>
                     <input type="text" id="cfg-upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
                 </div>
-                
                 <div>
-                    <label class="block text-[10px] text-orange-500 font-black uppercase tracking-wider mb-1">Game Card Background Watermark Number</label>
-                    <input type="text" id="cfg-watermark" placeholder="e.g. 9113224019" class="w-full bg-orange-50/50 border border-orange-200 rounded-xl p-2.5 text-xs text-gray-800 font-bold focus:outline-none focus:border-orange-500">
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Game Card Background Watermark Number</label>
+                    <input type="text" id="cfg-watermark" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-bold">
                 </div>
-
                 <div>
                     <label class="block text-[10px] text-gray-400 font-bold mb-1">Notice Text Broadcast</label>
                     <textarea id="cfg-notice" rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800"></textarea>
                 </div>
-
                 <div>
-                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Change Admin Master PIN (4 Digits)</label>
-                    <input type="password" id="cfg-pin" maxlength="4" placeholder="••••" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Change Admin PIN (4 Digits)</label>
+                    <input type="password" id="cfg-pin" maxlength="4" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
                 </div>
-
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
@@ -110,7 +85,7 @@
             </div>
         </div>
 
-        <!-- TAB SECTION 2: GAME MODIFICATION ENGINE -->
+        <!-- GAMES TAB -->
         <div id="tab-games" class="space-y-4 hidden">
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">Add/Edit Game Target</h3>
@@ -131,15 +106,15 @@
                 <div class="space-y-2">
                     <div>
                         <label class="block text-[10px] text-gray-400 font-bold mb-1">🎲 OTC Value Line</label>
-                        <input type="text" id="mkt-otc" placeholder="0 5" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono tracking-widest font-bold">
+                        <input type="text" id="mkt-otc" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono font-bold">
                     </div>
                     <div>
                         <label class="block text-[10px] text-gray-400 font-bold mb-1">🔗 Jodi Value Line</label>
-                        <input type="text" id="mkt-jodi" placeholder="02 03 07 08 58 52" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono tracking-wider font-bold">
+                        <input type="text" id="mkt-jodi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono font-bold">
                     </div>
                     <div>
                         <label class="block text-[10px] text-gray-400 font-bold mb-1">📊 Panel Value Line</label>
-                        <input type="text" id="mkt-panel" placeholder="370 127 334 168" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono tracking-wider font-bold">
+                        <input type="text" id="mkt-panel" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono font-bold">
                     </div>
                 </div>
                 <button onclick="addOrUpdateMarket()" class="w-full bg-orange-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Publish Game Update</button>
@@ -147,7 +122,7 @@
             <div id="admin-markets-list" class="space-y-2"></div>
         </div>
 
-        <!-- TAB SECTION 3: SUBSCRIPTION USERS MANAGEMENT -->
+        <!-- USERS TAB -->
         <div id="tab-users" class="space-y-4 hidden">
             <div class="bg-orange-50 rounded-2xl p-4 border border-orange-200 space-y-2">
                 <h3 class="font-black text-xs text-orange-800 uppercase tracking-wider">⚠️ Pending Payments Queue</h3>
@@ -190,8 +165,11 @@
         inputsZone.innerHTML += `
             <div class="bg-gray-50 p-2 rounded-xl border border-gray-200 flex flex-col space-y-1">
                 <div class="flex justify-between items-center text-[9px] text-gray-400 font-bold"><span>SLOT ${i}</span><span id="status-${i}" class="text-gray-400">Empty</span></div>
-                <input type="text" id="slide-${i}" class="w-full bg-white border border-gray-200 rounded-lg p-1 text-[11px] text-gray-800 focus:outline-none">
-                <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-50/10 file:text-orange-600 font-bold cursor-pointer">
+                <input type="text" id="slide-${i}" placeholder="Image link placeholder..." class="w-full bg-white border border-gray-200 rounded-lg p-1 text-[11px] text-gray-800 focus:outline-none overflow-hidden text-ellipsis">
+                <div class="flex space-x-2 mt-1">
+                    <input type="file" id="file-${i}" accept="image/*" onchange="uploadImageFromGallery(${i})" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-500/10 file:text-orange-600 font-bold cursor-pointer flex-1">
+                    <button onclick="clearImageSlot(${i})" class="bg-red-100 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold">Clear</button>
+                </div>
             </div>
         `;
     }
@@ -233,32 +211,42 @@
         if(!file) return;
         label.innerText = "UPLOADING..."; label.className = "text-orange-500 font-bold animate-pulse";
         try {
-            const snapshot = await uploadBytes(ref(storage, `slider_banners/slot_${slot}_${Date.now()}`), file);
+            const snapshot = await uploadBytes(ref(storage, `slider_banners/slot_${slot}`), file);
             const downloadUrl = await getDownloadURL(snapshot.ref);
             document.getElementById(`slide-${slot}`).value = downloadUrl;
             label.innerText = "✓ UPLOADED"; label.className = "text-green-600 font-bold";
+            saveSystemConfig();
         } catch(e) { label.innerText = "❌ FAILED"; label.className = "text-red-500 font-bold"; }
     }
 
+    window.clearImageSlot = function(slot) {
+        document.getElementById(`slide-${slot}`).value = "";
+        document.getElementById(`file-${slot}`).value = "";
+        document.getElementById(`status-${slot}`).innerText = "Cleared";
+        document.getElementById(`status-${slot}`).className = "text-red-500 font-bold";
+        saveSystemConfig();
+    }
+
     function loadLiveHooks() {
-        // Auto-fills everything into the inputs when the database sends an update
         onSnapshot(doc(db, "system_config", "settings"), (snap) => {
             if(snap.exists()) {
                 const s = snap.data();
                 document.getElementById('cfg-notice').value = s.notice_text || '';
-                
-                // Fallbacks guarantee values never become empty text fields
                 document.getElementById('cfg-p-day').value = s.price_day || "1100";
                 document.getElementById('cfg-p-week').value = s.price_week || "5100";
                 document.getElementById('cfg-upi').value = s.upi_address || "rudraksh@upi";
                 document.getElementById('cfg-pin').value = s.admin_pin || '9999';
-                document.getElementById('cfg-watermark').value = s.watermark_phone || '9113224019';
+                document.getElementById('cfg-watermark').value = s.watermark_phone || '';
                 
                 const imgs = s.slider_images || [];
                 for(let i=1; i<=6; i++) { 
                     if(document.getElementById(`status-${i}`).innerText !== "UPLOADING...") {
-                        document.getElementById(`slide-${i}`).value = imgs[i-1] || ''; 
-                    }
+                        document.getElementById(`slide-${i}`).value = imgs[i-1] || '';
+                        if(imgs[i-1]) {
+                            document.getElementById(`status-${i}`).innerText = "✓ Active";
+                            document.getElementById(`status-${i}`).className = "text-green-600 font-bold";
+                        }
+                    } 
                 }
             }
         });
@@ -287,7 +275,11 @@
                 container.innerHTML += `
                     <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex justify-between items-center text-xs">
                         <div><p class="font-bold text-gray-800">${u.name || 'User'}</p><p class="text-[10px] text-gray-400 font-mono">${uDoc.id}</p></div>
-                        <div class="flex items-center space-x-2">${subBadge}<button onclick="toggleMembership('${uDoc.id}', '${u.subscription}')" class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Toggle</button></div>
+                        <div class="flex items-center space-x-1">
+                            ${subBadge}
+                            <button onclick="toggleMembership('${uDoc.id}', '${u.subscription}')" class="bg-blue-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Toggle</button>
+                            <button onclick="deleteUser('${uDoc.id}')" class="bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Delete</button>
+                        </div>
                     </div>`;
             });
         });
@@ -343,7 +335,7 @@
             
             alert("Parameters successfully saved!");
         } catch(e) {
-            alert("Save failed. Confirm your Firestore rules allow public write strings.");
+            alert("Save failed. Check your Firebase console rule settings.");
             console.error(e);
         }
     }
@@ -368,6 +360,7 @@
     window.rejectPaymentRequest = async function(docId) { await updateDoc(doc(db, "deposits", docId), { status: "rejected" }); }
     window.toggleMembership = async function(id, cur) { await updateDoc(doc(db, "users", id), { subscription: cur === "active" ? "inactive" : "active" }); }
     window.deleteMarket = async function(id) { if(confirm("Wipe market?")) await deleteDoc(doc(db, "markets", id)); }
+    window.deleteUser = async function(id) { if(confirm("Permanently delete this user from database?")) await deleteDoc(doc(db, "users", id)); }
 </script>
 </body>
 </html>
