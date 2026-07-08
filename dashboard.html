@@ -31,25 +31,34 @@
         @media (max-width: 450px) {
             .app-container { height: 100vh; max-height: 100vh; }
         }
-        /* Card Watermark styling */
+        
+        /* New Professional Watermark Array Grid Overlay */
         .watermark-container {
             position: relative;
             overflow: hidden;
         }
-        .watermark-text {
+        .watermark-overlay {
             position: absolute;
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.05);
-            transform: rotate(-25deg);
-            white-space: nowrap;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 20px;
+            padding: 10px;
             pointer-events: none;
             user-select: none;
-            top: 30%;
-            left: -10%;
-            width: 120%;
-            text-align: center;
             z-index: 0;
+            transform: rotate(-15deg) scale(1.1);
+        }
+        .watermark-item {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.045);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -69,11 +78,13 @@
     <!-- MAIN DASHBOARD SCROLLER -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
 
-        <!-- USER PROFILE CARD -->
+        <!-- USER PROFILE CARD WITH NAME -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
             <div>
                 <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Subscriber Profile</p>
-                <p id="profile-phone" class="text-gray-800 font-extrabold text-sm mt-0.5">Mobile: --</p>
+                <!-- Shows User Name cleanly alongside mobile details -->
+                <p id="profile-name" class="text-gray-900 font-black text-base mt-0.5">Loading User...</p>
+                <p id="profile-phone" class="text-gray-500 font-semibold text-xs font-mono">Mobile: --</p>
             </div>
             <div id="membership-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gray-200 text-gray-600">Checking...</div>
         </div>
@@ -206,9 +217,10 @@
     let priceWeek = "5100";
     let selectedAmount = 0;
     let upiAddress = "rudraksh@upi";
-    let watermarkNumber = "+919113224019";
+    let watermarkNumber = "";
     let countdownInterval = null;
     let requestUnsubscribe = null;
+    let cachedMarkets = [];
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
@@ -218,10 +230,14 @@
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
-        // 1. User Account Access Monitor
+        // 1. Live User Account Access Monitor (Gets user name details directly)
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
             if (!snapshot.exists()) { handleLogout(); return; }
-            userSubscriptionStatus = snapshot.data().subscription || "inactive";
+            const uData = snapshot.data();
+            userSubscriptionStatus = uData.subscription || "inactive";
+            
+            // Assign name text property safely 
+            document.getElementById('profile-name').innerText = uData.name || "Rudraksh User";
             
             const badge = document.getElementById('membership-badge');
             const banner = document.getElementById('membership-banner');
@@ -239,9 +255,10 @@
                 badge.classList.add('bg-orange-100', 'text-orange-700');
                 banner.classList.remove('hidden');
             }
+            renderGameCards(); // Re-render numbers instantly if subscription profile transitions live
         });
 
-        // 2. Global System configs stream parameters (Handles Watermark changes live)
+        // 2. Global System Settings Monitor
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -254,7 +271,7 @@
                 priceDay = data.price_day || "1100";
                 priceWeek = data.price_week || "5100";
                 upiAddress = data.upi_address || "rudraksh@upi";
-                watermarkNumber = data.watermark_phone || "+919113224019"; // Capture active admin settings
+                watermarkNumber = data.watermark_phone || ""; 
                 
                 document.getElementById('label-price-day').innerText = "₹" + priceDay;
                 document.getElementById('label-price-week').innerText = "₹" + priceWeek;
@@ -262,64 +279,80 @@
                 if (data.slider_images && Array.isArray(data.slider_images)) {
                     setupAutoImageSlider(data.slider_images);
                 }
+                renderGameCards(); // Updates watermarks layout parameters cleanly
             }
         });
 
-        // 3. Game Section Real-time renderer (Displays Watermarks & Handles precision image look)
+        // 3. Realtime Markets Streaming Sync Hook
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
-            const container = document.getElementById('games-container');
-            container.innerHTML = '';
+            cachedMarkets = querySnapshot.docs.sort((a, b) => (Number(a.data().serialNo) || 999) - (Number(b.data().serialNo) || 999));
+            renderGameCards();
+        });
 
-            const sortedDocs = querySnapshot.docs.sort((a, b) => (Number(a.data().serialNo) || 999) - (Number(b.data().serialNo) || 999));
+        // AUTO FORCE SYNC MECHANIC: Runs background calculations verification checks every 2 seconds automatically
+        setInterval(() => {
+            renderGameCards();
+        }, 2000);
+    }
 
-            sortedDocs.forEach((doc) => {
-                const m = doc.data();
-                const isPremiumUser = (userSubscriptionStatus === "active");
-                
-                // Text layouts logic adjustments matches image instructions
-                const otcText = isPremiumUser ? (m.otcValue || "••") : "only for members";
-                const jodiText = isPremiumUser ? (m.jodiValue || "•• ••") : "only for members";
-                const panelText = isPremiumUser ? (m.panelValue || "••• •••") : "only for members";
-                const dataStyle = isPremiumUser ? "font-sans font-extrabold text-base tracking-wide" : "font-semibold italic text-xs tracking-normal text-orange-300";
+    // High performance DOM painter layer loop
+    function renderGameCards() {
+        const container = document.getElementById('games-container');
+        if(!container) return;
+        
+        let htmlBuffer = "";
+        const isPremiumUser = (userSubscriptionStatus === "active");
 
-                container.innerHTML += `
-                    <div class="watermark-container bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-4">
-                        
-                        <!-- Watermark node element injection -->
-                        <div class="watermark-text">${watermarkNumber}</div>
+        cachedMarkets.forEach((doc) => {
+            const m = doc.data();
+            const otcText = isPremiumUser ? (m.otcValue || "••") : "only for members";
+            const jodiText = isPremiumUser ? (m.jodiValue || "•• ••") : "only for members";
+            const panelText = isPremiumUser ? (m.panelValue || "••• •••") : "only for members";
+            const dataStyle = isPremiumUser ? "font-sans font-extrabold text-base tracking-wide" : "font-semibold italic text-xs tracking-normal text-orange-300";
 
-                        <!-- Header Row -->
-                        <div class="flex items-center justify-between z-10">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
-                                <h3 class="font-black text-xl uppercase tracking-wider font-sans">${doc.id}</h3>
-                            </div>
-                            <div class="bg-emerald-500 text-[11px] font-bold px-3 py-1 rounded-full text-white font-mono">${m.gameDate || '--'}</div>
-                            <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5 shadow-sm">
-                                <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
-                                <span>LIVE</span>
-                            </div>
+            // Creates 4 repeating positions inside the overlay box grid array matrix for optimal protection layout
+            const watermarkOverlayHtml = watermarkNumber ? `
+                <div class="watermark-overlay">
+                    <div class="watermark-item">${watermarkNumber}</div>
+                    <div class="watermark-item">${watermarkNumber}</div>
+                    <div class="watermark-item">${watermarkNumber}</div>
+                    <div class="watermark-item">${watermarkNumber}</div>
+                </div>
+            ` : "";
+
+            htmlBuffer += `
+                <div class="watermark-container bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-4">
+                    ${watermarkOverlayHtml}
+                    <div class="flex items-center justify-between z-10">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                            <h3 class="font-black text-xl uppercase tracking-wider font-sans">${doc.id}</h3>
                         </div>
-
-                        <!-- Data Fields precisely matching visual format guidelines -->
-                        <div class="space-y-2 z-10">
-                            <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
-                                <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🎲 OTC : &rarr;</span>
-                                <span class="${dataStyle}">${otcText}</span>
-                            </div>
-                            <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
-                                <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🔗 Jodi : &rarr;</span>
-                                <span class="${dataStyle}">${jodiText}</span>
-                            </div>
-                            <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
-                                <span class="text-xs font-bold text-blue-200 w-24 shrink-0">📊 Panel : &rarr;</span>
-                                <span class="${dataStyle}">${panelText}</span>
-                            </div>
+                        <div class="bg-emerald-500 text-[11px] font-bold px-3 py-1 rounded-full text-white font-mono">${m.gameDate || '--'}</div>
+                        <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5 shadow-sm">
+                            <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
+                            <span>LIVE</span>
                         </div>
                     </div>
-                `;
-            });
+                    <div class="space-y-2 z-10">
+                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
+                            <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🎲 OTC : &rarr;</span>
+                            <span class="${dataStyle}">${otcText}</span>
+                        </div>
+                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
+                            <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🔗 Jodi : &rarr;</span>
+                            <span class="${dataStyle}">${jodiText}</span>
+                        </div>
+                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
+                            <span class="text-xs font-bold text-blue-200 w-24 shrink-0">📊 Panel : &rarr;</span>
+                            <span class="${dataStyle}">${panelText}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
         });
+        
+        if(htmlBuffer) container.innerHTML = htmlBuffer;
     }
 
     window.openPlanModal = () => document.getElementById('plan-modal').classList.remove('hidden');
@@ -377,7 +410,6 @@
         else alert("⏱️ Verification timed out. Please link up with support via WhatsApp.");
     }
 
-    // Fixed dynamic image validation slider loop tracker array
     function setupAutoImageSlider(images) {
         const slider = document.getElementById('slider-container');
         if (!slider) return;
