@@ -53,12 +53,10 @@
             <h2 class="font-black text-sm tracking-wide text-orange-500">RUDRAKSH ADMIN</h2>
             <p class="text-[9px] text-gray-400">Mobile Console Interface</p>
         </div>
-        <div class="flex items-center space-x-2">
-            <button onclick="handleAdminLogout()" class="bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 text-[10px] font-bold rounded-lg">LOGOUT</button>
-        </div>
+        <button onclick="handleAdminLogout()" class="bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 text-[10px] font-bold rounded-lg">LOGOUT</button>
     </div>
 
-    <!-- BOTTOM APP BAR NAVIGATION SELECTOR TAB -->
+    <!-- BOTTOM APP BAR NAVIGATION -->
     <div class="bg-white border-t border-gray-100 grid grid-cols-3 text-center text-[11px] font-bold text-gray-400 sticky bottom-0 z-40 shadow-inner">
         <button onclick="openTab('system')" id="nav-system" class="py-3 border-t-2 border-orange-500 text-orange-500">Settings</button>
         <button onclick="openTab('games')" id="nav-games" class="py-3 border-t-2 border-transparent">Games</button>
@@ -70,7 +68,6 @@
 
         <!-- TAB SECTION 1: GLOBAL CONFIGURATIONS -->
         <div id="tab-system" class="space-y-4">
-            <!-- Price and Parameter Inputs -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">Subscription Control & Pricing</h3>
                 <div class="grid grid-cols-2 gap-2">
@@ -85,8 +82,15 @@
                 </div>
                 <div>
                     <label class="block text-[10px] text-gray-400 font-bold mb-1">Receiver UPI ID Address</label>
-                    <input type="text" id="cfg-upi" placeholder="rudraksh@upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
+                    <input type="text" id="cfg-upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
                 </div>
+                
+                <!-- NEW WATERMARK NUMBER FIELD SELECTION -->
+                <div>
+                    <label class="block text-[10px] text-orange-500 font-black uppercase tracking-wider mb-1">Game Card Background Watermark Number</label>
+                    <input type="text" id="cfg-watermark" placeholder="e.g. +91 91132 24019" class="w-full bg-orange-50/50 border border-orange-200 rounded-xl p-2.5 text-xs text-gray-800 font-bold focus:outline-none focus:border-orange-500">
+                </div>
+
                 <div>
                     <label class="block text-[10px] text-gray-400 font-bold mb-1">Notice Text Broadcast</label>
                     <textarea id="cfg-notice" rows="2" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800"></textarea>
@@ -94,7 +98,7 @@
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
-            <!-- Image Sliders Gallery Storage Bucket Inputs -->
+            <!-- Image Sliders Gallery -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-2">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider mb-2">Gallery Image Banners (1-6)</h3>
                 <div class="space-y-2" id="slider-inputs-zone"></div>
@@ -119,38 +123,31 @@
                     <label class="block text-[10px] text-gray-400 font-bold mb-1">Display Timestamp</label>
                     <input type="text" id="mkt-date" placeholder="17/06/2026 9:35 AM" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
                 </div>
-                <div class="grid grid-cols-3 gap-2">
+                <div class="space-y-2">
                     <div>
-                        <label class="block text-[10px] text-gray-400 font-bold mb-1">OTC</label>
-                        <input type="text" id="mkt-otc" placeholder="0 5" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">🎲 OTC Value Line</label>
+                        <input type="text" id="mkt-otc" placeholder="0 5" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono tracking-widest font-bold">
                     </div>
                     <div>
-                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Jodi</label>
-                        <input type="text" id="mkt-jodi" placeholder="02 58" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">🔗 Jodi Value Line</label>
+                        <input type="text" id="mkt-jodi" placeholder="02 03 07 08 58 52" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono tracking-wider font-bold">
                     </div>
                     <div>
-                        <label class="block text-[10px] text-gray-400 font-bold mb-1">Panel</label>
-                        <input type="text" id="mkt-panel" placeholder="370 127" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono">
+                        <label class="block text-[10px] text-gray-400 font-bold mb-1">📊 Panel Value Line</label>
+                        <input type="text" id="mkt-panel" placeholder="370 127 334 168" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono tracking-wider font-bold">
                     </div>
                 </div>
                 <button onclick="addOrUpdateMarket()" class="w-full bg-orange-500 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Publish Game Update</button>
             </div>
-
-            <!-- Realtime active markets listed below -->
             <div id="admin-markets-list" class="space-y-2"></div>
         </div>
 
-        <!-- TAB SECTION 3: SUBSCRIPTION SYSTEM QUEUE -->
+        <!-- TAB SECTION 3: SUBSCRIPTION USERS MANAGEMENT -->
         <div id="tab-users" class="space-y-4 hidden">
-            <!-- LIVE REQUEST PAYMENTS QUEUE BOX -->
             <div class="bg-orange-50 rounded-2xl p-4 border border-orange-200 space-y-2">
-                <h3 class="font-black text-xs text-orange-800 uppercase tracking-wider">⚠️ Pending Payments Queue (3 min Timer)</h3>
-                <div id="deposit-queue-zone" class="space-y-2">
-                    <p class="text-[11px] text-orange-600 font-semibold italic">No active requests floating in verification.</p>
-                </div>
+                <h3 class="font-black text-xs text-orange-800 uppercase tracking-wider">⚠️ Pending Payments Queue</h3>
+                <div id="deposit-queue-zone" class="space-y-2"></div>
             </div>
-
-            <!-- MASTER SUBSCRIBERS DIRECTORY -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <h3 class="font-black text-xs text-gray-400 uppercase tracking-wider">Subscribers Directory</h3>
                 <div id="users-directory-zone" class="space-y-3"></div>
@@ -182,7 +179,6 @@
     let masterAdminPin = "9999";
     let globalMarketsCache = {};
 
-    // Dynamic slider input boxes generation code
     const inputsZone = document.getElementById('slider-inputs-zone');
     inputsZone.innerHTML = '';
     for(let i=1; i<=6; i++) {
@@ -212,7 +208,7 @@
             localStorage.setItem('admin_session_auth', 'verified');
             document.getElementById('admin-gate').classList.add('hidden');
             loadLiveHooks();
-        } else { alert("Incorrect administrative safety PIN."); }
+        } else { alert("Incorrect PIN."); }
     }
 
     window.handleAdminLogout = () => { localStorage.removeItem('admin_session_auth'); window.location.reload(); }
@@ -240,7 +236,6 @@
     }
 
     function loadLiveHooks() {
-        // 1. Live settings hooks sync
         onSnapshot(doc(db, "system_config", "settings"), (snap) => {
             if(snap.exists()) {
                 const s = snap.data();
@@ -250,12 +245,13 @@
                 document.getElementById('cfg-p-week').value = s.price_week || "5100";
                 document.getElementById('cfg-upi').value = s.upi_address || "rudraksh@upi";
                 document.getElementById('cfg-pin').value = s.admin_pin || '';
+                document.getElementById('cfg-watermark').value = s.watermark_phone || '+919113224019'; // Fill watermark text
+                
                 const imgs = s.slider_images || [];
                 for(let i=1; i<=6; i++) { if(document.getElementById(`status-${i}`).innerText !== "UPLOADING...") document.getElementById(`slide-${i}`).value = imgs[i-1] || ''; }
             }
         });
 
-        // 2. Realtime Game sorting engine listed cards loops
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             const list = document.getElementById('admin-markets-list');
             list.innerHTML = '';
@@ -266,14 +262,11 @@
                 list.innerHTML += `
                     <div class="bg-white p-3 rounded-xl border border-gray-200 flex justify-between items-center cursor-pointer" onclick="populateMarketForm('${doc.id}')">
                         <div><span class="text-xs font-black text-orange-500 font-mono mr-1">[${m.serialNo}]</span><span class="font-bold text-gray-800 text-xs uppercase">${doc.id}</span></div>
-                        <div class="text-right space-x-2">
-                            <button onclick="event.stopPropagation(); deleteMarket('${doc.id}')" class="text-red-500 text-xs font-bold">Delete</button>
-                        </div>
+                        <button onclick="event.stopPropagation(); deleteMarket('${doc.id}')" class="text-red-500 text-xs font-bold">Delete</button>
                     </div>`;
             });
         });
 
-        // 3. Telemetry subscribers directory
         onSnapshot(collection(db, "users"), (querySnapshot) => {
             const container = document.getElementById('users-directory-zone');
             container.innerHTML = '';
@@ -288,28 +281,21 @@
             });
         });
 
-        // 4. Verification Queue Monitor (The 3 Minute lockdown interceptor handler)
         onSnapshot(collection(db, "deposits"), (querySnapshot) => {
             const zone = document.getElementById('deposit-queue-zone');
             const dot = document.getElementById('req-dot');
             zone.innerHTML = '';
-            
-            if(querySnapshot.empty) {
-                zone.innerHTML = `<p class="text-[11px] text-orange-600 font-semibold italic">No active validation requests floating.</p>`;
-                dot.classList.add('hidden');
-                return;
-            }
-            
+            if(querySnapshot.empty) { zone.innerHTML = `<p class="text-[11px] text-orange-600 font-semibold italic">No active requests.</p>`; dot.classList.add('hidden'); return; }
             dot.classList.remove('hidden');
             querySnapshot.forEach(dDoc => {
                 const d = dDoc.data();
                 if(d.status !== "pending") return;
                 zone.innerHTML += `
                     <div class="bg-white p-3 rounded-xl border border-orange-200 flex flex-col space-y-2 text-xs">
-                        <div class="flex justify-between font-bold"><span>User: <span class="font-mono text-gray-800">${d.userMobile}</span></span><span class="text-green-600">Amount: ₹${d.amount}</span></div>
+                        <div class="flex justify-between font-bold"><span>User: ${d.userMobile}</span><span class="text-green-600">₹${d.amount}</span></div>
                         <div class="grid grid-cols-2 gap-2 pt-1">
-                            <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px] uppercase">Approve Access</button>
-                            <button onclick="rejectPaymentRequest('${dDoc.id}')" class="bg-red-600 text-white py-1.5 rounded-lg font-bold text-[11px] uppercase">Reject/Cancel</button>
+                            <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px]">APPROVE</button>
+                            <button onclick="rejectPaymentRequest('${dDoc.id}')" class="bg-red-600 text-white py-1.5 rounded-lg font-bold text-[11px]">REJECT</button>
                         </div>
                     </div>`;
             });
@@ -336,9 +322,10 @@
             price_week: document.getElementById('cfg-p-week').value.trim(),
             upi_address: document.getElementById('cfg-upi').value.trim(),
             admin_pin: document.getElementById('cfg-pin').value.trim(),
+            watermark_phone: document.getElementById('cfg-watermark').value.trim(), // Save Watermark changes
             slider_images
         }, { merge: true });
-        alert("Global platform configurations successfully saved.");
+        alert("Parameters saved successfully.");
     }
 
     window.addOrUpdateMarket = async function() {
@@ -350,20 +337,15 @@
             jodiValue: document.getElementById('mkt-jodi').value.trim(),
             panelValue: document.getElementById('mkt-panel').value.trim()
         }, { merge: true });
-        alert("Game Section template published.");
+        alert("Game details published.");
     }
 
     window.approvePaymentRequest = async function(userMobile, docId) {
         await updateDoc(doc(db, "users", userMobile), { subscription: "active" });
         await deleteDoc(doc(db, "deposits", docId));
-        alert("Access approved. Client unlocked instantly.");
     }
 
-    window.rejectPaymentRequest = async function(docId) {
-        await updateDoc(doc(db, "deposits", docId), { status: "rejected" });
-        alert("Request rejected. Lockdown screen dismissed on user side.");
-    }
-
+    window.rejectPaymentRequest = async function(docId) { await updateDoc(doc(db, "deposits", docId), { status: "rejected" }); }
     window.toggleMembership = async function(id, cur) { await updateDoc(doc(db, "users", id), { subscription: cur === "active" ? "inactive" : "active" }); }
     window.deleteMarket = async function(id) { if(confirm("Wipe market?")) await deleteDoc(doc(db, "markets", id)); }
 </script>
