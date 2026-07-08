@@ -32,7 +32,7 @@
             .app-container { height: 100vh; max-height: 100vh; }
         }
         
-        /* Premium Background Repeating Watermark Grid */
+        /* High-Visibility Repeating Watermark Grid Array Overlay */
         .watermark-container {
             position: relative;
             overflow: hidden;
@@ -43,18 +43,18 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: repeat(2, 1fr);
-            gap: 20px;
-            padding: 10px;
+            gap: 30px;
+            padding: 15px;
             pointer-events: none;
             user-select: none;
             z-index: 0;
             transform: rotate(-15deg) scale(1.1);
         }
         .watermark-item {
-            font-size: 1.15rem;
-            font-weight: 800;
+            font-size: 1.2rem;
+            font-weight: 900;
             letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.045);
+            color: rgba(255, 255, 255, 0.06);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -82,7 +82,7 @@
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
             <div>
                 <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Subscriber Profile</p>
-                <p id="profile-name" class="text-gray-900 font-black text-base mt-0.5">Loading User...</p>
+                <p id="profile-name" class="text-gray-900 font-black text-base mt-0.5">Ganesh</p>
                 <p id="profile-phone" class="text-gray-500 font-semibold text-xs font-mono">Mobile: --</p>
             </div>
             <div id="membership-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gray-200 text-gray-600">Checking...</div>
@@ -108,14 +108,14 @@
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                 <h3 class="font-extrabold text-xs uppercase tracking-wider">Notice Board</h3>
             </div>
-            <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-semibold">Syncing announcements...</p>
+            <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-semibold">Welcome to Rudraksh App.</p>
         </div>
 
-        <!-- NEW POSITIONED: BIG ATTRACTIVE LIVE CLOCK WITH DATE (PLACED AFTER NOTICE BOARD) -->
+        <!-- BIG ATTRACTIVE LIVE CLOCK WITH DATE AFTER NOTICE BOARD -->
         <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-4 shadow-md text-center border border-green-500/20 relative overflow-hidden">
             <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
-            <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">00 MONTH 2026</div>
-            <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">00:00:00 AM</div>
+            <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">08 JULY 2026</div>
+            <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">11:18:35</div>
         </div>
 
         <!-- GAME SECTION PANEL CONTAINER -->
@@ -128,8 +128,8 @@
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <div class="grid grid-cols-2 gap-3">
-                <a id="support-whatsapp" href="#" target="_blank" class="flex items-center justify-center bg-emerald-500 text-white py-3 rounded-xl text-xs font-bold shadow-sm">WhatsApp Chat</a>
-                <a id="support-call" href="#" class="flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl text-xs font-bold shadow-sm">Call Support</a>
+                <a id="support-whatsapp" href="https://wa.me/919113224019" target="_blank" class="flex items-center justify-center bg-emerald-500 text-white py-3 rounded-xl text-xs font-bold shadow-sm">WhatsApp Chat</a>
+                <a id="support-call" href="tel:9113224019" class="flex items-center justify-center bg-blue-600 text-white py-3 rounded-xl text-xs font-bold shadow-sm">Call Support</a>
             </div>
         </div>
     </div>
@@ -211,7 +211,7 @@
         storageBucket: "rudraksh-d74c3.firebasestorage.app",
         messagingSenderId: "270620722307",
         appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
-        measurementId: "G-406NQEK3XV"
+        measurementId: "G-406NQNQEK3XV"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -223,7 +223,7 @@
     let priceWeek = "5100";
     let selectedAmount = 0;
     let upiAddress = "rudraksh@upi";
-    let watermarkNumber = "";
+    let watermarkNumber = "9113224019"; // Failsafe default watermark number if firestore isn't set yet
     let countdownInterval = null;
     let requestUnsubscribe = null;
     let cachedMarkets = [];
@@ -249,7 +249,7 @@
             const uData = snapshot.data();
             userSubscriptionStatus = uData.subscription || "inactive";
             
-            document.getElementById('profile-name').innerText = uData.name || "Rudraksh User";
+            document.getElementById('profile-name').innerText = uData.name || "Ganesh";
             
             const badge = document.getElementById('membership-badge');
             const banner = document.getElementById('membership-banner');
@@ -270,7 +270,7 @@
             renderGameCards();
         });
 
-        // 2. Global System Settings Monitor (Tracks Token URLs safely)
+        // 2. Global System Settings Monitor
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -283,7 +283,7 @@
                 priceDay = data.price_day || "1100";
                 priceWeek = data.price_week || "5100";
                 upiAddress = data.upi_address || "rudraksh@upi";
-                watermarkNumber = data.watermark_phone || ""; 
+                if(data.watermark_phone) watermarkNumber = data.watermark_phone; 
                 
                 document.getElementById('label-price-day').innerText = "₹" + priceDay;
                 document.getElementById('label-price-week').innerText = "₹" + priceWeek;
@@ -301,7 +301,7 @@
             renderGameCards();
         });
 
-        // Auto Sync loop
+        // Auto Refresh every 2 seconds (Flicker-free data painter template)
         setInterval(renderGameCards, 2000);
     }
 
