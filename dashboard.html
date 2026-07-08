@@ -6,60 +6,18 @@
     <title>Rudraksh Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
-        }
-        .app-container {
-            width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            max-height: 850px;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+        body { background-color: #f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+        .app-container { width: 100%; max-width: 450px; height: 100vh; max-height: 850px; background: #ffffff; display: flex; flex-column: auto; flex-direction: column; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .app-container::-webkit-scrollbar { display: none; }
-        @media (max-width: 450px) {
-            .app-container { height: 100vh; max-height: 100vh; }
-        }
+        @media (max-width: 450px) { .app-container { height: 100vh; max-height: 100vh; } }
         
-        /* High-Visibility Repeating Watermark Grid Array Overlay */
-        .watermark-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .watermark-overlay {
-            position: absolute;
-            inset: 0;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 30px;
-            padding: 15px;
-            pointer-events: none;
-            user-select: none;
-            z-index: 0;
-            transform: rotate(-15deg) scale(1.1);
-        }
-        .watermark-item {
-            font-size: 1.2rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.06);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-        }
+        .watermark-container { position: relative; overflow: hidden; }
+        .watermark-overlay { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 30px; padding: 15px; pointer-events: none; user-select: none; z-index: 0; transform: rotate(-15deg) scale(1.1); }
+        .watermark-item { font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; color: rgba(255, 255, 255, 0.06); display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+        
+        .slider-wrapper { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+        .slider-wrapper::-webkit-scrollbar { display: none; }
+        .slide-frame { shrink-0; width: 100%; height: 100%; scroll-snap-align: start; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -75,7 +33,7 @@
         <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 text-xs font-bold rounded-lg shadow transition-colors">LOGOUT</button>
     </div>
 
-    <!-- MAIN DASHBOARD CONTENT PANEL SCROLLER -->
+    <!-- MAIN DASHBOARD PANEL SCROLLER -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
 
         <!-- USER PROFILE CARD -->
@@ -89,15 +47,15 @@
         </div>
 
         <!-- IMAGE BANNER SLIDER -->
-        <div class="relative w-full h-40 bg-gray-200 rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-            <div id="slider-container" class="w-full h-full flex transition-transform duration-700 ease-in-out">
-                <img src="https://i.imgur.com/hWJLthc.png" class="w-full h-full object-cover shrink-0" alt="Banner">
+        <div class="relative w-full h-42 bg-gray-100 rounded-2xl overflow-hidden shadow-sm border border-gray-200/60">
+            <div id="slider-container" class="slider-wrapper">
+                <img src="https://i.imgur.com/hWJLthc.png" class="slide-frame shrink-0" alt="Banner Placeholder">
             </div>
         </div>
 
-        <!-- GET MEMBERSHIP ACCESS ACTION LINK -->
+        <!-- MEMBERSHIP BUTTON -->
         <div id="membership-banner" class="hidden">
-            <button onclick="openPlanModal()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-center py-3.5 rounded-2xl block shadow-md transition-all text-sm tracking-wider uppercase">
+            <button onclick="openPlanModal()" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-center py-3.5 rounded-2xl block shadow-md text-sm tracking-wider uppercase">
                 👑 Get Membership Access
             </button>
         </div>
@@ -111,20 +69,20 @@
             <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-semibold">Welcome to Rudraksh App.</p>
         </div>
 
-        <!-- BIG ATTRACTIVE LIVE CLOCK WITH DATE AFTER NOTICE BOARD -->
+        <!-- LIVE DIGITAL CLOCK MATRIX -->
         <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-4 shadow-md text-center border border-green-500/20 relative overflow-hidden">
             <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
             <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">08 JULY 2026</div>
-            <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">11:18:35</div>
+            <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">12:24:42</div>
         </div>
 
-        <!-- GAME SECTION PANEL CONTAINER -->
+        <!-- GAME SECTION CONTAINER -->
         <div class="space-y-3">
             <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Game Section</h2>
             <div id="games-container" class="space-y-4"></div>
         </div>
 
-        <!-- HELP AND TELEPHONY BUTTONS DESK -->
+        <!-- CUSTOMER SUPPORT DESK -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <div class="grid grid-cols-2 gap-3">
@@ -161,7 +119,7 @@
         </div>
     </div>
 
-    <!-- UPI QR GENERATOR SCREEN -->
+    <!-- QR MODAL DISPLAY -->
     <div id="qr-modal" class="fixed inset-0 bg-white z-50 flex flex-col hidden">
         <div class="bg-green-600 text-white px-4 py-4 flex items-center justify-between shadow-md">
             <h3 class="font-bold text-sm uppercase">Scan and Pay Securely</h3>
@@ -176,27 +134,20 @@
                 <img id="qr-image-src" src="" class="w-56 h-56 object-contain" alt="UPI QR Code">
             </div>
             <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl max-w-xs text-left">
-                <p class="text-[11px] text-blue-800 font-medium leading-relaxed">
-                    💡 **Instructions:** Scan this QR using PhonePe, Google Pay, or Paytm. Once your money is debited successfully, click the green button below immediately.
-                </p>
+                <p class="text-[11px] text-blue-800 font-medium leading-relaxed">Scan using PhonePe, Google Pay, or Paytm. Once done, hit the validation tracker below immediately.</p>
             </div>
-            <div class="w-full max-w-xs pt-2">
-                <button onclick="submitDepositValidation()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl shadow-md uppercase text-xs tracking-wider">
-                    ✅ Payment Done Successfully
-                </button>
-            </div>
+            <button onclick="submitDepositValidation()" class="w-full max-w-xs bg-green-600 text-white font-bold py-4 rounded-xl shadow-md uppercase text-xs tracking-wider">✅ Payment Done Successfully</button>
         </div>
     </div>
 
-    <!-- LOCKDOWN ADMIN VERIFICATION SCREEN -->
+    <!-- LOCKDOWN SCREEN -->
     <div id="lockdown-modal" class="fixed inset-0 bg-gray-950 z-50 flex flex-col items-center justify-center p-6 text-center hidden">
         <div class="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-6"></div>
         <h2 class="text-xl font-black text-white uppercase tracking-wide">Verifying Your Payment</h2>
-        <p class="text-xs text-gray-400 mt-2 max-w-xs leading-relaxed">Please wait while the administrator verifies your transaction parameters inside the core console terminal matrix.</p>
         <div class="mt-6 bg-white/5 border border-white/10 rounded-2xl px-6 py-2.5 font-mono text-3xl font-bold text-orange-400 tracking-widest shadow-inner">
             <span id="lockdown-timer">03:00</span>
         </div>
-        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mt-4">Do not go back or minimize this screen</p>
+        <p class="text-[10px] text-gray-600 font-bold uppercase tracking-widest mt-4">Do not close this panel screen</p>
     </div>
 
 </div>
@@ -238,19 +189,16 @@
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
-        // Clock & Date Tick Engine
         setInterval(() => {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toLocaleTimeString();
             document.getElementById('live-calendar-text').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         }, 1000);
 
-        // 1. Live User Account Access Monitor
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
             if (!snapshot.exists()) { handleLogout(); return; }
             const uData = snapshot.data();
             userSubscriptionStatus = uData.subscription || "inactive";
-            
             document.getElementById('profile-name').innerText = uData.name || "Ganesh";
             
             const badge = document.getElementById('membership-badge');
@@ -258,21 +206,17 @@
             badge.className = "px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ";
             
             if (userSubscriptionStatus === "active") {
-                badge.innerText = "Active";
-                badge.classList.add('bg-green-100', 'text-green-700');
+                badge.innerText = "Active"; badge.classList.add('bg-green-100', 'text-green-700');
                 banner.classList.add('hidden');
                 document.getElementById('lockdown-modal').classList.add('hidden');
-                clearInterval(countdownInterval);
-                if(requestUnsubscribe) requestUnsubscribe();
+                clearInterval(countdownInterval); if(requestUnsubscribe) requestUnsubscribe();
             } else {
-                badge.innerText = "Inactive";
-                badge.classList.add('bg-orange-100', 'text-orange-700');
+                badge.innerText = "Inactive"; badge.classList.add('bg-orange-100', 'text-orange-700');
                 banner.classList.remove('hidden');
             }
             renderGameCards();
         });
 
-        // 2. Global System Settings Monitor
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -281,11 +225,9 @@
                     document.getElementById('support-whatsapp').href = `https://wa.me/${data.support_phone}`;
                     document.getElementById('support-call').href = `tel:${data.support_phone}`;
                 }
-                
-                priceDay = data.price_day || "1100";
-                priceWeek = data.price_week || "5100";
+                priceDay = data.price_day || "1100"; priceWeek = data.price_week || "5100";
                 upiAddress = data.upi_address || "rudraksh@upi";
-                if(data.watermark_phone) watermarkNumber = data.watermark_phone; 
+                if(data.watermark_phone) watermarkNumber = data.watermark_phone;
                 
                 document.getElementById('label-price-day').innerText = "₹" + priceDay;
                 document.getElementById('label-price-week').innerText = "₹" + priceWeek;
@@ -297,21 +239,17 @@
             }
         });
 
-        // 3. Realtime Markets Streaming Sync Hook
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             cachedMarkets = querySnapshot.docs.sort((a, b) => (Number(a.data().serialNo) || 999) - (Number(b.data().serialNo) || 999));
             renderGameCards();
         });
-
-        setInterval(renderGameCards, 2000);
+        
+        setInterval(renderGameCards, 2500);
     }
 
     function renderGameCards() {
-        const container = document.getElementById('games-container');
-        if(!container) return;
-        
-        let htmlBuffer = "";
-        const isPremiumUser = (userSubscriptionStatus === "active");
+        const container = document.getElementById('games-container'); if(!container) return;
+        let htmlBuffer = ""; const isPremiumUser = (userSubscriptionStatus === "active");
 
         cachedMarkets.forEach((doc) => {
             const m = doc.data();
@@ -321,47 +259,52 @@
             const dataStyle = isPremiumUser ? "font-sans font-extrabold text-base tracking-wide" : "font-semibold italic text-xs tracking-normal text-orange-300";
 
             const watermarkOverlayHtml = watermarkNumber ? `
-                <div class="watermark-overlay">
-                    <div class="watermark-item">${watermarkNumber}</div>
-                    <div class="watermark-item">${watermarkNumber}</div>
-                    <div class="watermark-item">${watermarkNumber}</div>
-                    <div class="watermark-item">${watermarkNumber}</div>
-                </div>
-            ` : "";
+                <div class="watermark-overlay"><div class="watermark-item">${watermarkNumber}</div><div class="watermark-item">${watermarkNumber}</div><div class="watermark-item">${watermarkNumber}</div><div class="watermark-item">${watermarkNumber}</div></div>` : "";
 
             htmlBuffer += `
                 <div class="watermark-container bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-4">
                     ${watermarkOverlayHtml}
                     <div class="flex items-center justify-between z-10">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
-                            <h3 class="font-black text-xl uppercase tracking-wider font-sans">${doc.id}</h3>
-                        </div>
-                        <div class="bg-emerald-500 text-[11px] font-bold px-3 py-1 rounded-full text-white font-mono">${m.gameDate || '--'}</div>
-                        <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5 shadow-sm">
-                            <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
-                            <span>LIVE</span>
-                        </div>
+                        <div class="flex items-center space-x-2"><div class="w-1.5 h-6 bg-orange-500 rounded-full"></div><h3 class="font-black text-xl uppercase tracking-wider">${doc.id}</h3></div>
+                        <div class="bg-emerald-500 text-[11px] font-bold px-3 py-1 rounded-full font-mono">${m.gameDate || '--'}</div>
+                        <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5"><span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span><span>LIVE</span></div>
                     </div>
                     <div class="space-y-2 z-10">
-                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
-                            <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🎲 OTC : &rarr;</span>
-                            <span class="${dataStyle}">${otcText}</span>
-                        </div>
-                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
-                            <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🔗 Jodi : &rarr;</span>
-                            <span class="${dataStyle}">${jodiText}</span>
-                        </div>
-                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
-                            <span class="text-xs font-bold text-blue-200 w-24 shrink-0">📊 Panel : &rarr;</span>
-                            <span class="${dataStyle}">${panelText}</span>
-                        </div>
+                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center"><span class="text-xs font-bold text-blue-200 w-24 shrink-0">🎲 OTC : &rarr;</span><span class="${dataStyle}">${otcText}</span></div>
+                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center"><span class="text-xs font-bold text-blue-200 w-24 shrink-0">🔗 Jodi : &rarr;</span><span class="${dataStyle}">${jodiText}</span></div>
+                        <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center"><span class="text-xs font-bold text-blue-200 w-24 shrink-0">📊 Panel : &rarr;</span><span class="${dataStyle}">${panelText}</span></div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
-        
         if(htmlBuffer) container.innerHTML = htmlBuffer;
+    }
+
+    function setupAutoImageSlider(images) {
+        const slider = document.getElementById('slider-container'); if (!slider) return;
+        clearInterval(activeSliderTimer);
+        
+        const cleanImages = images.filter(url => url && url.trim() !== "" && url.startsWith('http'));
+        if (cleanImages.length === 0) {
+            slider.innerHTML = `<img src="https://i.imgur.com/hWJLthc.png" class="slide-frame shrink-0">`; return;
+        }
+
+        slider.innerHTML = '';
+        cleanImages.forEach(url => { 
+            // Anti-CORS link formatter fixes display issue on GitHub Pages
+            let finalUrl = url;
+            if (url.includes("firebasestorage.googleapis.com")) {
+                finalUrl = url.replace("/o/slider_banners%2F", "/o/slider_banners%2F");
+            }
+            slider.innerHTML += `<img src="${finalUrl}" class="slide-frame shrink-0" onerror="this.src='https://i.imgur.com/hWJLthc.png'">`; 
+        });
+
+        let index = 0;
+        if (cleanImages.length > 1) {
+            activeSliderTimer = setInterval(() => {
+                index++; if (index >= cleanImages.length) index = 0;
+                slider.scrollTo({ left: index * slider.clientWidth, behavior: 'smooth' });
+            }, 4000);
+        }
     }
 
     window.openPlanModal = () => document.getElementById('plan-modal').classList.remove('hidden');
@@ -372,89 +315,38 @@
         const selectedPlan = document.querySelector('input[name="membership-plan"]:checked').value;
         selectedAmount = (selectedPlan === 'day') ? priceDay : priceWeek;
         document.getElementById('qr-amount-text').innerText = "₹" + selectedAmount;
-        
         const upiString = `upi://pay?pa=${upiAddress}&pn=Rudraksh%20Premium&am=${selectedAmount}&cu=INR`;
         document.getElementById('qr-image-src').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-        
-        closePlanModal();
-        document.getElementById('qr-modal').classList.remove('hidden');
+        closePlanModal(); document.getElementById('qr-modal').classList.remove('hidden');
     }
 
     window.submitDepositValidation = async function() {
         const savedMobile = localStorage.getItem('app_user_mobile');
-        document.getElementById('qr-modal').classList.add('hidden');
-        document.getElementById('lockdown-modal').classList.remove('hidden');
-        
-        await setDoc(doc(db, "deposits", savedMobile), {
-            userMobile: savedMobile,
-            amount: selectedAmount,
-            status: "pending",
-            timestamp: Date.now()
-        });
+        document.getElementById('qr-modal').classList.add('hidden'); document.getElementById('lockdown-modal').classList.remove('hidden');
+        await setDoc(doc(db, "deposits", savedMobile), { userMobile: savedMobile, amount: selectedAmount, status: "pending", timestamp: Date.now() });
 
         let totalSeconds = 180;
         countdownInterval = setInterval(() => {
             totalSeconds--;
-            let mins = Math.floor(totalSeconds / 60);
-            let secs = totalSeconds % 60;
+            let mins = Math.floor(totalSeconds / 60); let secs = totalSeconds % 60;
             document.getElementById('lockdown-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             if(totalSeconds <= 0) { clearInterval(countdownInterval); cancelDepositLockdownWipe("timeout"); }
         }, 1000);
 
         requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
-            if(snap.exists() && snap.data().status === "rejected") {
-                clearInterval(countdownInterval);
-                cancelDepositLockdownWipe("rejected");
-            }
+            if(snap.exists() && snap.data().status === "rejected") { clearInterval(countdownInterval); cancelDepositLockdownWipe("rejected"); }
         });
     }
 
     async function cancelDepositLockdownWipe(reason) {
-        const savedMobile = localStorage.getItem('app_user_mobile');
-        if(requestUnsubscribe) requestUnsubscribe();
+        const savedMobile = localStorage.getItem('app_user_mobile'); if(requestUnsubscribe) requestUnsubscribe();
         try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
-        document.getElementById('lockdown-modal').classList.add('hidden');
-        document.getElementById('lockdown-timer').innerText = "03:00";
+        document.getElementById('lockdown-modal').classList.add('hidden'); document.getElementById('lockdown-timer').innerText = "03:00";
         if(reason === "rejected") alert("❌ Your payment validation request was rejected by the admin.");
         else alert("⏱️ Verification timed out. Please link up with support via WhatsApp.");
     }
 
-    // High performance anti-CORS proxy image engine parser
-    function setupAutoImageSlider(images) {
-        const slider = document.getElementById('slider-container');
-        if (!slider) return;
-        clearInterval(activeSliderTimer);
-        
-        const cleanImages = images.filter(url => url && url.trim() !== "" && url.startsWith('http'));
-        if (cleanImages.length === 0) {
-            slider.innerHTML = `<img src="https://i.imgur.com/hWJLthc.png" class="w-full h-full object-cover shrink-0">`;
-            return;
-        }
-
-        slider.innerHTML = '';
-        cleanImages.forEach(url => {
-            // Automatically proxy firebase cloud paths through a free open gateway to bypass CORS blocks 
-            let proxyUrl = url;
-            if(url.includes("firebasestorage.googleapis.com")) {
-                proxyUrl = "https://images.weserv.nl/?url=" + encodeURIComponent(url);
-            }
-            slider.innerHTML += `<img src="${proxyUrl}" class="w-full h-full object-cover shrink-0" onerror="this.src='https://i.imgur.com/hWJLthc.png'">`;
-        });
-
-        let index = 0;
-        if (cleanImages.length > 1) {
-            activeSliderTimer = setInterval(() => {
-                index++;
-                if (index >= cleanImages.length) index = 0;
-                slider.style.transform = `translateX(-${index * 100}%)`;
-            }, 3500);
-        }
-    }
-
-    window.handleLogout = function() {
-        localStorage.removeItem('app_user_mobile');
-        window.location.href = 'index.html';
-    }
+    window.handleLogout = function() { localStorage.removeItem('app_user_mobile'); window.location.href = 'index.html'; }
 </script>
 </body>
 </html>
