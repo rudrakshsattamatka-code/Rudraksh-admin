@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Portal</title>
+    <title>Rudraksh Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -27,6 +27,10 @@
             position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
+        /* Hide scrollbar for a true app feel */
+        .app-container::-webkit-scrollbar {
+            display: none;
+        }
         @media (max-width: 450px) {
             .app-container {
                 height: 100vh;
@@ -39,71 +43,73 @@
 
 <div class="app-container">
 
-    <!-- APP HEADER -->
-    <div class="bg-green-600 text-white px-4 py-3 flex items-center justify-between shadow-md sticky top-0 z-40">
+    <!-- HEADLINE APPBAR -->
+    <div class="bg-green-600 text-white px-4 py-3.5 flex items-center justify-between shadow-md sticky top-0 z-50">
         <div class="flex items-center space-x-3">
-            <img id="app-logo" src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-10 h-10 object-contain">
-            <div>
-                <h1 id="welcome-user" class="font-bold tracking-wide text-sm">Loading...</h1>
-                <p class="text-[10px] text-green-200">Secure Live Dashboard</p>
-            </div>
+            <img id="app-logo" src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-9 h-9 object-contain">
+            <h1 class="font-black tracking-wider text-xl uppercase">RUDRAKSH</h1>
         </div>
         <button onclick="handleLogout()" class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 text-xs font-bold rounded-lg shadow transition-colors">
             LOGOUT
         </button>
     </div>
 
-    <!-- MAIN APP BODY -->
+    <!-- MAIN DASHBOARD CONTENT SCROLLER -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-8">
 
         <!-- USER PROFILE CARD -->
-        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex justify-between items-center">
             <div>
-                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Account Profile</p>
-                <p id="profile-phone" class="text-gray-700 font-bold text-sm mt-0.5">Mobile: --</p>
+                <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Subscriber Profile</p>
+                <p id="profile-phone" class="text-gray-800 font-extrabold text-sm mt-0.5">Mobile: --</p>
             </div>
-            <div id="sub-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-600">
-                Syncing...
+            <div id="membership-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gray-200 text-gray-600">
+                Checking...
             </div>
+        </div>
+
+        <!-- AUTOMATIC SLIDING IMAGES PANEL -->
+        <div class="relative w-full h-40 bg-gray-200 rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+            <div id="slider-container" class="w-full h-full flex transition-transform duration-700 ease-in-out">
+                <!-- Fallback banner shown while images stream from firebase -->
+                <img src="https://i.imgur.com/hWJLthc.png" class="w-full h-full object-cover shrink-0" alt="Banner">
+            </div>
+        </div>
+
+        <!-- GET MEMBERSHIP BUTTON -->
+        <div id="membership-banner" class="hidden">
+            <a id="membership-link" href="https://wa.me/919113224019" target="_blank" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-center py-3.5 rounded-2xl block shadow-md transition-all text-sm tracking-wider uppercase">
+                👑 Get Membership Access
+            </a>
         </div>
 
         <!-- NOTICE BOARD -->
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm">
-            <div class="flex items-center space-x-2 text-amber-800 mb-1">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center space-x-2 text-amber-800 mb-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                <h3 class="font-bold text-xs uppercase tracking-wide">Notice Board</h3>
+                <h3 class="font-extrabold text-xs uppercase tracking-wider">Notice Board</h3>
             </div>
-            <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-medium">
-                Syncing live notices...
+            <p id="notice-text" class="text-xs text-amber-900 leading-relaxed font-semibold">
+                Syncing system announcements...
             </p>
         </div>
 
-        <!-- NEW REPOSITIONED BIG ATTRACTIVE LIVE CLOCK UNIT -->
-        <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-4 shadow-lg text-center border border-green-500/20 relative overflow-hidden">
-            <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
-            <p class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1">Live Engine Standard Time</p>
-            <!-- Big Clock Typography -->
-            <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
-                00:00:00 AM
-            </div>
-        </div>
-
-        <!-- MARKET CODES SECTION -->
+        <!-- GAME SECTION (DYNAMIC LIVE REFRESHED CONTENT) -->
         <div class="space-y-3">
-            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Live Market Panel</h2>
-            <div id="markets-container" class="space-y-3">
-                <p class="text-xs text-center text-gray-400 py-4">Waiting on data streams...</p>
+            <h2 class="text-xs font-bold text-gray-400 uppercase tracking-wider px-1">Game Section</h2>
+            <div id="games-container" class="space-y-4">
+                <p class="text-xs text-center text-gray-400 py-4">Streaming game panel cards...</p>
             </div>
         </div>
 
-        <!-- CUSTOMER SERVICE TERMINAL -->
-        <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 space-y-3">
+        <!-- DYNAMIC CUSTOMER SUPPORT DESK -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <div class="grid grid-cols-2 gap-3">
-                <a href="https://wa.me/919113224019" target="_blank" class="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-lg text-xs font-bold shadow-sm transition-colors">
+                <a id="support-whatsapp" href="https://wa.me/919113224019" target="_blank" class="flex items-center justify-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl text-xs font-bold shadow-sm transition-colors">
                     <span>WhatsApp Chat</span>
                 </a>
-                <a href="tel:9113224019" class="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-xs font-bold shadow-sm transition-colors">
+                <a id="support-call" href="tel:9113224019" class="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl text-xs font-bold shadow-sm transition-colors">
                     <span>Call Support</span>
                 </a>
             </div>
@@ -130,50 +136,67 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    setInterval(() => {
-        document.getElementById('live-clock').innerText = new Date().toLocaleTimeString();
-    }, 1000);
+    let activeSliderTimer = null;
+    let currentSupportPhone = "9113224019";
 
-    window.addEventListener('DOMContentLoaded', beginLiveEngine);
+    window.addEventListener('DOMContentLoaded', initializeEngineTerminal);
 
-    function beginLiveEngine() {
+    function initializeEngineTerminal() {
         const savedMobile = localStorage.getItem('app_user_mobile');
         if (!savedMobile) { window.location.href = 'index.html'; return; }
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
+        // 1. User Subscription Profile Listener
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
             if (!snapshot.exists()) { handleLogout(); return; }
             const u = snapshot.data();
-            document.getElementById('welcome-user').innerText = "Hi, " + (u.name || "User");
             
-            const badge = document.getElementById('sub-badge');
-            badge.className = "px-3 py-1 rounded-full text-xs font-bold ";
+            const badge = document.getElementById('membership-badge');
+            const banner = document.getElementById('membership-banner');
+            badge.className = "px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider ";
+            
             if (u.subscription === "active") {
                 badge.innerText = "Active";
                 badge.classList.add('bg-green-100', 'text-green-700');
+                banner.classList.add('hidden');
             } else {
                 badge.innerText = "Inactive";
                 badge.classList.add('bg-orange-100', 'text-orange-700');
+                banner.classList.remove('hidden');
             }
             await setDoc(doc(db, "users", savedMobile), { lastVisited: new Date().toLocaleString(), isOnline: true }, { merge: true });
         });
 
+        // 2. Global Configurations Listener (Logo, Notice, Support Phone, Slider Array)
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
                 if (data.logo_url) document.getElementById('app-logo').src = data.logo_url;
                 if (data.notice_text) document.getElementById('notice-text').innerText = data.notice_text;
+                
+                // Dynamically modify telephone links across the client dashboard layout
+                if (data.support_phone) {
+                    currentSupportPhone = data.support_phone;
+                    document.getElementById('support-whatsapp').href = `https://wa.me/${currentSupportPhone}`;
+                    document.getElementById('support-call').href = `tel:${currentSupportPhone}`;
+                    document.getElementById('membership-link').href = `https://wa.me/${currentSupportPhone}?text=Hello%20I%20want%20to%20get%20membership`;
+                }
+
+                // Render image slider loop directly from configurations document
+                if (data.slider_images && Array.isArray(data.slider_images) && data.slider_images.length > 0) {
+                    setupAutoImageSlider(data.slider_images);
+                }
             }
         });
 
-        // Realtime Market Streamer (Sorted by Admin Serial Input)
+        // 3. Game Section Registry Stream (Sorted according to Admin Serial Numbers input)
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
-            const container = document.getElementById('markets-container');
+            const container = document.getElementById('games-container');
             container.innerHTML = '';
 
             if (querySnapshot.empty) {
-                container.innerHTML = `<p class="text-xs text-center text-gray-400 py-4">No active markets streaming.</p>`;
+                container.innerHTML = `<p class="text-xs text-center text-gray-400 py-4">No active game markets configured.</p>`;
                 return;
             }
 
@@ -181,45 +204,83 @@
                 return (Number(a.data().serialNo) || 999) - (Number(b.data().serialNo) || 999);
             });
 
-            sortedDocs.forEach((mDoc) => {
-                const m = mDoc.data();
+            sortedDocs.forEach((doc) => {
+                const m = doc.data();
                 
-                const openPana = m.openPana || "•••";
-                const openDigit = m.openDigit !== undefined && m.openDigit !== "" ? m.openDigit : "•";
-                const closeDigit = m.closeDigit !== undefined && m.closeDigit !== "" ? m.closeDigit : "•";
-                const closePana = m.closePana || "•••";
-                
-                const timeOpen = m.timeOpen || "12:30 PM";
-                const timeClose = m.timeClose || "02:30 PM";
+                // Default value structure values
+                const gameDate = m.gameDate || "00/00/0000 00:00 AM";
+                const otcValue = m.otcValue || "••";
+                const jodiValue = m.jodiValue || "•• •• ••";
+                const panelValue = m.panelValue || "••• ••• •••";
 
-                let innerResultDisplay = `
-                    <div class="mt-2 bg-gray-50 border border-gray-100 rounded-xl px-6 py-2 font-mono text-xl font-bold tracking-widest text-orange-600 shadow-inner">
-                        <span>${openPana}</span>
-                        <span class="text-gray-900 mx-1">-${openDigit}${closeDigit}-</span>
-                        <span>${closePana}</span>
-                    </div>
-                `;
-
-                if(m.isHoliday) {
-                    innerResultDisplay = `
-                        <div class="mt-2 bg-red-50 border border-red-100 rounded-xl px-6 py-2 text-sm font-black tracking-wider text-red-600 uppercase">
-                            HOLIDAY TODAY
-                        </div>
-                    `;
-                }
-
+                // Generate exact matches to provided graphic blueprint layout
                 container.innerHTML += `
-                    <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                        <h3 class="font-black text-gray-800 tracking-wide text-lg uppercase">${mDoc.id}</h3>
-                        ${innerResultDisplay}
-                        <div class="w-full border-t border-gray-100 mt-4 pt-3 flex justify-between text-[11px] font-semibold text-gray-400">
-                            <div>Open: <span class="text-green-600 font-mono">${timeOpen}</span></div>
-                            <div>Close: <span class="text-red-500 font-mono">${timeClose}</span></div>
+                    <div class="bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-3.5 relative">
+                        
+                        <!-- Top Header Section: Market Name, Time Data, Live indicator -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
+                                <h3 class="font-black text-xl uppercase tracking-wider font-sans">${doc.id}</h3>
+                            </div>
+                            
+                            <!-- Custom Time/Date stamp block straight from firebase inputs -->
+                            <div class="bg-emerald-500 text-[11px] font-bold px-3 py-1 rounded-full text-white tracking-wide font-mono">
+                                ${gameDate}
+                            </div>
+                            
+                            <!-- Red Blinking Active State Badge -->
+                            <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5">
+                                <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
+                                <span>LIVE</span>
+                            </div>
                         </div>
+
+                        <!-- Content Core Subcontainers -->
+                        <div class="space-y-2">
+                            <!-- OTC Data Array Row -->
+                            <div class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 flex items-center space-x-3">
+                                <span class="text-xs font-bold text-blue-200 tracking-wider">🎲 OTC : &rarr;</span>
+                                <span class="font-mono text-base font-black tracking-widest text-white">${otcValue}</span>
+                            </div>
+
+                            <!-- Jodi Array Row -->
+                            <div class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 flex items-center space-x-3">
+                                <span class="text-xs font-bold text-blue-200 tracking-wider">🔗 Jodi : &rarr;</span>
+                                <span class="font-mono text-base font-black tracking-wider text-white">${jodiValue}</span>
+                            </div>
+
+                            <!-- Panel Array Row -->
+                            <div class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 flex items-center space-x-3">
+                                <span class="text-xs font-bold text-blue-200 tracking-wider">📊 Panel : &rarr;</span>
+                                <span class="font-mono text-base font-black tracking-wider text-white">${panelValue}</span>
+                            </div>
+                        </div>
+
                     </div>
                 `;
             });
         });
+    }
+
+    // Auto image slide controller matching requirements
+    function setupAutoImageSlider(images) {
+        const slider = document.getElementById('slider-container');
+        if (!slider) return;
+        
+        clearInterval(activeSliderTimer);
+        slider.innerHTML = ''; // Wipes old images
+
+        images.forEach(url => {
+            slider.innerHTML += `<img src="${url}" class="w-full h-full object-cover shrink-0" alt="Banner Slider">`;
+        });
+
+        let index = 0;
+        activeSliderTimer = setInterval(() => {
+            index++;
+            if (index >= images.length) index = 0;
+            slider.style.transform = `translateX(-${index * 100}%)`;
+        }, 3500); // Transitions slide position automatic every 3.5 seconds
     }
 
     window.handleLogout = async function() {
