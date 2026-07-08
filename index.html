@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Secure Portal</title>
-    <!-- Tailwind CSS for mobile-first app styling -->
+    <title>Rudraksh Satta Matka - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Forces an Android App layout on desktop, full screen on mobile */
         body {
             background-color: #f3f4f6;
             display: flex;
@@ -25,15 +23,62 @@
             background: #ffffff;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
             position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
         }
-        @media (max-width: 450px) {
-            .app-container {
-                height: 100vh;
-                max-height: 100vh;
-            }
+        
+        /* Interactive Auto Slideshow Framework */
+        .slider-wrapper {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+        }
+        .slider-wrapper::-webkit-scrollbar { display: none; }
+        .slide-frame {
+            shrink-0;
+            width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            object-fit: cover;
+        }
+
+        /* Professional Premium Loading Animation Overlay */
+        #loading-screen {
+            position: absolute;
+            inset: 0;
+            background-color: #ffffff;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+        .loader-bar-container {
+            width: 160px;
+            height: 4px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 20px;
+            position: relative;
+        }
+        .loader-bar-progress {
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(to right, #16a34a, #10b981);
+            border-radius: 9999px;
+            position: absolute;
+            animation: modern-loading 1.6s infinite ease-in-out;
+        }
+        @keyframes modern-loading {
+            0% { left: -40%; width: 40%; }
+            50% { width: 60%; }
+            100% { left: 100%; width: 40%; }
         }
     </style>
 </head>
@@ -41,69 +86,71 @@
 
 <div class="app-container">
 
-    <!-- SPLASH / AUTO-LOGIN SCREEN -->
-    <div id="splash-screen" class="flex-1 flex flex-col items-center justify-center p-6 bg-white z-50">
-        <!-- Pulse animated logo with no borders or outlines -->
-        <img src="https://i.imgur.com/Hl0Rai4.jpeg" alt="Logo" class="w-40 h-40 object-contain mb-6 animate-pulse">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+    <!-- PROFESSIONAL LOADING SCREEN OVERLAY -->
+    <div id="loading-screen">
+        <div class="flex flex-col items-center">
+            <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-20 h-20 object-contain animate-pulse">
+            <h2 class="text-xl font-black text-gray-800 tracking-widest uppercase mt-4">RUDRAKSH</h2>
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Connecting to Cloud Securely</p>
+            <div class="loader-bar-container">
+                <div class="loader-bar-progress"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- AUTHENTICATION CARD (LOGIN & REGISTER) -->
-    <div id="auth-screen" class="hidden flex-1 flex flex-col p-6 justify-between">
-        <div class="w-full flex flex-col items-center mt-4">
-            <!-- App Logo (Plain, borderless) -->
-            <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-28 h-28 object-contain mb-6">
-            
-            <!-- Tabs to toggle Login/Register -->
-            <div class="flex w-full border-b border-gray-200 mb-6">
-                <button id="tab-login" class="flex-1 pb-2 font-bold text-center border-b-2 border-orange-500 text-orange-600" onclick="switchTab('login')">Login</button>
-                <button id="tab-register" class="flex-1 pb-2 font-bold text-center text-gray-400 border-b-2 border-transparent" onclick="switchTab('register')">Register</button>
+    <!-- MAIN APP HEADER APPBAR -->
+    <div class="bg-green-600 text-white px-4 py-3.5 flex items-center space-x-3 shadow-md sticky top-0 z-40">
+        <img src="https://i.imgur.com/hWJLthc.png" alt="Logo" class="w-9 h-9 object-contain">
+        <h1 class="font-black tracking-wider text-xl uppercase">RUDRAKSH</h1>
+    </div>
+
+    <!-- CONTENT FRAME SCROLLER -->
+    <div class="flex-1 bg-gray-50 flex flex-col justify-between overflow-y-auto">
+        
+        <div class="p-4 space-y-5">
+            <!-- SAME ATTRACTIVE REALTIME IMAGE SLIDER AS DASHBOARD -->
+            <div class="relative w-full h-44 bg-gray-100 rounded-2xl overflow-hidden shadow-sm border border-gray-200/60">
+                <div id="index-slider-container" class="slider-wrapper">
+                    <img src="https://i.imgur.com/hWJLthc.png" class="slide-frame shrink-0" alt="Banner Placeholder">
+                </div>
             </div>
 
-            <!-- Form Wrapper -->
-            <div class="w-full">
-                <!-- Name Field (Only visible during Registration) -->
-                <div id="field-name" class="hidden mb-4">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">Full Name</label>
-                    <input type="text" id="auth-name" placeholder="Enter your name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+            <!-- LOGIN CREDENTIALS CONTAINER FORM -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-4">
+                <div class="text-center">
+                    <h3 class="text-gray-800 font-black text-lg uppercase tracking-wide">Welcome Subscriber</h3>
+                    <p class="text-xs text-gray-400 font-medium">Log in with your details to view calculations</p>
                 </div>
 
-                <!-- Mobile Field (Forces Number Pad on Mobile devices) -->
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">Mobile Number</label>
-                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="auth-mobile" placeholder="Enter 10-digit mobile" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500">
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <label class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">Your Full Name</label>
+                        <input type="text" id="user-name" placeholder="Enter full name" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 font-bold focus:outline-none focus:border-green-500">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] text-gray-400 font-bold uppercase tracking-wider mb-1 px-1">10-Digit Mobile Number</label>
+                        <input type="tel" id="user-mobile" inputmode="numeric" maxlength="10" placeholder="Enter mobile number" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-800 font-mono font-bold tracking-widest focus:outline-none focus:border-green-500">
+                    </div>
                 </div>
 
-                <!-- 4-Digit PIN Field (Forces Number Pad on Mobile devices) -->
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-semibold mb-1">4-Digit PIN</label>
-                    <input type="password" inputmode="numeric" pattern="[0-9]*" id="auth-pin" maxlength="4" placeholder="••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg tracking-widest text-center text-lg focus:outline-none focus:border-green-500">
-                </div>
-
-                <!-- Action Button -->
-                <button id="submit-btn" onclick="handleAuth()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition-colors shadow-md">
-                    Login
+                <button onclick="handleUserAuthentication()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3.5 rounded-2xl tracking-wider text-xs uppercase shadow-md transition-colors mt-2">
+                    🔓 Access System Dashboard
                 </button>
             </div>
         </div>
 
-        <!-- Legal Disclaimer text -->
-        <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg mt-8 text-center">
-            <p class="text-[10px] text-gray-500 leading-relaxed font-medium">
-                <span class="text-orange-600 font-bold block mb-1">-:DISCLAIMER:-</span>
-                Visiting this site and browsing it is strictly recommended at your own risk. Every information available here is only according to informational purpose and based on astrology and number calculations. We are no associated or affiliated with any illegal Matka business. We make sure we follow all rules and regulations of the regions where you are accessing the website. There are also chances that the website may be banned in your area and after that if you are using it, you are solely dependable and responsible for any damage, loss or legal action taken. If you are the one who does not like our disclaimer it is advised that you leave our website immediately. Copying of any information/contents posted on the website is strictly prohibited and against the law.
-            </p>
+        <!-- FOOTER BRAND TRADEMARK TAG -->
+        <div class="p-4 text-center">
+            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">© 2026 Rudraksh. All Rights Reserved.</p>
         </div>
     </div>
 
 </div>
 
-<!-- Firebase Configured Stack Modules -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Your production Firebase configurations integrated
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
         authDomain: "rudraksh-d74c3.firebaseapp.com",
@@ -117,96 +164,103 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    let activeSliderTimer = null;
 
-    let currentMode = 'login';
+    window.addEventListener('DOMContentLoaded', initializeLandingPage);
 
-    window.addEventListener('DOMContentLoaded', checkUserSession);
+    function initializeAppCoresLoader() {
+        const loadingOverlay = document.getElementById('loading-screen');
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '0';
+            loadingOverlay.style.visibility = 'hidden';
+        }, 1200); // Gives a beautifully balanced 1.2s authentic transition lag
+    }
 
-    async function checkUserSession() {
-        const savedMobile = localStorage.getItem('app_user_mobile');
-        if (savedMobile) {
-            try {
-                const userDoc = await getDoc(doc(db, "users", savedMobile));
-                if (userDoc.exists()) {
-                    // Redirect directly to dashboard.html file
-                    window.location.href = 'dashboard.html';
-                    return;
+    function initializeLandingPage() {
+        // Safe Session Routing Skip Link
+        if (localStorage.getItem('app_user_mobile')) {
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        initializeAppCoresLoader();
+
+        // Realtime Synchronized System Settings Listener for Slide URLs
+        onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.data();
+                if (data.slider_images && Array.isArray(data.slider_images)) {
+                    setupIndexImageSlider(data.slider_images);
                 }
-            } catch (error) {
-                console.error("Session lookup error: ", error);
             }
-        }
-        document.getElementById('splash-screen').classList.add('hidden');
-        document.getElementById('auth-screen').classList.remove('hidden');
+        });
     }
 
-    window.switchTab = function(mode) {
-        currentMode = mode;
-        const loginTab = document.getElementById('tab-login');
-        const regTab = document.getElementById('tab-register');
-        const nameField = document.getElementById('field-name');
-        const submitBtn = document.getElementById('submit-btn');
-
-        if (mode === 'register') {
-            regTab.className = "flex-1 pb-2 font-bold text-center border-b-2 border-orange-500 text-orange-600";
-            loginTab.className = "flex-1 pb-2 font-bold text-center text-gray-400 border-b-2 border-transparent";
-            nameField.classList.remove('hidden');
-            submitBtn.innerText = "Create Account";
-        } else {
-            loginTab.className = "flex-1 pb-2 font-bold text-center border-b-2 border-orange-500 text-orange-600";
-            regTab.className = "flex-1 pb-2 font-bold text-center text-gray-400 border-b-2 border-transparent";
-            nameField.classList.add('hidden');
-            submitBtn.innerText = "Login";
-        }
-    }
-
-    window.handleAuth = async function() {
-        const mobile = document.getElementById('auth-mobile').value.trim();
-        const pin = document.getElementById('auth-pin').value.trim();
-        const name = document.getElementById('auth-name').value.trim();
-
-        if (!mobile || mobile.length < 10) {
-            alert("Please enter a valid 10-digit mobile number.");
-            return;
-        }
-        if (pin.length !== 4 || isNaN(pin)) {
-            alert("PIN must be a 4-digit number.");
+    function setupIndexImageSlider(images) {
+        const slider = document.getElementById('index-slider-container');
+        if (!slider) return;
+        clearInterval(activeSliderTimer);
+        
+        const cleanImages = images.filter(url => url && url.trim() !== "" && url.startsWith('http'));
+        if (cleanImages.length === 0) {
+            slider.innerHTML = `<img src="https://i.imgur.com/hWJLthc.png" class="slide-frame shrink-0">`;
             return;
         }
 
-        if (currentMode === 'register') {
-            if (!name) {
-                alert("Please fill in your name.");
-                return;
+        slider.innerHTML = '';
+        cleanImages.forEach(url => {
+            let finalUrl = url;
+            if (url.includes("firebasestorage.googleapis.com") && !url.includes("%2F")) {
+                finalUrl = url.replace("/o/slider_banners", "/o/slider_banners%2F");
             }
+            slider.innerHTML += `<img src="${finalUrl}" class="slide-frame shrink-0" onerror="this.src='https://i.imgur.com/hWJLthc.png'">`;
+        });
+
+        let index = 0;
+        if (cleanImages.length > 1) {
+            activeSliderTimer = setInterval(() => {
+                index++;
+                if (index >= cleanImages.length) index = 0;
+                slider.scrollTo({ left: index * slider.clientWidth, behavior: 'smooth' });
+            }, 4000);
+        }
+    }
+
+    window.handleUserAuthentication = async function() {
+        const nameInput = document.getElementById('user-name').value.trim();
+        const mobileInput = document.getElementById('user-mobile').value.trim();
+
+        if (!nameInput) return alert("Please enter your Full Name.");
+        if (mobileInput.length !== 10 || isNaN(mobileInput)) return alert("Please enter a valid 10-Digit Mobile Number.");
+
+        // Show professional loading block animation state during registration tracking
+        document.getElementById('loading-screen').style.visibility = 'visible';
+        document.getElementById('loading-screen').style.opacity = '1';
+
+        try {
+            const userRef = doc(db, "users", mobileInput);
             
-            const userRef = doc(db, "users", mobile);
-            const userSnap = await getDoc(userRef);
-            
-            if (userSnap.exists()) {
-                alert("Mobile number already registered. Please login.");
-                switchTab('login');
-                return;
-            }
-
-            await setDoc(userRef, { name, mobile, pin });
-            localStorage.setItem('app_user_mobile', mobile);
-            window.location.href = 'dashboard.html';
-
-        } else {
-            const userRef = doc(db, "users", mobile);
-            const userSnap = await getDoc(userRef);
-
-            if (!userSnap.exists() || userSnap.data().pin !== pin) {
-                alert("Invalid mobile number or PIN.");
-                return;
-            }
-
-            localStorage.setItem('app_user_mobile', mobile);
-            window.location.href = 'dashboard.html';
+            // Checks if user profile records already sit on cloud tracks
+            onSnapshot(userRef, async (snap) => {
+                if (!snap.exists()) {
+                    // Create an inactive subscription template cleanly for new users
+                    await setDoc(userRef, {
+                        name: nameInput,
+                        mobile: mobileInput,
+                        subscription: "inactive",
+                        joinedAt: Date.now()
+                    });
+                }
+                
+                localStorage.setItem('app_user_mobile', mobileInput);
+                window.location.href = 'dashboard.html';
+            });
+        } catch(e) {
+            document.getElementById('loading-screen').style.opacity = '0';
+            document.getElementById('loading-screen').style.visibility = 'hidden';
+            alert("Network error. Try launching your browser loop terminal session again.");
         }
     }
 </script>
-
 </body>
 </html>
