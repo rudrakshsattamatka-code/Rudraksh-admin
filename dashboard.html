@@ -31,6 +31,26 @@
         @media (max-width: 450px) {
             .app-container { height: 100vh; max-height: 100vh; }
         }
+        /* Card Watermark styling */
+        .watermark-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .watermark-text {
+            position: absolute;
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.05);
+            transform: rotate(-25deg);
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+            top: 30%;
+            left: -10%;
+            width: 120%;
+            text-align: center;
+            z-index: 0;
+        }
     </style>
 </head>
 <body>
@@ -97,9 +117,9 @@
         </div>
     </div>
 
-    <!-- MEMBERSHIP SELECTOR MODAL COMPONENT (SLIDES UP) -->
+    <!-- MEMBERSHIP SELECTOR MODAL -->
     <div id="plan-modal" class="fixed inset-0 bg-black/60 z-50 flex items-end justify-center hidden">
-        <div class="bg-white rounded-t-3xl p-6 w-full max-w-[450px] space-y-5 animate-slide-up transform translate-y-0 transition-transform">
+        <div class="bg-white rounded-t-3xl p-6 w-full max-w-[450px] space-y-5 animate-slide-up">
             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                 <h3 class="text-gray-800 font-black text-base uppercase">Select Plan</h3>
                 <button onclick="closePlanModal()" class="text-gray-400 text-sm font-bold">Close</button>
@@ -124,7 +144,7 @@
         </div>
     </div>
 
-    <!-- DYNAMIC QR GENERATOR SCREEN (SLIDES UP) -->
+    <!-- UPI QR GENERATOR SCREEN -->
     <div id="qr-modal" class="fixed inset-0 bg-white z-50 flex flex-col hidden">
         <div class="bg-green-600 text-white px-4 py-4 flex items-center justify-between shadow-md">
             <h3 class="font-bold text-sm uppercase">Scan and Pay Securely</h3>
@@ -135,7 +155,6 @@
                 <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Amount To Pay</p>
                 <p id="qr-amount-text" class="text-3xl font-black text-gray-800 mt-1">₹0.00</p>
             </div>
-            <!-- Dynamic QR Code Target -->
             <div class="bg-white p-4 border border-gray-200 rounded-2xl shadow-inner">
                 <img id="qr-image-src" src="" class="w-56 h-56 object-contain" alt="UPI QR Code">
             </div>
@@ -150,13 +169,11 @@
         </div>
     </div>
 
-    <!-- LOCKDOWN ADMIN VERIFICATION COUNTDOWN SCREEN -->
+    <!-- LOCKDOWN ADMIN VERIFICATION SCREEN -->
     <div id="lockdown-modal" class="fixed inset-0 bg-gray-950 z-50 flex flex-col items-center justify-center p-6 text-center hidden">
         <div class="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-6"></div>
         <h2 class="text-xl font-black text-white uppercase tracking-wide">Verifying Your Payment</h2>
         <p class="text-xs text-gray-400 mt-2 max-w-xs leading-relaxed">Please wait while the administrator verifies your transaction parameters inside the core console terminal matrix.</p>
-        
-        <!-- Timer UI Object -->
         <div class="mt-6 bg-white/5 border border-white/10 rounded-2xl px-6 py-2.5 font-mono text-3xl font-bold text-orange-400 tracking-widest shadow-inner">
             <span id="lockdown-timer">03:00</span>
         </div>
@@ -189,6 +206,7 @@
     let priceWeek = "5100";
     let selectedAmount = 0;
     let upiAddress = "rudraksh@upi";
+    let watermarkNumber = "+919113224019";
     let countdownInterval = null;
     let requestUnsubscribe = null;
 
@@ -200,7 +218,7 @@
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
-        // 1. Live Subscriber listener
+        // 1. User Account Access Monitor
         onSnapshot(doc(db, "users", savedMobile), async (snapshot) => {
             if (!snapshot.exists()) { handleLogout(); return; }
             userSubscriptionStatus = snapshot.data().subscription || "inactive";
@@ -213,7 +231,6 @@
                 badge.innerText = "Active";
                 badge.classList.add('bg-green-100', 'text-green-700');
                 banner.classList.add('hidden');
-                // Auto dismiss lockdown screen if admin approves transaction live
                 document.getElementById('lockdown-modal').classList.add('hidden');
                 clearInterval(countdownInterval);
                 if(requestUnsubscribe) requestUnsubscribe();
@@ -224,7 +241,7 @@
             }
         });
 
-        // 2. Global Settings listener (Prices, Sliders, Numbers)
+        // 2. Global System configs stream parameters (Handles Watermark changes live)
         onSnapshot(doc(db, "system_config", "settings"), (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.data();
@@ -234,21 +251,21 @@
                     document.getElementById('support-call').href = `tel:${data.support_phone}`;
                 }
                 
-                // Track admin modified subscription pricing
                 priceDay = data.price_day || "1100";
                 priceWeek = data.price_week || "5100";
                 upiAddress = data.upi_address || "rudraksh@upi";
+                watermarkNumber = data.watermark_phone || "+919113224019"; // Capture active admin settings
                 
                 document.getElementById('label-price-day').innerText = "₹" + priceDay;
                 document.getElementById('label-price-week').innerText = "₹" + priceWeek;
 
-                if (data.slider_images && Array.isArray(data.slider_images) && data.slider_images.length > 0) {
+                if (data.slider_images && Array.isArray(data.slider_images)) {
                     setupAutoImageSlider(data.slider_images);
                 }
             }
         });
 
-        // 3. Realtime Sorting Markets Display with Premium Conditional Visibility Hiding
+        // 3. Game Section Real-time renderer (Displays Watermarks & Handles precision image look)
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
             const container = document.getElementById('games-container');
             container.innerHTML = '';
@@ -257,39 +274,46 @@
 
             sortedDocs.forEach((doc) => {
                 const m = doc.data();
-                
-                // Conditional parameters mask verification check
                 const isPremiumUser = (userSubscriptionStatus === "active");
+                
+                // Text layouts logic adjustments matches image instructions
                 const otcText = isPremiumUser ? (m.otcValue || "••") : "only for members";
                 const jodiText = isPremiumUser ? (m.jodiValue || "•• ••") : "only for members";
                 const panelText = isPremiumUser ? (m.panelValue || "••• •••") : "only for members";
-                const textStyleClass = isPremiumUser ? "text-white font-mono font-black" : "text-orange-300 font-bold italic text-xs tracking-normal";
+                const dataStyle = isPremiumUser ? "font-sans font-extrabold text-base tracking-wide" : "font-semibold italic text-xs tracking-normal text-orange-300";
 
                 container.innerHTML += `
-                    <div class="bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-3.5">
-                        <div class="flex items-center justify-between">
+                    <div class="watermark-container bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-4">
+                        
+                        <!-- Watermark node element injection -->
+                        <div class="watermark-text">${watermarkNumber}</div>
+
+                        <!-- Header Row -->
+                        <div class="flex items-center justify-between z-10">
                             <div class="flex items-center space-x-2">
                                 <div class="w-1.5 h-6 bg-orange-500 rounded-full"></div>
                                 <h3 class="font-black text-xl uppercase tracking-wider font-sans">${doc.id}</h3>
                             </div>
                             <div class="bg-emerald-500 text-[11px] font-bold px-3 py-1 rounded-full text-white font-mono">${m.gameDate || '--'}</div>
-                            <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5">
+                            <div class="bg-red-600 text-[10px] font-black tracking-widest px-2.5 py-1 rounded-full flex items-center space-x-1.5 shadow-sm">
                                 <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
                                 <span>LIVE</span>
                             </div>
                         </div>
-                        <div class="space-y-2">
-                            <div class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 flex justify-between items-center">
-                                <span class="text-xs font-bold text-blue-200">🎲 OTC :</span>
-                                <span class="${textStyleClass}">${otcText}</span>
+
+                        <!-- Data Fields precisely matching visual format guidelines -->
+                        <div class="space-y-2 z-10">
+                            <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
+                                <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🎲 OTC : &rarr;</span>
+                                <span class="${dataStyle}">${otcText}</span>
                             </div>
-                            <div class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 flex justify-between items-center">
-                                <span class="text-xs font-bold text-blue-200">🔗 Jodi :</span>
-                                <span class="${textStyleClass}">${jodiText}</span>
+                            <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
+                                <span class="text-xs font-bold text-blue-200 w-24 shrink-0">🔗 Jodi : &rarr;</span>
+                                <span class="${dataStyle}">${jodiText}</span>
                             </div>
-                            <div class="bg-white/5 border border-white/5 rounded-xl px-4 py-2.5 flex justify-between items-center">
-                                <span class="text-xs font-bold text-blue-200">📊 Panel :</span>
-                                <span class="${textStyleClass}">${panelText}</span>
+                            <div class="bg-white/5 border border-white/5 rounded-2xl px-4 py-2.5 flex items-center">
+                                <span class="text-xs font-bold text-blue-200 w-24 shrink-0">📊 Panel : &rarr;</span>
+                                <span class="${dataStyle}">${panelText}</span>
                             </div>
                         </div>
                     </div>
@@ -305,10 +329,8 @@
     window.generateMembershipPayment = function() {
         const selectedPlan = document.querySelector('input[name="membership-plan"]:checked').value;
         selectedAmount = (selectedPlan === 'day') ? priceDay : priceWeek;
-        
         document.getElementById('qr-amount-text').innerText = "₹" + selectedAmount;
         
-        // Construct dynamic auto-generated Google Pay/UPI schema string
         const upiString = `upi://pay?pa=${upiAddress}&pn=Rudraksh%20Premium&am=${selectedAmount}&cu=INR`;
         document.getElementById('qr-image-src').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
         
@@ -321,7 +343,6 @@
         document.getElementById('qr-modal').classList.add('hidden');
         document.getElementById('lockdown-modal').classList.remove('hidden');
         
-        // Write transaction payload to Firestore Queue
         await setDoc(doc(db, "deposits", savedMobile), {
             userMobile: savedMobile,
             amount: selectedAmount,
@@ -329,21 +350,15 @@
             timestamp: Date.now()
         });
 
-        // Initialize internal secure 3 min countdown clock logic
         let totalSeconds = 180;
         countdownInterval = setInterval(() => {
             totalSeconds--;
             let mins = Math.floor(totalSeconds / 60);
             let secs = totalSeconds % 60;
             document.getElementById('lockdown-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            
-            if(totalSeconds <= 0) {
-                clearInterval(countdownInterval);
-                cancelDepositLockdownWipe("timeout");
-            }
+            if(totalSeconds <= 0) { clearInterval(countdownInterval); cancelDepositLockdownWipe("timeout"); }
         }, 1000);
 
-        // Instantly hook real-time listener onto deposit node for admin rejection trace
         requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
             if(snap.exists() && snap.data().status === "rejected") {
                 clearInterval(countdownInterval);
@@ -356,29 +371,37 @@
         const savedMobile = localStorage.getItem('app_user_mobile');
         if(requestUnsubscribe) requestUnsubscribe();
         try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
-        
         document.getElementById('lockdown-modal').classList.add('hidden');
         document.getElementById('lockdown-timer').innerText = "03:00";
-        
-        if(reason === "rejected") {
-            alert("❌ Your payment validation was rejected by the admin. Please talk to support desk.");
-        } else {
-            alert("⏱️ Verification timed out. Contact support via WhatsApp if your payment was deducted.");
-        }
+        if(reason === "rejected") alert("❌ Your payment validation request was rejected by the admin.");
+        else alert("⏱️ Verification timed out. Please link up with support via WhatsApp.");
     }
 
+    // Fixed dynamic image validation slider loop tracker array
     function setupAutoImageSlider(images) {
         const slider = document.getElementById('slider-container');
         if (!slider) return;
         clearInterval(activeSliderTimer);
+        
+        const cleanImages = images.filter(url => url && url.trim() !== "" && url.startsWith('http'));
+        if (cleanImages.length === 0) {
+            slider.innerHTML = `<img src="https://i.imgur.com/hWJLthc.png" class="w-full h-full object-cover shrink-0">`;
+            return;
+        }
+
         slider.innerHTML = '';
-        images.forEach(url => { slider.innerHTML += `<img src="${url}" class="w-full h-full object-cover shrink-0">`; });
+        cleanImages.forEach(url => {
+            slider.innerHTML += `<img src="${url}" class="w-full h-full object-cover shrink-0" onerror="this.src='https://i.imgur.com/hWJLthc.png'">`;
+        });
+
         let index = 0;
-        activeSliderTimer = setInterval(() => {
-            index++;
-            if (index >= images.length) index = 0;
-            slider.style.transform = `translateX(-${index * 100}%)`;
-        }, 3500);
+        if (cleanImages.length > 1) {
+            activeSliderTimer = setInterval(() => {
+                index++;
+                if (index >= cleanImages.length) index = 0;
+                slider.style.transform = `translateX(-${index * 100}%)`;
+            }, 3500);
+        }
     }
 
     window.handleLogout = function() {
