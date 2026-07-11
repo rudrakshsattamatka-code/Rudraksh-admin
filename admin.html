@@ -64,7 +64,7 @@
                     <input type="text" id="cfg-upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Customer Support Phone Number (WhatsApp/Calling)</label>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Customer Support Phone Number (WhatsApp)</label>
                     <input type="text" id="cfg-support-phone" placeholder="e.g. 919113224019" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-bold">
                 </div>
                 <div>
@@ -82,24 +82,42 @@
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
-            <!-- VOICE NOTES BROADCAST SYSTEM -->
+            <!-- VOICE NOTES RECORDER AND UPLOADER HUB -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">📢 Dashboard Voice Notes Broadcast</h3>
+                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">🎙️ Voice Notes Control Console</h3>
                 <div>
-                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Voice Note Label Title</label>
-                    <input type="text" id="voice-title" placeholder="e.g. Special Market Closing Audio Note" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-semibold focus:outline-none">
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Voice Track Title</label>
+                    <input type="text" id="voice-title" placeholder="e.g. Urgent Live Game Announcement" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-semibold focus:outline-none">
                 </div>
+                
+                <!-- Direct Recording Panel Section Components -->
+                <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex flex-col items-center justify-center space-y-2">
+                    <p class="text-[9px] uppercase tracking-wider font-bold text-gray-400">Record Live Audio Note</p>
+                    <div class="flex space-x-2">
+                        <button type="button" id="btn-start-rec" onclick="initiateMicrophoneRecording()" class="bg-red-600 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase">Start Record</button>
+                        <button type="button" id="btn-stop-rec" onclick="stopMicrophoneRecording()" disabled class="bg-gray-300 text-gray-600 font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase">Stop</button>
+                    </div>
+                    <div id="rec-preview-zone" class="w-full hidden pt-1">
+                        <audio id="audio-playback-preview" controls class="w-full h-8"></audio>
+                    </div>
+                </div>
+
+                <div class="relative flex items-center justify-center my-1">
+                    <span class="absolute inset-x-0 h-px bg-gray-200"></span>
+                    <span class="relative bg-white px-2 text-[9px] font-bold text-gray-400 uppercase">OR Upload File</span>
+                </div>
+
                 <div>
-                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Audio Source File URL</label>
-                    <input type="text" id="voice-url" placeholder="Paste .mp3 audio network link URL..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono focus:outline-none">
+                    <input type="text" id="voice-url" placeholder="Audio URL Link (auto-filled on record)..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono text-gray-600">
                 </div>
-                <div class="flex space-x-2 items-center">
+                <div class="flex items-center space-x-2">
                     <input type="file" id="voice-file-input" accept="audio/*" onchange="uploadVoiceFileToServer()" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-500/10 file:text-orange-600 font-bold cursor-pointer flex-1">
                     <span id="voice-upload-status" class="text-[9px] font-bold text-gray-400">Idle</span>
                 </div>
-                <button onclick="publishVoiceNote()" class="w-full bg-blue-600 text-white font-black py-2 rounded-xl text-xs uppercase tracking-wider">🎙️ Broadcast Audio Note</button>
+                <button onclick="publishVoiceNote()" class="w-full bg-blue-600 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider">🚀 Publish Voice Alert</button>
+                
                 <div class="border-t border-gray-100 pt-3">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Active Voice Logs</p>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Live Broadcast Logs</p>
                     <div id="admin-voice-list" class="space-y-2"></div>
                 </div>
             </div>
@@ -190,6 +208,10 @@
     let globalMarketsCache = {};
     let cachedUsersList = [];
 
+    // Audio recording hardware configuration context tools
+    let mediaRecorderEngine = null;
+    let registeredAudioChunks = [];
+
     const inputsZone = document.getElementById('slider-inputs-zone');
     inputsZone.innerHTML = '';
     for(let i=1; i<=6; i++) {
@@ -234,6 +256,48 @@
         });
         document.getElementById('tab-'+tabId).classList.remove('hidden');
         document.getElementById('nav-'+tabId).className = "py-3 border-t-2 border-orange-500 text-orange-500";
+    }
+
+    window.initiateMicrophoneRecording = async function() {
+        registeredAudioChunks = [];
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorderEngine = new MediaRecorder(stream);
+            mediaRecorderEngine.ondataavailable = (e) => { if(e.data.size > 0) registeredAudioChunks.push(e.data); };
+            
+            mediaRecorderEngine.onstop = async () => {
+                const audioBlob = new Blob(registeredAudioChunks, { type: 'audio/mp3' });
+                document.getElementById('rec-preview-zone').classList.remove('hidden');
+                document.getElementById('audio-playback-preview').src = URL.createObjectURL(audioBlob);
+                
+                // Directly flush raw record chunk to Firebase storage instantly
+                const status = document.getElementById('voice-upload-status');
+                status.innerText = "STORING RECORDING..."; status.className = "text-orange-500 font-bold animate-pulse text-[9px]";
+                
+                const fileRef = ref(storage, `voice_notes/record_${Date.now()}.mp3`);
+                const snap = await uploadBytes(fileRef, audioBlob);
+                const linkUrl = await getDownloadURL(snap.ref);
+                document.getElementById('voice-url').value = linkUrl;
+                status.innerText = "✓ RECORD READY"; status.className = "text-green-600 font-bold text-[9px]";
+            };
+
+            mediaRecorderEngine.start();
+            document.getElementById('btn-start-rec').classList.add('bg-gray-400');
+            document.getElementById('btn-start-rec').innerText = "Recording...";
+            document.getElementById('btn-stop-rec').disabled = false;
+            document.getElementById('btn-stop-rec').className = "bg-red-600 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase";
+        } catch(err) { alert("Microphone dynamic check access denied."); }
+    }
+
+    window.stopMicrophoneRecording = function() {
+        if(mediaRecorderEngine && mediaRecorderEngine.state !== "inactive") {
+            mediaRecorderEngine.stop();
+            mediaRecorderEngine.stream.getTracks().forEach(track => track.stop());
+            document.getElementById('btn-start-rec').className = "bg-red-600 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase";
+            document.getElementById('btn-start-rec').innerText = "Start Record";
+            document.getElementById('btn-stop-rec').disabled = true;
+            document.getElementById('btn-stop-rec').className = "bg-gray-300 text-gray-600 font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase";
+        }
     }
 
     window.uploadImageFromGallery = async function(slot) {
@@ -283,21 +347,15 @@
             }
         });
 
-        // Live Voice Notes list monitoring dashboard interface synchronization hooks
         onSnapshot(collection(db, "voicenotes"), (querySnapshot) => {
             const container = document.getElementById('admin-voice-list');
             container.innerHTML = '';
-            if(querySnapshot.empty) {
-                container.innerHTML = `<p class="text-[11px] italic text-gray-400">No active audio logs streaming.</p>`;
-                return;
-            }
             querySnapshot.forEach((vDoc) => {
                 const v = vDoc.data();
                 container.innerHTML += `
                     <div class="bg-gray-50 border border-gray-200 p-2 rounded-xl flex items-center justify-between text-xs">
                         <div class="overflow-hidden mr-2">
                             <p class="font-bold text-gray-800 truncate">${v.title || 'Audio Note'}</p>
-                            <p class="text-[9px] text-gray-400 truncate font-mono">${v.url}</p>
                         </div>
                         <button onclick="deleteVoiceNote('${vDoc.id}')" class="bg-red-100 text-red-600 font-bold text-[10px] px-2.5 py-1 rounded-lg shrink-0">Wipe</button>
                     </div>`;
@@ -324,6 +382,14 @@
             querySnapshot.forEach(uDoc => {
                 cachedUsersList.push({ id: uDoc.id, ...uDoc.data() });
             });
+            
+            // 🔥 CRITICAL REQUIREMENT IMPLEMENTATION: Custom priority sort pushes "Active" profiles straight to top
+            cachedUsersList.sort((a, b) => {
+                const aActive = a.subscription === "active" ? 1 : 0;
+                const bActive = b.subscription === "active" ? 1 : 0;
+                return bActive - aActive; 
+            });
+
             renderUserDirectoryItems(cachedUsersList);
         });
 
@@ -337,9 +403,11 @@
                 const d = dDoc.data();
                 if(d.status !== "pending") return;
                 zone.innerHTML += `
-                    <div class="bg-white p-3 rounded-xl border border-orange-200 flex flex-col space-y-2 text-xs">
-                        <div class="flex justify-between font-bold"><span>User: ${d.userMobile}</span><span class="text-green-600">₹${d.amount}</span></div>
-                        <div class="grid grid-cols-2 gap-2 pt-1">
+                    <div class="bg-white p-3 rounded-xl border border-orange-200 flex flex-col space-y-1 text-xs">
+                        <div class="flex justify-between font-bold"><span>User Name: ${d.userName || 'Unknown'}</span><span class="text-green-600">₹${d.amount}</span></div>
+                        <p class="text-[10px] text-gray-500 font-mono">Mobile Number: ${d.userMobile}</p>
+                        <p class="text-[10px] text-blue-600 font-semibold font-mono bg-blue-50 p-1 rounded">Transaction Note: ${d.note || '--'}</p>
+                        <div class="grid grid-cols-2 gap-2 pt-1.5">
                             <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px]">APPROVE</button>
                             <button onclick="rejectPaymentRequest('${dDoc.id}')" class="bg-red-600 text-white py-1.5 rounded-lg font-bold text-[11px]">REJECT</button>
                         </div>
@@ -359,46 +427,35 @@
             const downloadUrl = await getDownloadURL(snapshot.ref);
             document.getElementById('voice-url').value = downloadUrl;
             status.innerText = "✓ READY"; status.className = "text-green-600 font-bold text-[9px]";
-        } catch(e) {
-            status.innerText = "❌ ERROR"; status.className = "text-red-500 font-bold text-[9px]";
-        }
+        } catch(e) { status.innerText = "❌ ERROR"; status.className = "text-red-500 font-bold text-[9px]"; }
     }
 
     window.publishVoiceNote = async function() {
         const title = document.getElementById('voice-title').value.trim();
         const url = document.getElementById('voice-url').value.trim();
-        if(!title || !url) return alert("Please specify both Title and Audio Source Link URL.");
+        if(!title || !url) return alert("Please specify both Title and Audio Source URL.");
         
         try {
             const idString = "voice_" + Date.now();
-            await setDoc(doc(db, "voicenotes", idString), {
-                title: title,
-                url: url,
-                timestamp: Date.now()
-            });
+            await setDoc(doc(db, "voicenotes", idString), { title: title, url: url, timestamp: Date.now() });
             document.getElementById('voice-title').value = '';
             document.getElementById('voice-url').value = '';
             document.getElementById('voice-file-input').value = '';
             document.getElementById('voice-upload-status').innerText = 'Idle';
-            alert("Voice Broadcast note published live instantly!");
-        } catch(e) { alert("Broadcast update failed."); }
+            document.getElementById('rec-preview-zone').classList.add('hidden');
+            alert("Voice note broadcast updated live instantly!");
+        } catch(e) { alert("Broadcast failed."); }
     }
 
     window.deleteVoiceNote = async function(id) {
-        if(confirm("Permanently wipe this audio message track from database?")) {
-            await deleteDoc(doc(db, "voicenotes", id));
-        }
+        if(confirm("Permanently wipe this audio message track?")) { await deleteDoc(doc(db, "voicenotes", id)); }
     }
 
     window.triggerUserFilterDisplay = function() {
         const query = document.getElementById('user-search-bar').value.toLowerCase().trim();
-        if(!query) {
-            renderUserDirectoryItems(cachedUsersList);
-            return;
-        }
+        if(!query) { renderUserDirectoryItems(cachedUsersList); return; }
         const filtered = cachedUsersList.filter(u => 
-            (u.name && u.name.toLowerCase().includes(query)) || 
-            (u.id && u.id.includes(query))
+            (u.name && u.name.toLowerCase().includes(query)) || (u.id && u.id.includes(query))
         );
         renderUserDirectoryItems(filtered);
     }
@@ -425,8 +482,10 @@
             if(isActive && u.expiresAt) {
                 const diff = u.expiresAt - Date.now();
                 if(diff > 0) {
-                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-                    remainingText = `<p class="text-[10px] text-green-600 font-bold">Ends in: ${days} Day(s)</p>`;
+                    const hoursTotal = Math.floor(diff / (1000 * 60 * 60));
+                    const days = Math.floor(hoursTotal / 24);
+                    const hours = hoursTotal % 24;
+                    remainingText = `<p class="text-[10px] text-green-600 font-bold">Time Ending In: ${days}d ${hours}h</p>`;
                 } else {
                     remainingText = `<p class="text-[10px] text-red-500 font-bold">Expired</p>`;
                 }
@@ -480,7 +539,6 @@
         try {
             const slider_images = [];
             for(let i=1; i<=6; i++) { const v = document.getElementById(`slide-${i}`).value.trim(); if(v) slider_images.push(v); }
-            
             let pinVal = document.getElementById('cfg-pin').value.trim();
             if(!pinVal) pinVal = "9999";
 
@@ -494,11 +552,8 @@
                 watermark_phone: document.getElementById('cfg-watermark').value.trim(), 
                 slider_images: slider_images
             }, { merge: true });
-            
             alert("Parameters successfully saved!");
-        } catch(e) {
-            alert("Save failed.");
-        }
+        } catch(e) { alert("Save failed."); }
     }
 
     window.addOrUpdateMarket = async function() {
@@ -515,10 +570,7 @@
 
     window.approvePaymentRequest = async function(userMobile, docId) {
         const expiryTime = Date.now() + (1 * 24 * 60 * 60 * 1000); 
-        await updateDoc(doc(db, "users", userMobile), { 
-            subscription: "active",
-            expiresAt: expiryTime 
-        });
+        await updateDoc(doc(db, "users", userMobile), { subscription: "active", expiresAt: expiryTime });
         await deleteDoc(doc(db, "deposits", docId));
     }
 
@@ -526,32 +578,22 @@
     
     window.modifyMembershipDuration = async function(userId, currentlyActive) {
         if(currentlyActive) {
-            await updateDoc(doc(db, "users", userId), { 
-                subscription: "inactive",
-                expiresAt: null 
-            });
+            await updateDoc(doc(db, "users", userId), { subscription: "inactive", expiresAt: null });
         } else {
             const selectElem = document.getElementById(`duration-${userId}`);
             const selectDays = parseInt(selectElem.value) || 1;
             const computedExpiry = Date.now() + (selectDays * 24 * 60 * 60 * 1000);
-            await updateDoc(doc(db, "users", userId), { 
-                subscription: "active",
-                expiresAt: computedExpiry
-            });
+            await updateDoc(doc(db, "users", userId), { subscription: "active", expiresAt: computedExpiry });
         }
     }
 
     window.toggleUserBlockStatus = async function(userId, currentlyBlocked) {
         if(currentlyBlocked) {
             await updateDoc(doc(db, "users", userId), { status: "allowed" });
-            alert("User unblocked successfully.");
+            alert("User unblocked.");
         } else {
-            await updateDoc(doc(db, "users", userId), { 
-                status: "blocked",
-                subscription: "inactive",
-                expiresAt: null 
-            });
-            alert("User blocked successfully!");
+            await updateDoc(doc(db, "users", userId), { status: "blocked", subscription: "inactive", expiresAt: null });
+            alert("User blocked.");
         }
     }
 
