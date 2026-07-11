@@ -82,15 +82,14 @@
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
-            <!-- VOICE NOTES RECORDER AND UPLOADER HUB -->
+            <!-- VOICE NOTES RECORDER HUB -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">🎙️ Voice Notes Control Console</h3>
                 <div>
-                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Voice Track Title</label>
-                    <input type="text" id="voice-title" placeholder="e.g. Urgent Live Game Announcement" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-semibold focus:outline-none">
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Voice Track Title (Optional)</label>
+                    <input type="text" id="voice-title" placeholder="Leaves empty for auto date-timestamp label..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-semibold focus:outline-none">
                 </div>
                 
-                <!-- Direct Recording Panel Section Components -->
                 <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 flex flex-col items-center justify-center space-y-2">
                     <p class="text-[9px] uppercase tracking-wider font-bold text-gray-400">Record Live Audio Note</p>
                     <div class="flex space-x-2">
@@ -104,11 +103,11 @@
 
                 <div class="relative flex items-center justify-center my-1">
                     <span class="absolute inset-x-0 h-px bg-gray-200"></span>
-                    <span class="relative bg-white px-2 text-[9px] font-bold text-gray-400 uppercase">OR Upload File</span>
+                    <span class="relative bg-white px-2 text-[9px] font-bold text-gray-400 uppercase">OR Provide File Link</span>
                 </div>
 
                 <div>
-                    <input type="text" id="voice-url" placeholder="Audio URL Link (auto-filled on record)..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono text-gray-600">
+                    <input type="text" id="voice-url" placeholder="Audio network URL link container box..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono text-gray-600">
                 </div>
                 <div class="flex items-center space-x-2">
                     <input type="file" id="voice-file-input" accept="audio/*" onchange="uploadVoiceFileToServer()" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-500/10 file:text-orange-600 font-bold cursor-pointer flex-1">
@@ -208,7 +207,6 @@
     let globalMarketsCache = {};
     let cachedUsersList = [];
 
-    // Audio recording hardware configuration context tools
     let mediaRecorderEngine = null;
     let registeredAudioChunks = [];
 
@@ -262,21 +260,28 @@
         registeredAudioChunks = [];
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorderEngine = new MediaRecorder(stream);
+            let options = { mimeType: 'audio/webm' };
+            if (MediaRecorder.isTypeSupported('audio/mp4')) { options = { mimeType: 'audio/mp4' }; }
+
+            mediaRecorderEngine = new MediaRecorder(stream, options);
             mediaRecorderEngine.ondataavailable = (e) => { if(e.data.size > 0) registeredAudioChunks.push(e.data); };
             
             mediaRecorderEngine.onstop = async () => {
-                const audioBlob = new Blob(registeredAudioChunks, { type: 'audio/mp3' });
+                const recordedMime = mediaRecorderEngine.mimeType;
+                const audioBlob = new Blob(registeredAudioChunks, { type: recordedMime });
+                
                 document.getElementById('rec-preview-zone').classList.remove('hidden');
                 document.getElementById('audio-playback-preview').src = URL.createObjectURL(audioBlob);
                 
-                // Directly flush raw record chunk to Firebase storage instantly
                 const status = document.getElementById('voice-upload-status');
                 status.innerText = "STORING RECORDING..."; status.className = "text-orange-500 font-bold animate-pulse text-[9px]";
                 
-                const fileRef = ref(storage, `voice_notes/record_${Date.now()}.mp3`);
-                const snap = await uploadBytes(fileRef, audioBlob);
+                const fileExt = recordedMime.includes('mp4') ? 'mp4' : 'webm';
+                const fileRef = ref(storage, `voice_notes/record_${Date.now()}.${fileExt}`);
+                
+                const snap = await uploadBytes(fileRef, audioBlob, { contentType: recordedMime });
                 const linkUrl = await getDownloadURL(snap.ref);
+                
                 document.getElementById('voice-url').value = linkUrl;
                 status.innerText = "✓ RECORD READY"; status.className = "text-green-600 font-bold text-[9px]";
             };
@@ -286,7 +291,7 @@
             document.getElementById('btn-start-rec').innerText = "Recording...";
             document.getElementById('btn-stop-rec').disabled = false;
             document.getElementById('btn-stop-rec').className = "bg-red-600 text-white font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase";
-        } catch(err) { alert("Microphone dynamic check access denied."); }
+        } catch(err) { alert("Microphone hardware access verification failure."); }
     }
 
     window.stopMicrophoneRecording = function() {
@@ -298,6 +303,46 @@
             document.getElementById('btn-stop-rec').disabled = true;
             document.getElementById('btn-stop-rec').className = "bg-gray-300 text-gray-600 font-bold text-[10px] px-3 py-1.5 rounded-lg uppercase";
         }
+    }
+
+    window.uploadVoiceFileToServer = async function() {
+        const file = document.getElementById('voice-file-input').files[0];
+        const status = document.getElementById('voice-upload-status');
+        if(!file) return;
+        status.innerText = "UPLOADING..."; status.className = "text-orange-500 font-bold animate-pulse text-[9px]";
+        try {
+            const storageRef = ref(storage, `voice_notes/audio_${Date.now()}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadUrl = await getDownloadURL(snapshot.ref);
+            document.getElementById('voice-url').value = downloadUrl;
+            status.innerText = "✓ READY"; status.className = "text-green-600 font-bold text-[9px]";
+        } catch(e) { status.innerText = "❌ ERROR"; status.className = "text-red-500 font-bold text-[9px]"; }
+    }
+
+    window.publishVoiceNote = async function() {
+        let title = document.getElementById('voice-title').value.trim();
+        const url = document.getElementById('voice-url').value.trim();
+        if(!url) return alert("Please record an audio note or select a file first.");
+        
+        if (!title) {
+            const now = new Date();
+            title = "Voice Announcement (" + now.toLocaleDateString() + " " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ")";
+        }
+        
+        try {
+            const idString = "voice_" + Date.now();
+            await setDoc(doc(db, "voicenotes", idString), { title: title, url: url, timestamp: Date.now() });
+            document.getElementById('voice-title').value = '';
+            document.getElementById('voice-url').value = '';
+            document.getElementById('voice-file-input').value = '';
+            document.getElementById('voice-upload-status').innerText = 'Idle';
+            document.getElementById('rec-preview-zone').classList.add('hidden');
+            alert("Voice note broadcast updated live instantly!");
+        } catch(e) { alert("Broadcast failed."); }
+    }
+
+    window.deleteVoiceNote = async function(id) {
+        if(confirm("Permanently wipe this audio message track?")) { await deleteDoc(doc(db, "voicenotes", id)); }
     }
 
     window.uploadImageFromGallery = async function(slot) {
@@ -379,17 +424,14 @@
 
         onSnapshot(collection(db, "users"), (querySnapshot) => {
             cachedUsersList = [];
-            querySnapshot.forEach(uDoc => {
-                cachedUsersList.push({ id: uDoc.id, ...uDoc.data() });
-            });
+            querySnapshot.forEach(uDoc => { cachedUsersList.push({ id: uDoc.id, ...uDoc.data() }); });
             
-            // 🔥 CRITICAL REQUIREMENT IMPLEMENTATION: Custom priority sort pushes "Active" profiles straight to top
+            // Priority Sort: Active accounts float to top structure execution
             cachedUsersList.sort((a, b) => {
-                const aActive = a.subscription === "active" ? 1 : 0;
-                const bActive = b.subscription === "active" ? 1 : 0;
-                return bActive - aActive; 
+                const aAct = a.subscription === "active" ? 1 : 0;
+                const bAct = b.subscription === "active" ? 1 : 0;
+                return bAct - aAct;
             });
-
             renderUserDirectoryItems(cachedUsersList);
         });
 
@@ -397,16 +439,16 @@
             const zone = document.getElementById('deposit-queue-zone');
             const dot = document.getElementById('req-dot');
             zone.innerHTML = '';
-            if(querySnapshot.empty) { zone.innerHTML = `<p class="text-[11px] text-orange-600 font-semibold italic">No active requests.</p>`; dot.classList.add('hidden'); return; }
+            if(querySnapshot.empty) { zone.innerHTML = `<p class="text-[11px] text-orange-600 font-semibold italic">No requests.</p>`; dot.classList.add('hidden'); return; }
             dot.classList.remove('hidden');
             querySnapshot.forEach(dDoc => {
                 const d = dDoc.data();
                 if(d.status !== "pending") return;
                 zone.innerHTML += `
                     <div class="bg-white p-3 rounded-xl border border-orange-200 flex flex-col space-y-1 text-xs">
-                        <div class="flex justify-between font-bold"><span>User Name: ${d.userName || 'Unknown'}</span><span class="text-green-600">₹${d.amount}</span></div>
-                        <p class="text-[10px] text-gray-500 font-mono">Mobile Number: ${d.userMobile}</p>
-                        <p class="text-[10px] text-blue-600 font-semibold font-mono bg-blue-50 p-1 rounded">Transaction Note: ${d.note || '--'}</p>
+                        <div class="flex justify-between font-bold"><span>Name: ${d.userName || 'Unknown'}</span><span class="text-green-600">₹${d.amount}</span></div>
+                        <p class="text-[10px] text-gray-500 font-mono">Mobile: ${d.userMobile}</p>
+                        <p class="text-[10px] text-blue-600 font-bold font-mono bg-blue-50 p-1 rounded">Note: ${d.note || '--'}</p>
                         <div class="grid grid-cols-2 gap-2 pt-1.5">
                             <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px]">APPROVE</button>
                             <button onclick="rejectPaymentRequest('${dDoc.id}')" class="bg-red-600 text-white py-1.5 rounded-lg font-bold text-[11px]">REJECT</button>
@@ -414,41 +456,6 @@
                     </div>`;
             });
         });
-    }
-
-    window.uploadVoiceFileToServer = async function() {
-        const file = document.getElementById('voice-file-input').files[0];
-        const status = document.getElementById('voice-upload-status');
-        if(!file) return;
-        status.innerText = "UPLOADING..."; status.className = "text-orange-500 font-bold animate-pulse text-[9px]";
-        try {
-            const storageRef = ref(storage, `voice_notes/audio_${Date.now()}`);
-            const snapshot = await uploadBytes(storageRef, file);
-            const downloadUrl = await getDownloadURL(snapshot.ref);
-            document.getElementById('voice-url').value = downloadUrl;
-            status.innerText = "✓ READY"; status.className = "text-green-600 font-bold text-[9px]";
-        } catch(e) { status.innerText = "❌ ERROR"; status.className = "text-red-500 font-bold text-[9px]"; }
-    }
-
-    window.publishVoiceNote = async function() {
-        const title = document.getElementById('voice-title').value.trim();
-        const url = document.getElementById('voice-url').value.trim();
-        if(!title || !url) return alert("Please specify both Title and Audio Source URL.");
-        
-        try {
-            const idString = "voice_" + Date.now();
-            await setDoc(doc(db, "voicenotes", idString), { title: title, url: url, timestamp: Date.now() });
-            document.getElementById('voice-title').value = '';
-            document.getElementById('voice-url').value = '';
-            document.getElementById('voice-file-input').value = '';
-            document.getElementById('voice-upload-status').innerText = 'Idle';
-            document.getElementById('rec-preview-zone').classList.add('hidden');
-            alert("Voice note broadcast updated live instantly!");
-        } catch(e) { alert("Broadcast failed."); }
-    }
-
-    window.deleteVoiceNote = async function(id) {
-        if(confirm("Permanently wipe this audio message track?")) { await deleteDoc(doc(db, "voicenotes", id)); }
     }
 
     window.triggerUserFilterDisplay = function() {
@@ -463,11 +470,6 @@
     function renderUserDirectoryItems(usersArray) {
         const container = document.getElementById('users-directory-zone');
         container.innerHTML = '';
-        if(usersArray.length === 0) {
-            container.innerHTML = `<p class="text-xs italic text-gray-400 text-center py-2">No matching users setup.</p>`;
-            return;
-        }
-        
         usersArray.forEach(u => {
             const isBlocked = u.status === "blocked";
             const isActive = u.subscription === "active";
@@ -486,9 +488,7 @@
                     const days = Math.floor(hoursTotal / 24);
                     const hours = hoursTotal % 24;
                     remainingText = `<p class="text-[10px] text-green-600 font-bold">Time Ending In: ${days}d ${hours}h</p>`;
-                } else {
-                    remainingText = `<p class="text-[10px] text-red-500 font-bold">Expired</p>`;
-                }
+                } else { remainingText = `<p class="text-[10px] text-red-500 font-bold">Expired</p>`; }
             }
 
             const subBadge = isBlocked ? 
@@ -506,7 +506,6 @@
                         </div>
                         <button onclick="deleteUser('${u.id}')" class="bg-red-100 text-red-600 px-2 py-1 rounded-lg text-[10px] font-bold">Delete</button>
                     </div>
-                    
                     <div class="grid grid-cols-3 gap-1.5 pt-1 border-t border-gray-200/50 items-center">
                         <select id="duration-${u.id}" class="bg-white border border-gray-200 text-[11px] rounded p-1 font-semibold focus:outline-none">
                             <option value="1">1 Day</option>
