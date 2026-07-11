@@ -27,19 +27,17 @@
             <p id="pay-amount" class="text-4xl font-black text-gray-800 mt-1">₹0.00</p>
         </div>
 
-        <!-- CLICKABLE OR SCANNER DEEP-LINK CONTAINER -->
-        <a id="upi-deep-link" href="#" class="block group">
-            <div class="bg-white p-5 border-2 border-dashed border-gray-200 rounded-3xl shadow-inner group-active:scale-95 transition-transform">
-                <img id="payment-qr" src="" class="w-56 h-56 object-contain mx-auto" alt="Merchant QR">
-                <p class="text-[10px] text-blue-600 font-extrabold uppercase mt-2 animate-pulse">Tap QR to Pay Directly via App</p>
-            </div>
-        </a>
+        <!-- STATIC DISPLAY IMAGE CONTAINER (No link redirections) -->
+        <div class="bg-white p-5 border-2 border-dashed border-gray-200 rounded-3xl shadow-inner">
+            <img id="payment-qr" src="" class="w-56 h-56 object-contain mx-auto" alt="Merchant QR">
+            <p class="text-[10px] text-gray-500 font-extrabold uppercase mt-2">Scan QR code using PhonePe / GPay</p>
+        </div>
 
         <!-- TRANSACTION NOTE PREVIEW PANEL -->
         <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl w-full max-w-sm text-left space-y-1.5">
             <p class="text-[11px] text-blue-900 font-bold uppercase tracking-wider">🔒 Auto-Filled Message Note:</p>
             <p id="pay-note-preview" class="text-sm font-mono bg-white p-2.5 rounded-lg border border-blue-200/60 text-gray-900 font-black tracking-widest text-center"></p>
-            <p class="text-[9px] text-gray-400 font-medium text-center leading-normal">Scanning this QR will auto-fill your Phone Number inside the PhonePe/GPay message comment box to verify your transaction.</p>
+            <p class="text-[9px] text-gray-400 font-medium text-center leading-normal">Scanning this QR code will automatically add your phone number into your UPI application message/remark box for verification.</p>
         </div>
 
         <div class="w-full max-w-xs space-y-3">
@@ -50,7 +48,7 @@
         </div>
     </div>
 
-    <!-- 3 MINUTES LOCKDOWN SCREEN (Hidden by default until User says Payment Done) -->
+    <!-- 3 MINUTES LOCKDOWN SCREEN -->
     <div id="lockdown-modal" class="absolute inset-0 bg-gray-950 z-50 flex flex-col items-center justify-center p-6 text-center hidden">
         <div class="w-20 h-20 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mb-6"></div>
         <h2 class="text-xl font-black text-white uppercase tracking-wide">Verifying Your Payment</h2>
@@ -103,15 +101,15 @@
             amt = (selectedPlan === 'day') ? (data.price_day || "1100") : (data.price_week || "5100");
         }
 
-        // Setting the mobile number inside the standard &tn= parameter maps it to the comment box inside PhonePe/GPay
         const txNote = savedMobile; 
         document.getElementById('pay-amount').innerText = `₹${amt}`;
         document.getElementById('pay-note-preview').innerText = txNote;
 
-        const upiUrl = `upi://pay?pa=${upi}&pn=Rudraksh%20Console&am=${amt}&tn=${encodeURIComponent(txNote)}&cu=INR`;
+        // Structured UPI code generation sequence incorporating transaction note payload parameters
+        const rawUpiUrl = `upi://pay?pa=${upi}&pn=Rudraksh%20Console&am=${amt}&tn=${encodeURIComponent(txNote)}&cu=INR`;
         
-        document.getElementById('payment-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
-        document.getElementById('upi-deep-link').href = upiUrl;
+        // Generate QR Code purely for display scanning
+        document.getElementById('payment-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(rawUpiUrl)}`;
         
         localStorage.setItem('computed_pay_amt', amt);
     }
@@ -128,7 +126,6 @@
         let profileName = "Ganesh";
         if(userSnap.exists()) { profileName = userSnap.data().name || "Ganesh"; }
 
-        // Send validation payload request directly to the admin queue
         await setDoc(doc(db, "deposits", savedMobile), {
             userMobile: savedMobile,
             userName: profileName,
@@ -141,7 +138,6 @@
         localStorage.removeItem('selected_pay_plan');
         localStorage.removeItem('computed_pay_amt');
 
-        // Fire Up the 3 Minutes Lockdown Watcher System Interface Panel
         startVerificationLockdownClock();
     }
 
@@ -150,7 +146,7 @@
         document.getElementById('main-payment-screen').classList.add('hidden');
         document.getElementById('lockdown-modal').classList.remove('hidden');
 
-        let totalSeconds = 180; // 3 minutes total time sequence
+        let totalSeconds = 180; 
         countdownInterval = setInterval(() => {
             totalSeconds--;
             let mins = Math.floor(totalSeconds / 60);
@@ -163,7 +159,6 @@
             }
         }, 1000);
 
-        // Active Firestore real-time snapshot hook looks out for Admin approval or rejection
         requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
             if (snap.exists()) {
                 const depositData = snap.data();
