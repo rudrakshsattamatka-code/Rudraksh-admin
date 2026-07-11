@@ -42,7 +42,7 @@
         <button onclick="openTab('users')" id="nav-users" class="py-3 border-t-2 border-transparent relative">Users <span id="req-dot" class="hidden absolute top-2 right-6 w-2 h-2 bg-red-500 rounded-full"></span></button>
     </div>
 
-    <!-- NAVIGATION SCROLLER AREA -->
+    <!-- SCROLLER AREA -->
     <div class="flex-1 bg-gray-50 p-4 space-y-4 pb-12">
 
         <!-- SETTINGS TAB -->
@@ -64,7 +64,7 @@
                     <input type="text" id="cfg-upi" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono">
                 </div>
                 <div>
-                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Customer Support Phone Number</label>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Customer Support Phone Number (WhatsApp/Calling)</label>
                     <input type="text" id="cfg-support-phone" placeholder="e.g. 919113224019" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-bold">
                 </div>
                 <div>
@@ -82,6 +82,29 @@
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
+            <!-- VOICE NOTES BROADCAST SYSTEM -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">📢 Dashboard Voice Notes Broadcast</h3>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Voice Note Label Title</label>
+                    <input type="text" id="voice-title" placeholder="e.g. Special Market Closing Audio Note" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-semibold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Audio Source File URL</label>
+                    <input type="text" id="voice-url" placeholder="Paste .mp3 audio network link URL..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs text-gray-800 font-mono focus:outline-none">
+                </div>
+                <div class="flex space-x-2 items-center">
+                    <input type="file" id="voice-file-input" accept="audio/*" onchange="uploadVoiceFileToServer()" class="text-[9px] text-gray-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-orange-500/10 file:text-orange-600 font-bold cursor-pointer flex-1">
+                    <span id="voice-upload-status" class="text-[9px] font-bold text-gray-400">Idle</span>
+                </div>
+                <button onclick="publishVoiceNote()" class="w-full bg-blue-600 text-white font-black py-2 rounded-xl text-xs uppercase tracking-wider">🎙️ Broadcast Audio Note</button>
+                <div class="border-t border-gray-100 pt-3">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Active Voice Logs</p>
+                    <div id="admin-voice-list" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Image Sliders Gallery -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-2">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider mb-2">Gallery Image Banners (1-6)</h3>
                 <div class="space-y-2" id="slider-inputs-zone"></div>
@@ -127,17 +150,16 @@
 
         <!-- USERS TAB -->
         <div id="tab-users" class="space-y-4 hidden">
-            <div class="bg-orange-50 rounded-2xl p-4 border border-orange-200 space-y-2">
-                <h3 class="font-black text-xs text-orange-800 uppercase tracking-wider">⚠️ Pending Payments Queue</h3>
-                <div id="deposit-queue-zone" class="space-y-2"></div>
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100">
+                <input type="text" id="user-search-bar" oninput="triggerUserFilterDisplay()" placeholder="🔍 Search user by name or phone number..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-800 font-semibold focus:outline-none focus:border-orange-500">
             </div>
 
-            <!-- DIRECTORY PANEL & LIVE FILTERS -->
+            <div class="bg-orange-50 rounded-2xl p-4 border border-orange-200 space-y-2">
+                <h3 class="font-black text-xs text-orange-800 uppercase tracking-wider">Pending Payments Queue</h3>
+                <div id="deposit-queue-zone" class="space-y-2"></div>
+            </div>
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
-                <div class="flex flex-col space-y-1.5">
-                    <h3 class="font-black text-xs text-gray-400 uppercase tracking-wider">Subscribers Directory</h3>
-                    <input type="text" id="directory-search" oninput="triggerDirectorySearchRender()" placeholder="Search by name or mobile..." class="w-full text-xs font-bold bg-gray-50 border border-gray-200 p-2.5 rounded-xl focus:outline-none focus:border-orange-500">
-                </div>
+                <h3 class="font-black text-xs text-gray-400 uppercase tracking-wider">Subscribers Directory</h3>
                 <div id="users-directory-zone" class="space-y-3"></div>
             </div>
         </div>
@@ -166,8 +188,7 @@
     const storage = getStorage(app);
     let masterAdminPin = "9999";
     let globalMarketsCache = {};
-    let globalUsersCache = [];
-    let blockedNumbersCache = [];
+    let cachedUsersList = [];
 
     const inputsZone = document.getElementById('slider-inputs-zone');
     inputsZone.innerHTML = '';
@@ -262,14 +283,25 @@
             }
         });
 
-        // Monitor structural block list modifications
-        onSnapshot(doc(db, "system_config", "blocked_users"), (snap) => {
-            if (snap.exists()) {
-                blockedNumbersCache = snap.data().numbers || [];
-            } else {
-                blockedNumbersCache = [];
+        // Live Voice Notes list monitoring dashboard interface synchronization hooks
+        onSnapshot(collection(db, "voicenotes"), (querySnapshot) => {
+            const container = document.getElementById('admin-voice-list');
+            container.innerHTML = '';
+            if(querySnapshot.empty) {
+                container.innerHTML = `<p class="text-[11px] italic text-gray-400">No active audio logs streaming.</p>`;
+                return;
             }
-            renderUsersDirectory();
+            querySnapshot.forEach((vDoc) => {
+                const v = vDoc.data();
+                container.innerHTML += `
+                    <div class="bg-gray-50 border border-gray-200 p-2 rounded-xl flex items-center justify-between text-xs">
+                        <div class="overflow-hidden mr-2">
+                            <p class="font-bold text-gray-800 truncate">${v.title || 'Audio Note'}</p>
+                            <p class="text-[9px] text-gray-400 truncate font-mono">${v.url}</p>
+                        </div>
+                        <button onclick="deleteVoiceNote('${vDoc.id}')" class="bg-red-100 text-red-600 font-bold text-[10px] px-2.5 py-1 rounded-lg shrink-0">Wipe</button>
+                    </div>`;
+            });
         });
 
         onSnapshot(collection(db, "markets"), (querySnapshot) => {
@@ -288,13 +320,11 @@
         });
 
         onSnapshot(collection(db, "users"), (querySnapshot) => {
-            globalUsersCache = [];
+            cachedUsersList = [];
             querySnapshot.forEach(uDoc => {
-                let data = uDoc.data();
-                data.id = uDoc.id;
-                globalUsersCache.push(data);
+                cachedUsersList.push({ id: uDoc.id, ...uDoc.data() });
             });
-            renderUsersDirectory();
+            renderUserDirectoryItems(cachedUsersList);
         });
 
         onSnapshot(collection(db, "deposits"), (querySnapshot) => {
@@ -310,7 +340,7 @@
                     <div class="bg-white p-3 rounded-xl border border-orange-200 flex flex-col space-y-2 text-xs">
                         <div class="flex justify-between font-bold"><span>User: ${d.userMobile}</span><span class="text-green-600">₹${d.amount}</span></div>
                         <div class="grid grid-cols-2 gap-2 pt-1">
-                            <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px]">APPROVE (1 DAY)</button>
+                            <button onclick="approvePaymentRequest('${d.userMobile}', '${dDoc.id}')" class="bg-green-600 text-white py-1.5 rounded-lg font-bold text-[11px]">APPROVE</button>
                             <button onclick="rejectPaymentRequest('${dDoc.id}')" class="bg-red-600 text-white py-1.5 rounded-lg font-bold text-[11px]">REJECT</button>
                         </div>
                     </div>`;
@@ -318,123 +348,122 @@
         });
     }
 
-    window.triggerDirectorySearchRender = function() {
-        renderUsersDirectory();
+    window.uploadVoiceFileToServer = async function() {
+        const file = document.getElementById('voice-file-input').files[0];
+        const status = document.getElementById('voice-upload-status');
+        if(!file) return;
+        status.innerText = "UPLOADING..."; status.className = "text-orange-500 font-bold animate-pulse text-[9px]";
+        try {
+            const storageRef = ref(storage, `voice_notes/audio_${Date.now()}`);
+            const snapshot = await uploadBytes(storageRef, file);
+            const downloadUrl = await getDownloadURL(snapshot.ref);
+            document.getElementById('voice-url').value = downloadUrl;
+            status.innerText = "✓ READY"; status.className = "text-green-600 font-bold text-[9px]";
+        } catch(e) {
+            status.innerText = "❌ ERROR"; status.className = "text-red-500 font-bold text-[9px]";
+        }
     }
 
-    function renderUsersDirectory() {
+    window.publishVoiceNote = async function() {
+        const title = document.getElementById('voice-title').value.trim();
+        const url = document.getElementById('voice-url').value.trim();
+        if(!title || !url) return alert("Please specify both Title and Audio Source Link URL.");
+        
+        try {
+            const idString = "voice_" + Date.now();
+            await setDoc(doc(db, "voicenotes", idString), {
+                title: title,
+                url: url,
+                timestamp: Date.now()
+            });
+            document.getElementById('voice-title').value = '';
+            document.getElementById('voice-url').value = '';
+            document.getElementById('voice-file-input').value = '';
+            document.getElementById('voice-upload-status').innerText = 'Idle';
+            alert("Voice Broadcast note published live instantly!");
+        } catch(e) { alert("Broadcast update failed."); }
+    }
+
+    window.deleteVoiceNote = async function(id) {
+        if(confirm("Permanently wipe this audio message track from database?")) {
+            await deleteDoc(doc(db, "voicenotes", id));
+        }
+    }
+
+    window.triggerUserFilterDisplay = function() {
+        const query = document.getElementById('user-search-bar').value.toLowerCase().trim();
+        if(!query) {
+            renderUserDirectoryItems(cachedUsersList);
+            return;
+        }
+        const filtered = cachedUsersList.filter(u => 
+            (u.name && u.name.toLowerCase().includes(query)) || 
+            (u.id && u.id.includes(query))
+        );
+        renderUserDirectoryItems(filtered);
+    }
+
+    function renderUserDirectoryItems(usersArray) {
         const container = document.getElementById('users-directory-zone');
-        if (!container) return;
         container.innerHTML = '';
-
-        const filterTerm = document.getElementById('directory-search').value.trim().toLowerCase();
-
-        globalUsersCache.forEach(u => {
-            const userName = (u.name || 'User').toLowerCase();
-            const userPhone = (u.id || '').toLowerCase();
-
-            // Apply search parameters
-            if (filterTerm && !userName.includes(filterTerm) && !userPhone.includes(filterTerm)) {
-                return;
-            }
-
-            const isBlocked = blockedNumbersCache.includes(u.id);
+        if(usersArray.length === 0) {
+            container.innerHTML = `<p class="text-xs italic text-gray-400 text-center py-2">No matching users setup.</p>`;
+            return;
+        }
+        
+        usersArray.forEach(u => {
+            const isBlocked = u.status === "blocked";
+            const isActive = u.subscription === "active";
             
-            // Format subscriber runtime parameters
-            let dynamicSubText = "";
-            if (u.subscriptionExpiresAt && u.subscriptionExpiresAt > Date.now()) {
-                const remainMs = u.subscriptionExpiresAt - Date.now();
-                const dLeft = Math.ceil(remainMs / (1000 * 60 * 60 * 24));
-                dynamicSubText = `<span class="text-green-600 bg-green-50 px-2 py-0.5 rounded font-bold text-[10px]">Active (${dLeft}d left)</span>`;
-            } else {
-                dynamicSubText = `<span class="text-red-500 bg-red-50 px-2 py-0.5 rounded font-bold text-[10px]">Inactive</span>`;
+            let lastSeenStr = "Never";
+            if(u.lastSeen) {
+                const dateObj = new Date(u.lastSeen);
+                lastSeenStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             }
 
-            // Calculate live connection delay values
-            let lastSeenLabel = "Never";
-            if (u.lastSeen) {
-                const delaySeconds = Math.floor((Date.now() - u.lastSeen) / 1000);
-                if (delaySeconds < 60) lastSeenLabel = "Online Now";
-                else if (delaySeconds < 3600) lastSeenLabel = `${Math.floor(delaySeconds/60)}m ago`;
-                else lastSeenLabel = `${Math.floor(delaySeconds/3600)}h ago`;
+            let remainingText = "";
+            if(isActive && u.expiresAt) {
+                const diff = u.expiresAt - Date.now();
+                if(diff > 0) {
+                    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    remainingText = `<p class="text-[10px] text-green-600 font-bold">Ends in: ${days} Day(s)</p>`;
+                } else {
+                    remainingText = `<p class="text-[10px] text-red-500 font-bold">Expired</p>`;
+                }
             }
+
+            const subBadge = isBlocked ? 
+                '<span class="text-white bg-gray-900 px-2 py-0.5 rounded font-bold text-[10px]">BLOCKED</span>' : 
+                (isActive ? '<span class="text-green-600 bg-green-50 px-2 py-0.5 rounded font-bold text-[10px]">Active</span>' : '<span class="text-red-500 bg-red-50 px-2 py-0.5 rounded font-bold text-[10px]">Inactive</span>');
 
             container.innerHTML += `
-                <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex flex-col space-y-2.5 text-xs">
+                <div class="bg-gray-50 border border-gray-100 p-3 rounded-xl flex flex-col space-y-2 text-xs">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="font-bold text-gray-800">${u.name || 'User'} ${isBlocked ? '<span class="text-[9px] bg-red-600 text-white px-1.5 py-0.2 rounded font-black">BLOCKED</span>' : ''}</p>
-                            <p class="text-[10px] text-gray-400 font-mono">${u.id}</p>
-                            <p class="text-[9px] text-blue-500 font-bold uppercase tracking-wider mt-0.5">Seen: ${lastSeenLabel}</p>
+                            <p class="font-bold text-gray-800">${u.name || 'User'} ${subBadge}</p>
+                            <p class="text-[10px] text-gray-400 font-mono">Mobile: ${u.id}</p>
+                            <p class="text-[9px] text-gray-500 mt-0.5">👁️ Last Seen: ${lastSeenStr}</p>
+                            ${remainingText}
                         </div>
-                        <div class="flex flex-col items-end space-y-1">
-                            ${dynamicSubText}
-                        </div>
+                        <button onclick="deleteUser('${u.id}')" class="bg-red-100 text-red-600 px-2 py-1 rounded-lg text-[10px] font-bold">Delete</button>
                     </div>
-                    <!-- CONTROL SUITE ROW -->
-                    <div class="flex items-center space-x-2 pt-1 border-t border-gray-200/60 justify-between">
-                        <select onchange="modifyUserLifespan('${u.id}', this.value)" class="bg-white border border-gray-200 rounded-lg p-1 text-[10px] font-bold text-gray-700 focus:outline-none">
-                            <option value="" disabled selected>Change Plan...</option>
-                            <option value="1">Add +1 Day</option>
-                            <option value="5">Add +5 Days</option>
-                            <option value="7">Add +1 Week</option>
-                            <option value="30">Add +1 Month</option>
-                            <option value="0">Deactivate Profile</option>
+                    
+                    <div class="grid grid-cols-3 gap-1.5 pt-1 border-t border-gray-200/50 items-center">
+                        <select id="duration-${u.id}" class="bg-white border border-gray-200 text-[11px] rounded p-1 font-semibold focus:outline-none">
+                            <option value="1">1 Day</option>
+                            <option value="5">5 Days</option>
+                            <option value="7">7 Days</option>
+                            <option value="30">30 Days</option>
                         </select>
-                        <div class="flex space-x-1">
-                            <button onclick="toggleSystemBlockStatus('${u.id}')" class="bg-amber-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase">${isBlocked ? 'Unblock' : 'Block'}</button>
-                            <button onclick="deleteUser('${u.id}')" class="bg-red-600 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Delete</button>
-                        </div>
+                        <button onclick="modifyMembershipDuration('${u.id}', ${isActive})" class="${isActive ? 'bg-orange-500' : 'bg-emerald-600'} text-white py-1 rounded text-[10px] font-bold uppercase tracking-wider">
+                            ${isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button onclick="toggleUserBlockStatus('${u.id}', ${isBlocked})" class="${isBlocked ? 'bg-gray-600' : 'bg-gray-950'} text-white py-1 rounded text-[10px] font-bold uppercase tracking-wider">
+                            ${isBlocked ? 'Unblock' : 'Block'}
+                        </button>
                     </div>
                 </div>`;
         });
-    }
-
-    window.modifyUserLifespan = async function(userId, scopeDays) {
-        const numericDays = Number(scopeDays);
-        const userRef = doc(db, "users", userId);
-        
-        if (numericDays === 0) {
-            await updateDoc(userRef, {
-                subscription: "inactive",
-                subscriptionExpiresAt: 0
-            });
-            alert(`Subscription deactivated for user: ${userId}`);
-            return;
-        }
-
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-            const currentExpiresAt = userSnap.data().subscriptionExpiresAt || 0;
-            const baseTimestamp = Math.max(Date.now(), currentExpiresAt);
-            const addedLifespanMs = numericDays * 24 * 60 * 60 * 1000;
-            const absoluteExpiration = baseTimestamp + addedLifespanMs;
-
-            await updateDoc(userRef, {
-                subscription: "active",
-                subscriptionExpiresAt: absoluteExpiration
-            });
-            alert(`Added +${numericDays} Days validation space for profile: ${userId}`);
-        }
-    }
-
-    window.toggleSystemBlockStatus = async function(userId) {
-        const blockedIndex = blockedNumbersCache.indexOf(userId);
-        let updatedList = [...blockedNumbersCache];
-
-        if (blockedIndex > -1) {
-            updatedList.splice(blockedIndex, 1);
-            alert(`Mobile number ${userId} unblocked successfully.`);
-        } else {
-            if (!confirm(`Are you sure you want to block ${userId}? They will be immediately blocked from logging in or registering a new profile.`)) return;
-            updatedList.push(userId);
-            
-            // Instantly deactivate remaining subscription records
-            await updateDoc(doc(db, "users", userId), { subscription: "inactive", subscriptionExpiresAt: 0 });
-            alert(`Mobile number ${userId} blocked completely.`);
-        }
-
-        await setDoc(doc(db, "system_config", "blocked_users"), { numbers: updatedList }, { merge: true });
     }
 
     window.populateMarketForm = function(id) {
@@ -468,8 +497,7 @@
             
             alert("Parameters successfully saved!");
         } catch(e) {
-            alert("Save failed. Check your Firebase console rule settings.");
-            console.error(e);
+            alert("Save failed.");
         }
     }
 
@@ -486,17 +514,47 @@
     }
 
     window.approvePaymentRequest = async function(userMobile, docId) {
-        // Dynamic payload to grant exactly 1 day premium lifespan starting from now
-        const runtimeEnd = Date.now() + (1 * 24 * 60 * 60 * 1000);
+        const expiryTime = Date.now() + (1 * 24 * 60 * 60 * 1000); 
         await updateDoc(doc(db, "users", userMobile), { 
             subscription: "active",
-            subscriptionExpiresAt: runtimeEnd 
+            expiresAt: expiryTime 
         });
         await deleteDoc(doc(db, "deposits", docId));
-        alert(`Approved deposit application for ${userMobile}. Granting +1 Day plan.`);
     }
 
     window.rejectPaymentRequest = async function(docId) { await updateDoc(doc(db, "deposits", docId), { status: "rejected" }); }
+    
+    window.modifyMembershipDuration = async function(userId, currentlyActive) {
+        if(currentlyActive) {
+            await updateDoc(doc(db, "users", userId), { 
+                subscription: "inactive",
+                expiresAt: null 
+            });
+        } else {
+            const selectElem = document.getElementById(`duration-${userId}`);
+            const selectDays = parseInt(selectElem.value) || 1;
+            const computedExpiry = Date.now() + (selectDays * 24 * 60 * 60 * 1000);
+            await updateDoc(doc(db, "users", userId), { 
+                subscription: "active",
+                expiresAt: computedExpiry
+            });
+        }
+    }
+
+    window.toggleUserBlockStatus = async function(userId, currentlyBlocked) {
+        if(currentlyBlocked) {
+            await updateDoc(doc(db, "users", userId), { status: "allowed" });
+            alert("User unblocked successfully.");
+        } else {
+            await updateDoc(doc(db, "users", userId), { 
+                status: "blocked",
+                subscription: "inactive",
+                expiresAt: null 
+            });
+            alert("User blocked successfully!");
+        }
+    }
+
     window.deleteMarket = async function(id) { if(confirm("Wipe market?")) await deleteDoc(doc(db, "markets", id)); }
     window.deleteUser = async function(id) { if(confirm("Permanently delete this user from database?")) await deleteDoc(doc(db, "users", id)); }
 </script>
