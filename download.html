@@ -61,11 +61,14 @@
         </div>
     </div>
 
-    <!-- MAIN INSTALL ACTION BUTTON (Points to internal root file repository) -->
-    <div class="px-4 py-3">
-        <a id="lnk-main-download" href="Rudraksh.1.apk" download="Rudraksh_New.apk" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-all transform active:scale-[0.99]">
-            Install
-        </a>
+    <!-- MAIN INSTALL ACTION BUTTON WITH DYNAMIC PERCENT PROGRESS -->
+    <div class="px-4 py-3 relative">
+        <button id="btn-main-install" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-all transform active:scale-[0.99] overflow-hidden relative">
+            <div id="progress-bar-fill" class="absolute top-0 left-0 bottom-0 bg-[#016e4d] w-0 transition-all duration-200 z-0"></div>
+            <span id="txt-install" class="relative z-10 flex items-center justify-center space-x-2">
+                <span>Install</span>
+            </span>
+        </button>
     </div>
 
     <!-- VALUE METRIC TAG CHIPS SLIDER -->
@@ -205,43 +208,77 @@
         <p class="font-bold text-[9px] uppercase tracking-wider mt-1">© Rudraksh Analytics Software Systems Inc.</p>
     </div>
 
-    <!-- FALLBACK USER ALERTS OVERLAY DESIGN -->
-    <div id="alert-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-6 hidden">
-        <div class="bg-white p-5 rounded-2xl w-full max-w-[320px] text-center space-y-4">
-            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-xl font-bold">✓</div>
-            <h3 class="font-black text-gray-900 text-base uppercase">Download Initiated!</h3>
-            <p class="text-xs text-gray-500 font-semibold leading-relaxed">Your mobile browser is now saving the application file.</p>
-            
-            <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-left space-y-2 text-[11px] text-gray-600 font-medium">
-                <p>📍 Check your phone's <b>Top Notification Bar</b> or tap the browser menu ➔ <b>Downloads</b>.</p>
-                <p>🚀 Simply tap the completed <b>"Rudraksh_New.apk"</b> row to run the Android installer screen immediately!</p>
-            </div>
-            <button id="btn-alert-ok" class="w-full bg-[#01875f] text-white font-bold py-3 rounded-xl text-xs uppercase shadow-sm">OK, I Understand</button>
-        </div>
-    </div>
-
 </div>
 
-<!-- INTERACTIVE FLOW CONTROL SCRIPT -->
+<!-- COMPREHENSIVE STREAM DRIVER SCRIPT -->
 <script>
-    document.getElementById('lnk-main-download').onclick = function() {
-        var el = document.getElementById('lnk-main-download');
-        el.innerText = "Downloading App...";
-        el.className = "w-full bg-amber-600 text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-all";
+    // UPDATED V1.0.5 RELEASE TARGET ADDRESS
+    var apkDownloadLink = "https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.5/Rudraksh.1.apk";
+
+    document.getElementById('btn-main-install').onclick = function() {
+        var btn = document.getElementById('btn-main-install');
+        var txt = document.getElementById('txt-install');
+        var bar = document.getElementById('progress-bar-fill');
+
+        if(txt.innerText.includes("Downloading")) return;
         
-        // Pop open the helpful installation instructions panel
-        setTimeout(function() {
-            document.getElementById('alert-modal').classList.remove('hidden');
-        }, 1200);
+        txt.innerText = "Downloading 0%";
+        bar.style.width = "0%";
 
-        setTimeout(function() {
-            el.innerText = "Install";
-            el.className = "w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-all";
-        }, 6000);
-    };
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", apkDownloadLink, true);
+        xhr.responseType = "blob";
 
-    document.getElementById('btn-alert-ok').onclick = function() {
-        document.getElementById('alert-modal').classList.add('hidden');
+        xhr.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percentComplete = Math.round((event.loaded / event.total) * 100);
+                txt.innerText = "Downloading " + percentComplete + "%";
+                bar.style.width = percentComplete + "%";
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                txt.innerText = "Opening Installer...";
+                bar.style.width = "100%";
+
+                var blob = xhr.response;
+                var binaryUrl = window.URL.createObjectURL(blob);
+                var triggerAnchor = document.createElement('a');
+                
+                // appends randomized numbering to skip active device conflict blocks completely
+                var incrementalIndex = Math.floor(Math.random() * 999) + 1;
+                var finalizedCustomFileName = "Rudraksh_" + incrementalIndex + ".apk";
+                
+                triggerAnchor.href = binaryUrl;
+                triggerAnchor.download = finalizedCustomFileName;
+                
+                document.body.appendChild(triggerAnchor);
+                triggerAnchor.click();
+                
+                document.body.removeChild(triggerAnchor);
+                window.URL.revokeObjectURL(binaryUrl);
+
+                setTimeout(function() {
+                    txt.innerText = "Install";
+                    bar.style.width = "0%";
+                }, 2000);
+            } else {
+                handleDownloadError();
+            }
+        };
+
+        xhr.onerror = function() {
+            handleDownloadError();
+        };
+
+        function handleDownloadError() {
+            window.location.href = apkDownloadLink;
+            txt.innerText = "Install";
+            bar.style.width = "0%";
+        }
+
+        xhr.send();
     };
 
     document.getElementById('btn-submit-review').onclick = function() {
