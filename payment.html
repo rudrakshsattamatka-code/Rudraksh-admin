@@ -25,13 +25,19 @@
             <p id="pay-amount" class="text-4xl font-black text-gray-800 mt-1">₹0.00</p>
         </div>
 
-        <div class="bg-white p-5 border border-gray-200 rounded-3xl shadow-inner">
-            <img id="payment-qr" src="" class="w-56 h-56 object-contain" alt="Merchant QR">
-        </div>
+        <!-- CLICKABLE OR SCANNER DEEP-LINK CONTAINER -->
+        <a id="upi-deep-link" href="#" class="block group">
+            <div class="bg-white p-5 border-2 border-dashed border-gray-200 rounded-3xl shadow-inner group-active:scale-95 transition-transform">
+                <img id="payment-qr" src="" class="w-56 h-56 object-contain mx-auto" alt="Merchant QR">
+                <p class="text-[10px] text-blue-600 font-extrabold uppercase mt-2 animate-pulse">Tap QR to Pay Directly via App</p>
+            </div>
+        </a>
 
-        <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl max-w-sm text-left space-y-1">
-            <p class="text-[11px] text-amber-900 font-bold uppercase">📌 Auto-Filled Payment Notes:</p>
-            <p id="pay-note-preview" class="text-xs font-mono bg-white p-2 rounded-lg border border-amber-200/60 text-gray-700 font-bold"></p>
+        <!-- TRANSACTION NOTE PREVIEW PANEL -->
+        <div class="bg-blue-50 border border-blue-200 p-4 rounded-2xl w-full max-w-sm text-left space-y-1.5">
+            <p class="text-[11px] text-blue-900 font-bold uppercase tracking-wider">🔒 Bank Statement Verification Note:</p>
+            <p id="pay-note-preview" class="text-sm font-mono bg-white p-2.5 rounded-lg border border-blue-200/60 text-gray-900 font-black tracking-widest text-center"></p>
+            <p class="text-[9px] text-gray-400 font-medium text-center leading-normal">This number is automatically locked into your payment notes to verify your status in our bank statement.</p>
         </div>
 
         <div class="w-full max-w-xs space-y-3">
@@ -79,26 +85,29 @@
             amt = (selectedPlan === 'day') ? (data.price_day || "1100") : (data.price_week || "5100");
         }
 
-        const txNote = `Mobile-${savedMobile}`;
+        // Pre-filling mobile number explicitly for bank text mapping matching parameters
+        const txNote = savedMobile; 
         document.getElementById('pay-amount').innerText = `₹${amt}`;
         document.getElementById('pay-note-preview').innerText = txNote;
 
-        const upiUrl = `upi://pay?pa=${upi}&pn=Rudraksh%20Console&am=${amt}&tn=${encodeURIComponent(txNote)}&cu=INR`;
+        // Structured deep link incorporating strict transaction notes payload parameter (&tn)
+        const upiUrl = `upi://pay?pa=${upi}&pn=Rudraksh%20Premium&am=${amt}&tn=${encodeURIComponent(txNote)}&cu=INR`;
+        
+        // Update both the visual QR code image and the direct clickable link element
         document.getElementById('payment-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+        document.getElementById('upi-deep-link').href = upiUrl;
         
         localStorage.setItem('computed_pay_amt', amt);
     }
 
     window.promptPaymentConfirmation = async function() {
-        const firstCheck = confirm("Did you complete the payment transfer inside your UPI application?");
+        const firstCheck = confirm("Did you finish sending the money inside your payment app?");
         if (!firstCheck) return;
 
-        const secondCheck = confirm("Are you absolutely sure? Providing false declarations might cause account termination.");
+        const secondCheck = confirm("Double Check: Did you verify that your phone number was added to the note section?");
         if (!secondCheck) return;
 
         const amt = localStorage.getItem('computed_pay_amt') || "0";
-        
-        // Fetch User profile metadata names for admin records logs sync tracking
         const userSnap = await getDoc(doc(db, "users", savedMobile));
         let profileName = "Ganesh";
         if(userSnap.exists()) { profileName = userSnap.data().name || "Ganesh"; }
@@ -107,14 +116,14 @@
             userMobile: savedMobile,
             userName: profileName,
             amount: amt,
-            note: `Mobile-${savedMobile}`,
+            note: savedMobile, // Exact match tracking log context
             status: "pending",
             timestamp: Date.now()
         });
 
         localStorage.removeItem('selected_pay_plan');
         localStorage.removeItem('computed_pay_amt');
-        alert("Verification request submitted successfully. The dashboard will unlock automatically upon admin confirmation.");
+        alert("Payment confirmation received. The admin will verify this instantly against the bank log statement.");
         window.location.href = 'dashboard.html';
     }
 
