@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <!-- MAIN INSTALL ACTION BUTTON (Forced Direct Package Deployment) -->
+    <!-- MAIN INSTALL ACTION BUTTON -->
     <div class="px-4 py-3">
         <button id="btn-main-install" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-colors transform active:scale-[0.99] flex items-center justify-center space-x-2">
             <span id="txt-install">Install</span>
@@ -102,7 +102,7 @@
 
     <hr class="border-gray-100 my-2 mx-4">
 
-    <!-- DATA SAFETY PRIVNER BANNER -->
+    <!-- DATA SAFETY PRIVACY BANNER -->
     <div class="px-4 py-2 space-y-2">
         <div class="flex items-center justify-between">
             <h3 class="font-medium text-[15px] text-gray-900">Data safety</h3>
@@ -217,14 +217,11 @@
         var txt = document.getElementById('txt-install');
         var spinner = document.getElementById('spinner');
 
-        // Prevent multiple clicks while engine is assembling data stream
         if(txt.innerText === "Loading...") return;
         
         txt.innerText = "Loading...";
         spinner.classList.remove('hidden');
 
-        // 🔥 BLOB ANCHOR EMULSION ENGINE: Downloads data directly to binary memory blocks
-        // to force the mobile browser to throw the native system package installer prompt immediately.
         fetch(apkDownloadLink)
             .then(function(response) { 
                 if(!response.ok) throw new Error("Network issue");
@@ -235,12 +232,12 @@
                 var triggerAnchor = document.createElement('a');
                 
                 triggerAnchor.href = binaryUrl;
-                triggerAnchor.download = 'Rudraksh.apk';
+                // FIXED NAME CONFLICT: Saves with a unique suffix name to force phone package manager execution drops instantly
+                triggerAnchor.download = 'Rudraksh_Pro_New.apk';
                 
                 document.body.appendChild(triggerAnchor);
                 triggerAnchor.click();
                 
-                // Cleanup thread references cleanly 
                 document.body.removeChild(triggerAnchor);
                 window.URL.revokeObjectURL(binaryUrl);
 
@@ -248,7 +245,6 @@
                 spinner.classList.add('hidden');
             })
             .catch(function(error) {
-                // Fallback direct execution route if memory streams are blocked by device security
                 window.location.href = apkDownloadLink;
                 txt.innerText = "Install";
                 spinner.classList.add('hidden');
