@@ -47,16 +47,15 @@
                 <div id="membership-badge" class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gray-200 text-gray-600">Checking...</div>
             </div>
             
-            <!-- Exact countdown indicator alert feature container box -->
             <div id="subscription-countdown-box" class="hidden text-xs bg-orange-50 text-orange-700 p-2.5 rounded-xl border border-orange-200 font-bold text-center">
                 Your premium subscription ends in: <span id="days-remaining-counter" class="font-black text-red-600">--</span>
             </div>
         </div>
 
-        <!-- LIVE ANTICHEAT SERVER TIMESTAMPS NETWORKS WATCHCLOCK -->
+        <!-- LIVE ANTICHEAT SERVER TIMESTAMPS WATCHCLOCK -->
         <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-2xl p-4 shadow-md text-center border border-green-500/20 relative overflow-hidden">
             <div class="absolute -top-6 -right-6 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
-            <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">SYNCING WITH TELECOM NETWORKS</div>
+            <div id="live-calendar-text" class="text-[10px] text-green-200 font-bold uppercase tracking-widest mb-1 font-mono">SYNCING SERVER TIME...</div>
             <div id="live-clock" class="text-3xl font-black text-white tracking-widest font-mono drop-shadow-[0_2px_6px_rgba(0,0,0,0.15)]">--:--:--</div>
         </div>
 
@@ -105,7 +104,7 @@
             </p>
         </div>
 
-        <!-- SUPPORT SYSTEM DESK (Voice Call Option Completely Removed As Instructed) -->
+        <!-- SUPPORT SYSTEM DESK -->
         <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Customer Support Desk</h4>
             <a id="support-whatsapp" href="https://wa.me/919113224019" target="_blank" class="flex items-center justify-center bg-emerald-500 text-white py-3.5 rounded-xl text-xs font-black shadow-sm uppercase tracking-wider">WhatsApp Support Chat</a>
@@ -143,7 +142,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, updateDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
@@ -165,8 +164,6 @@
     let priceWeek = "5100";
     let watermarkNumber = "9113224019"; 
     let cachedMarkets = [];
-    
-    // Core anti-tampering server network offsets configuration metrics variables
     let serverTimeOffset = 0; 
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
@@ -177,18 +174,18 @@
 
         document.getElementById('profile-phone').innerText = "Mobile: " + savedMobile;
 
-        // 🔥 FIX: Establish baseline reference sync directly with database server timestamp mapping
+        // OPTIMIZED INSTANT TIME SYNC: Fetching headers removes the database write freeze completely
         try {
-            const timeRef = doc(db, "system_config", "settings");
-            await updateDoc(timeRef, { serverPing: serverTimestamp() });
-            const freshSnap = await getDoc(timeRef);
-            if (freshSnap.exists() && freshSnap.data().serverPing) {
-                const serverMs = freshSnap.data().serverPing.toMillis();
+            const startTest = Date.now();
+            const response = await fetch(window.location.href, { method: 'HEAD' });
+            const serverDateHeader = response.headers.get('Date');
+            if(serverDateHeader) {
+                const serverMs = Date.parse(serverDateHeader) + (Date.now() - startTest) / 2;
                 serverTimeOffset = serverMs - Date.now();
             }
-        } catch(e) { console.log("System network synchronization offset configured successfully"); }
+        } catch(e) { console.log("Baseline time calculated via system context"); }
 
-        // Live Anti-Cheat Clock Execution Loop Hook
+        // Live Anti-Cheat Clock Loop execution 
         setInterval(() => {
             const secureCorrectedMs = Date.now() + serverTimeOffset;
             const now = new Date(secureCorrectedMs);
@@ -196,7 +193,7 @@
             document.getElementById('live-calendar-text').innerText = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
         }, 1000);
 
-        // Visibility listener triggers instantly when tab is closed or switched
+        // Visibility events trigger instantly on exit signals
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') { updateLastSeenSyncPing(savedMobile); }
         });
@@ -205,7 +202,7 @@
         updateLastSeenSyncPing(savedMobile);
         setInterval(() => updateLastSeenSyncPing(savedMobile), 15000);
 
-        // Monitor Voice announcements loop hooks stream dashboard interface synchronization
+        // Realtime dynamic voice logs streaming handler listener
         onSnapshot(collection(db, "voicenotes"), (snapshot) => {
             const sec = document.getElementById('voice-notes-section');
             const target = document.getElementById('voice-elements-container');
@@ -221,9 +218,7 @@
                             <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-ping"></span>
                             <span>${data.title || 'Important Voice Update'}</span>
                         </p>
-                        <audio controls class="w-full h-8 text-xs focus:outline-none">
-                            <source src="${data.url}" type="audio/mpeg">
-                        </audio>
+                        <audio src="${data.url}" controls class="w-full h-8 text-xs focus:outline-none"></audio>
                     </div>`;
             });
         });
@@ -241,7 +236,7 @@
             userSubscriptionStatus = uData.subscription || "inactive";
             const currentSecureTime = Date.now() + serverTimeOffset;
 
-            // Automatically deactivate profile membership states when duration parameters lapse securely
+            // Automatically track lopsided expiry timestamps metrics parameters
             if (userSubscriptionStatus === "active" && uData.expiresAt) {
                 if (uData.expiresAt - currentSecureTime <= 0) {
                     userSubscriptionStatus = "inactive";
@@ -262,7 +257,6 @@
                 badge.innerText = "Active"; badge.classList.add('bg-green-100', 'text-green-700');
                 banner.classList.add('hidden');
                 
-                // Show remaining days/hours left
                 if(uData.expiresAt) {
                     const diffTime = uData.expiresAt - currentSecureTime;
                     if(diffTime > 0) {
@@ -285,9 +279,7 @@
             if (snapshot.exists()) {
                 const data = snapshot.data();
                 if (data.notice_text) document.getElementById('notice-text').innerText = data.notice_text;
-                if (data.support_phone) {
-                    document.getElementById('support-whatsapp').href = `https://wa.me/${data.support_phone}`;
-                }
+                if (data.support_phone) { document.getElementById('support-whatsapp').href = `https://wa.me/${data.support_phone}`; }
                 priceDay = data.price_day || "1100"; priceWeek = data.price_week || "5100";
                 if(data.watermark_phone) watermarkNumber = data.watermark_phone;
                 
