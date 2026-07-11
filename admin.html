@@ -426,7 +426,6 @@
             cachedUsersList = [];
             querySnapshot.forEach(uDoc => { cachedUsersList.push({ id: uDoc.id, ...uDoc.data() }); });
             
-            // Priority Sort: Active accounts float to top structure execution
             cachedUsersList.sort((a, b) => {
                 const aAct = a.subscription === "active" ? 1 : 0;
                 const bAct = b.subscription === "active" ? 1 : 0;
@@ -457,6 +456,15 @@
             });
         });
     }
+
+    window.approvePaymentRequest = async function(userMobile, docId) {
+        const expiryTime = Date.now() + (1 * 24 * 60 * 60 * 1000); 
+        await updateDoc(doc(db, "users", userMobile), { subscription: "active", expiresAt: expiryTime });
+        // FIXED: Updates status dynamically instead of instant deletion to allow handshake sync triggers
+        await updateDoc(doc(db, "deposits", docId), { status: "approved" });
+    }
+
+    window.rejectPaymentRequest = async function(docId) { await updateDoc(doc(db, "deposits", docId), { status: "rejected" }); }
 
     window.triggerUserFilterDisplay = function() {
         const query = document.getElementById('user-search-bar').value.toLowerCase().trim();
@@ -567,14 +575,6 @@
         alert("Game details published.");
     }
 
-    window.approvePaymentRequest = async function(userMobile, docId) {
-        const expiryTime = Date.now() + (1 * 24 * 60 * 60 * 1000); 
-        await updateDoc(doc(db, "users", userMobile), { subscription: "active", expiresAt: expiryTime });
-        await deleteDoc(doc(db, "deposits", docId));
-    }
-
-    window.rejectPaymentRequest = async function(docId) { await updateDoc(doc(db, "deposits", docId), { status: "rejected" }); }
-    
     window.modifyMembershipDuration = async function(userId, currentlyActive) {
         if(currentlyActive) {
             await updateDoc(doc(db, "users", userId), { subscription: "inactive", expiresAt: null });
