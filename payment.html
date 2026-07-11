@@ -122,6 +122,7 @@
 
     let countdownInterval = null;
     let requestUnsubscribe = null;
+    let fallbackLoopInterval = null; // Forces verification even if WebView freezes active snapshots
 
     if(!savedMobile || !selectedPlan) { window.location.href = 'dashboard.html'; }
 
@@ -184,37 +185,54 @@
             document.getElementById('lockdown-timer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             
             if(totalSeconds <= 0) {
-                clearInterval(countdownInterval);
+                stopAllActiveWatcherLoops();
                 cancelDepositLockdownWipe("timeout");
             }
         }, 1000);
 
-        requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), async (snap) => {
+        // REAL-TIME SNAPHOT WATCHER
+        requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
             if (snap.exists()) {
                 const depositData = snap.data();
-                
-                // HANDSHAKE TRIGGER: Resolves immediately upon intercepting the approval string signal
-                if (depositData.status === "approved") {
-                    clearInterval(countdownInterval);
-                    if(requestUnsubscribe) requestUnsubscribe();
-                    
-                    // Client executes self-cleaning removal from database queues cleanly
-                    try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
-                    
-                    window.showCustomAlert("✅ Approved!", "Your payment was successfully verified by the admin! Premium access has been unlocked.", "success", () => {
-                        window.location.href = 'dashboard.html';
-                    });
-                } 
-                else if (depositData.status === "rejected") {
-                    clearInterval(countdownInterval);
-                    cancelDepositLockdownWipe("rejected");
-                }
+                processIncomingStatusUpdate(depositData.status);
             }
         });
+
+        // 🔥 FALLBACK PULL LOOP: Runs a manual database check every 3 seconds to bypass WebView caching freezes
+        fallbackLoopInterval = setInterval(async () => {
+            try {
+                const manualSnap = await getDoc(doc(db, "deposits", savedMobile));
+                if (manualSnap.exists()) {
+                    processIncomingStatusUpdate(manualSnap.data().status);
+                }
+            } catch(e) { console.log("Fallback sync active"); }
+        }, 3000);
+    }
+
+    async function processIncomingStatusUpdate(status) {
+        if (status === "approved") {
+            stopAllActiveWatcherLoops();
+            
+            try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
+            
+            window.showCustomAlert("✅ Approved!", "Your payment was successfully verified by the admin! Premium access has been unlocked.", "success", () => {
+                window.location.href = 'dashboard.html';
+            });
+        } 
+        else if (status === "rejected") {
+            stopAllActiveWatcherLoops();
+            cancelDepositLockdownWipe("rejected");
+        }
+    }
+
+    function stopAllActiveWatcherLoops() {
+        if(countdownInterval) clearInterval(countdownInterval);
+        if(fallbackLoopInterval) clearInterval(fallbackLoopInterval);
+        if(requestUnsubscribe) requestUnsubscribe();
     }
 
     async function cancelDepositLockdownWipe(reason) {
-        if(requestUnsubscribe) requestUnsubscribe();
+        stopAllActiveWatcherLoops();
         try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
         
         if(reason === "rejected") {
