@@ -189,16 +189,18 @@
             }
         }, 1000);
 
-        // INSTANT DECISION ENGINE: Watches the document for direct state modifications live
-        requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
+        requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), async (snap) => {
             if (snap.exists()) {
                 const depositData = snap.data();
                 
+                // HANDSHAKE TRIGGER: Resolves immediately upon intercepting the approval string signal
                 if (depositData.status === "approved") {
                     clearInterval(countdownInterval);
                     if(requestUnsubscribe) requestUnsubscribe();
                     
-                    // Fire WebView safe modal instead of simple alert
+                    // Client executes self-cleaning removal from database queues cleanly
+                    try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
+                    
                     window.showCustomAlert("✅ Approved!", "Your payment was successfully verified by the admin! Premium access has been unlocked.", "success", () => {
                         window.location.href = 'dashboard.html';
                     });
@@ -207,13 +209,6 @@
                     clearInterval(countdownInterval);
                     cancelDepositLockdownWipe("rejected");
                 }
-            } else {
-                // If admin cleanly wipes/deletes the approved document request from queue directly
-                clearInterval(countdownInterval);
-                if(requestUnsubscribe) requestUnsubscribe();
-                window.showCustomAlert("✅ Profile Active!", "Your verification session is complete. Returning to your dashboard dashboard area now.", "success", () => {
-                    window.location.href = 'dashboard.html';
-                });
             }
         });
     }
