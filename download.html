@@ -210,10 +210,11 @@
 
 </div>
 
-<!-- COMPREHENSIVE STREAM DRIVER SCRIPT -->
+<!-- FIXED SCRIPT - Uses direct download + Android Intent for automatic installation -->
 <script>
     // UPDATED V1.0.5 RELEASE TARGET ADDRESS
     var apkDownloadLink = "https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.5/Rudraksh.1.apk";
+    var apkFileName = "Rudraksh.apk";
 
     document.getElementById('btn-main-install').onclick = function() {
         var btn = document.getElementById('btn-main-install');
@@ -225,6 +226,7 @@
         txt.innerText = "Downloading 0%";
         bar.style.width = "0%";
 
+        // METHOD 1: Try XHR with blob for progress tracking
         var xhr = new XMLHttpRequest();
         xhr.open("GET", apkDownloadLink, true);
         xhr.responseType = "blob";
@@ -243,40 +245,66 @@
                 bar.style.width = "100%";
 
                 var blob = xhr.response;
-                var binaryUrl = window.URL.createObjectURL(blob);
+                
+                // Create a temporary URL for the blob
+                var blobUrl = window.URL.createObjectURL(blob);
+                
+                // Try Android Intent first - THIS OPENS THE INSTALLER
+                try {
+                    // Create an intent URL that opens the APK with package installer
+                    var intentUrl = 'intent://' + apkDownloadLink.replace('https://', '') + '#Intent;action=android.intent.action.VIEW;scheme=https;type=application/vnd.android.package-archive;end';
+                    
+                    // Try to open with intent (Android only)
+                    var iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = intentUrl;
+                    document.body.appendChild(iframe);
+                    
+                    // Fallback: If intent doesn't work, use direct download
+                    setTimeout(function() {
+                        document.body.removeChild(iframe);
+                    }, 1000);
+                } catch(e) {
+                    // Fallback to direct download
+                }
+
+                // ALSO create a download link (works on all browsers)
                 var triggerAnchor = document.createElement('a');
-                
-                // appends randomized numbering to skip active device conflict blocks completely
-                var incrementalIndex = Math.floor(Math.random() * 999) + 1;
-                var finalizedCustomFileName = "Rudraksh_" + incrementalIndex + ".apk";
-                
-                triggerAnchor.href = binaryUrl;
-                triggerAnchor.download = finalizedCustomFileName;
-                
+                triggerAnchor.href = blobUrl;
+                triggerAnchor.download = apkFileName;
                 document.body.appendChild(triggerAnchor);
                 triggerAnchor.click();
-                
                 document.body.removeChild(triggerAnchor);
-                window.URL.revokeObjectURL(binaryUrl);
+                
+                // Revoke the blob URL after a delay
+                setTimeout(function() {
+                    window.URL.revokeObjectURL(blobUrl);
+                }, 5000);
 
+                // Show "Installing" message and reset after delay
                 setTimeout(function() {
                     txt.innerText = "Install";
                     bar.style.width = "0%";
-                }, 2000);
+                }, 4000);
             } else {
-                handleDownloadError();
+                // If XHR fails, use direct link
+                window.location.href = apkDownloadLink;
+                txt.innerText = "Install";
+                bar.style.width = "0%";
             }
         };
 
         xhr.onerror = function() {
-            handleDownloadError();
-        };
-
-        function handleDownloadError() {
-            window.location.href = apkDownloadLink;
+            // If XHR fails, use direct link with download attribute
+            var link = document.createElement('a');
+            link.href = apkDownloadLink;
+            link.download = apkFileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             txt.innerText = "Install";
             bar.style.width = "0%";
-        }
+        };
 
         xhr.send();
     };
