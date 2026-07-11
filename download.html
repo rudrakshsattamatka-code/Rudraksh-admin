@@ -61,11 +61,15 @@
         </div>
     </div>
 
-    <!-- MAIN INSTALL ACTION BUTTON -->
-    <div class="px-4 py-3">
-        <button id="btn-main-install" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-colors transform active:scale-[0.99] flex items-center justify-center space-x-2">
-            <span id="txt-install">Install</span>
-            <div id="spinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+    <!-- MAIN INSTALL ACTION BUTTON WITH DYNAMIC PERCENT PROGRESS -->
+    <div class="px-4 py-3 relative">
+        <button id="btn-main-install" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-all transform active:scale-[0.99] overflow-hidden relative">
+            <!-- Background progress bar visual element -->
+            <div id="progress-bar-fill" class="absolute top-0 left-0 bottom-0 bg-[#016e4d] w-0 transition-all duration-200 z-0"></div>
+            <!-- Interactive text element -->
+            <span id="txt-install" class="relative z-10 flex items-center justify-center space-x-2">
+                <span>Install</span>
+            </span>
         </button>
     </div>
 
@@ -208,32 +212,49 @@
 
 </div>
 
-<!-- COMPREHENSIVE ROUTING DRIVER SCRIPT -->
+<!-- COMPREHENSIVE STREAM DRIVER SCRIPT -->
 <script>
     var apkDownloadLink = "https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.4/Rudraksh.apk";
 
     document.getElementById('btn-main-install').onclick = function() {
         var btn = document.getElementById('btn-main-install');
         var txt = document.getElementById('txt-install');
-        var spinner = document.getElementById('spinner');
+        var bar = document.getElementById('progress-bar-fill');
 
-        if(txt.innerText === "Loading...") return;
+        if(txt.innerText.includes("Downloading")) return;
         
-        txt.innerText = "Loading...";
-        spinner.classList.remove('hidden');
+        txt.innerText = "Downloading 0%";
+        bar.style.width = "0%";
 
-        fetch(apkDownloadLink)
-            .then(function(response) { 
-                if(!response.ok) throw new Error("Network issue");
-                return response.blob(); 
-            })
-            .then(function(blob) {
+        // 🔥 AJAX PROGRESS LISTENER EMULSION SYSTEM
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", apkDownloadLink, true);
+        xhr.responseType = "blob";
+
+        // Updates the button background fill tracking variables line calculations
+        xhr.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percentComplete = Math.round((event.loaded / event.total) * 100);
+                txt.innerText = "Downloading " + percentComplete + "%";
+                bar.style.width = percentComplete + "%";
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                txt.innerText = "Opening Installer...";
+                bar.style.width = "100%";
+
+                var blob = xhr.response;
                 var binaryUrl = window.URL.createObjectURL(blob);
                 var triggerAnchor = document.createElement('a');
                 
+                // Randomized suffix handles namespace conflicts automatically 
+                var incrementalIndex = Math.floor(Math.random() * 999) + 1;
+                var finalizedCustomFileName = "Rudraksh_" + incrementalIndex + ".apk";
+                
                 triggerAnchor.href = binaryUrl;
-                // FIXED NAME CONFLICT: Saves with a unique suffix name to force phone package manager execution drops instantly
-                triggerAnchor.download = 'Rudraksh_Pro_New.apk';
+                triggerAnchor.download = finalizedCustomFileName;
                 
                 document.body.appendChild(triggerAnchor);
                 triggerAnchor.click();
@@ -241,14 +262,27 @@
                 document.body.removeChild(triggerAnchor);
                 window.URL.revokeObjectURL(binaryUrl);
 
-                txt.innerText = "Install";
-                spinner.classList.add('hidden');
-            })
-            .catch(function(error) {
-                window.location.href = apkDownloadLink;
-                txt.innerText = "Install";
-                spinner.classList.add('hidden');
-            });
+                // Reset state back to original appearance tracking hooks
+                setTimeout(function() {
+                    txt.innerText = "Install";
+                    bar.style.width = "0%";
+                }, 2000);
+            } else {
+                handleDownloadError();
+            }
+        };
+
+        xhr.onerror = function() {
+            handleDownloadError();
+        };
+
+        function handleDownloadError() {
+            window.location.href = apkDownloadLink;
+            txt.innerText = "Install";
+            bar.style.width = "0%";
+        }
+
+        xhr.send();
     };
 
     document.getElementById('btn-submit-review').onclick = function() {
