@@ -122,7 +122,7 @@
 
     let countdownInterval = null;
     let requestUnsubscribe = null;
-    let fallbackLoopInterval = null; // Forces verification even if WebView freezes active snapshots
+    let fallbackLoopInterval = null;
 
     if(!savedMobile || !selectedPlan) { window.location.href = 'dashboard.html'; }
 
@@ -190,7 +190,7 @@
             }
         }, 1000);
 
-        // REAL-TIME SNAPHOT WATCHER
+        // SNAPSHOT WATCHER LINK
         requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
             if (snap.exists()) {
                 const depositData = snap.data();
@@ -198,14 +198,14 @@
             }
         });
 
-        // 🔥 FALLBACK PULL LOOP: Runs a manual database check every 3 seconds to bypass WebView caching freezes
+        // FALLBACK PULL LOOP
         fallbackLoopInterval = setInterval(async () => {
             try {
                 const manualSnap = await getDoc(doc(db, "deposits", savedMobile));
                 if (manualSnap.exists()) {
                     processIncomingStatusUpdate(manualSnap.data().status);
                 }
-            } catch(e) { console.log("Fallback sync active"); }
+            } catch(e) { console.log("Fallback loop context check active"); }
         }, 3000);
     }
 
@@ -213,10 +213,16 @@
         if (status === "approved") {
             stopAllActiveWatcherLoops();
             
+            // Wipe data from database completely
             try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
             
-            window.showCustomAlert("✅ Approved!", "Your payment was successfully verified by the admin! Premium access has been unlocked.", "success", () => {
-                window.location.href = 'dashboard.html';
+            // FIX: Instantly hide the dark lockdown container so the phone stops loading the animation frame
+            document.getElementById('lockdown-modal').classList.add('hidden');
+            
+            // Trigger a clean modal popup notification that works inside WebView app
+            window.showCustomAlert("✅ Approved!", "Your payment was verified successfully! Opening your premium panel dashboard now.", "success", () => {
+                // WebView Forced Refresh Redirect: Wipes out the web intent navigation history memory cache
+                window.location.replace('dashboard.html');
             });
         } 
         else if (status === "rejected") {
@@ -235,13 +241,15 @@
         stopAllActiveWatcherLoops();
         try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
         
+        document.getElementById('lockdown-modal').classList.add('hidden');
+        
         if(reason === "rejected") {
             window.showCustomAlert("❌ Request Rejected", "Your payment verification statement was rejected by the admin. Please verify data parameters or double check your transfer statement.", "error", () => {
-                window.location.href = 'dashboard.html';
+                window.location.replace('dashboard.html');
             });
         } else {
             window.showCustomAlert("⏱️ Session Timed Out", "Verification clock timed out. Please link up directly with customer support desk on WhatsApp.", "error", () => {
-                window.location.href = 'dashboard.html';
+                window.location.replace('dashboard.html');
             });
         }
     }
@@ -288,7 +296,7 @@
         window.abortPayment = function() {
             localStorage.removeItem('selected_pay_plan');
             localStorage.removeItem('computed_pay_amt');
-            window.location.href = 'dashboard.html';
+            window.location.replace('dashboard.html');
         };
 
         window.onload = function() {
