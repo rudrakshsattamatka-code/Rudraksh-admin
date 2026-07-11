@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rudraksh - Download App</title>
+    <title>Rudraksh - Download & Install</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -77,13 +77,21 @@
             opacity: 0.7;
             cursor: not-allowed;
         }
+        .btn-open {
+            background: #2563eb;
+            transition: all 0.15s ease;
+        }
+        .btn-open:hover {
+            background: #1d4ed8;
+            transform: scale(0.98);
+        }
         .modal-overlay {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(4px);
         }
         .progress-bar {
             width: 0%;
-            height: 3px;
+            height: 4px;
             background: linear-gradient(90deg, #0b7e5c, #14b789);
             border-radius: 4px;
             transition: width 0.3s ease;
@@ -91,9 +99,38 @@
         .progress-container {
             background: #e2e8f0;
             border-radius: 4px;
-            height: 3px;
+            height: 4px;
             overflow: hidden;
             margin-top: 8px;
+        }
+        .success-card {
+            background: #f0fdf4;
+            border: 2px solid #0b7e5c;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+        .success-card.show {
+            display: block;
+            animation: slideDown 0.5s ease;
+        }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .pulse-ring {
+            animation: pulseRing 1.5s ease-in-out infinite;
+        }
+        @keyframes pulseRing {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(11, 126, 92, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(11, 126, 92, 0); }
         }
         .file-size-badge {
             background: #f1f5f9;
@@ -103,27 +140,32 @@
             color: #64748b;
             font-weight: 600;
         }
-        .install-step {
-            animation: fadeInUp 0.5s ease forwards;
-            opacity: 0;
-            transform: translateY(10px);
+        .step-card {
+            transition: all 0.3s ease;
         }
-        .install-step:nth-child(1) { animation-delay: 0.1s; }
-        .install-step:nth-child(2) { animation-delay: 0.3s; }
-        .install-step:nth-child(3) { animation-delay: 0.5s; }
-        
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .step-card:hover {
+            transform: scale(1.02);
         }
-        .pulse-green {
-            animation: pulseGreen 2s infinite;
+        .download-btn-wrapper {
+            position: relative;
         }
-        @keyframes pulseGreen {
-            0%, 100% { background-color: #0b7e5c; }
-            50% { background-color: #14b789; }
+        .download-btn-wrapper .btn-install,
+        .download-btn-wrapper .btn-open {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .hidden-btn {
+            display: none !important;
         }
     </style>
 </head>
@@ -171,63 +213,83 @@
         </div>
     </div>
 
-    <!-- INSTALL BUTTON -->
+    <!-- DOWNLOAD SECTION -->
     <div class="px-4 py-3">
-        <a id="downloadBtn" 
-           href="https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.5/Rudraksh.1.apk" 
-           download="Rudraksh.apk"
-           class="w-full btn-install text-white text-center font-bold py-3 rounded-xl text-base shadow-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            Install
-        </a>
+        <!-- Download Button -->
+        <div class="download-btn-wrapper">
+            <button id="downloadBtn" 
+                    class="btn-install pulse-ring">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                Install App
+            </button>
+            
+            <!-- Open & Install Button (shows after download) -->
+            <button id="openBtn" 
+                    class="btn-open hidden-btn">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                📂 Open & Install APK
+            </button>
+        </div>
         
         <div class="flex items-center justify-between mt-2">
-            <p id="downloadStatus" class="text-[10px] text-gray-400 font-medium">Tap Install to download</p>
-            <span class="file-size-badge">📦 Version 1.0.5</span>
+            <p id="downloadStatus" class="text-[10px] text-gray-400 font-medium">Tap to download & install</p>
+            <span class="file-size-badge">📦 v1.0.5</span>
         </div>
         
         <div class="progress-container">
             <div id="progressBar" class="progress-bar"></div>
         </div>
+
+        <!-- Success message after download -->
+        <div id="successCard" class="success-card">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 text-xl shrink-0">✅</div>
+                <div>
+                    <p class="text-sm font-bold text-emerald-800">Download Complete!</p>
+                    <p class="text-[11px] text-emerald-700">Tap <b>"Open & Install APK"</b> above to install</p>
+                    <p class="text-[10px] text-gray-500 mt-1">Or find <b>Rudraksh.apk</b> in your Downloads folder</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Enhanced Installation Guide -->
+    <!-- Installation Guide -->
     <div class="mx-4 mb-3 bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200/60 p-4 rounded-2xl space-y-3">
         <div class="flex items-center gap-2 text-emerald-800">
             <span class="text-lg">📲</span>
-            <h4 class="text-xs font-black uppercase tracking-wider">How to Install After Download</h4>
+            <h4 class="text-xs font-black uppercase tracking-wider">Easy Installation Steps</h4>
         </div>
         
-        <div class="space-y-3">
-            <div class="install-step flex items-start gap-3 bg-white/60 p-2.5 rounded-xl">
+        <div class="space-y-2">
+            <div class="step-card flex items-start gap-3 bg-white/60 p-2.5 rounded-xl">
                 <div class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">1</div>
                 <div>
-                    <p class="text-[12px] font-bold text-gray-800">Open Downloads Folder</p>
-                    <p class="text-[10px] text-gray-500">Go to your phone's <span class="font-semibold text-emerald-700">Downloads</span> folder or check the notification bar</p>
+                    <p class="text-[12px] font-bold text-gray-800">Tap <span class="text-emerald-700">"Open & Install"</span></p>
+                    <p class="text-[10px] text-gray-500">Or find the APK in your <b>Downloads</b> folder</p>
                 </div>
             </div>
             
-            <div class="install-step flex items-start gap-3 bg-white/60 p-2.5 rounded-xl">
+            <div class="step-card flex items-start gap-3 bg-white/60 p-2.5 rounded-xl">
                 <div class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">2</div>
                 <div>
-                    <p class="text-[12px] font-bold text-gray-800">Tap the APK File</p>
-                    <p class="text-[10px] text-gray-500">Find <span class="font-semibold text-emerald-700">Rudraksh.apk</span> and tap on it</p>
+                    <p class="text-[12px] font-bold text-gray-800">Tap <span class="text-emerald-700">"Install"</span></p>
+                    <p class="text-[10px] text-gray-500">If prompted, allow <b>"Install from unknown sources"</b></p>
                 </div>
             </div>
             
-            <div class="install-step flex items-start gap-3 bg-white/60 p-2.5 rounded-xl">
+            <div class="step-card flex items-start gap-3 bg-white/60 p-2.5 rounded-xl">
                 <div class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-[10px] font-bold shrink-0 mt-0.5">3</div>
                 <div>
-                    <p class="text-[12px] font-bold text-gray-800">Allow & Install</p>
-                    <p class="text-[10px] text-gray-500">Tap <span class="font-semibold text-emerald-700">Install</span> (if prompted, allow "Install from unknown sources")</p>
+                    <p class="text-[12px] font-bold text-gray-800">Tap <span class="text-emerald-700">"Open"</span></p>
+                    <p class="text-[10px] text-gray-500">Start using Rudraksh App! 🎉</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-amber-50 border border-amber-200/60 rounded-xl p-2.5 mt-1">
+        <div class="bg-amber-50 border border-amber-200/60 rounded-xl p-2.5">
             <p class="text-[10px] text-amber-700 font-medium flex items-center gap-1.5">
                 <span>⚠️</span> 
-                If you see "Install blocked", go to Settings → Security → Enable "Install from unknown sources"
+                If "Install" is blocked: Settings → Security → Enable "Unknown sources"
             </p>
         </div>
     </div>
@@ -308,19 +370,19 @@
         <p class="font-bold text-[9px] uppercase tracking-wider mt-0.5">© Rudraksh Analytics</p>
     </div>
 
-    <!-- Enhanced Modal -->
+    <!-- Modal -->
     <div id="downloadModal" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-6 hidden">
         <div class="bg-white p-6 rounded-2xl w-full max-w-[340px] shadow-2xl space-y-4">
             <div class="text-center">
                 <div class="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-3xl font-bold">✓</div>
                 <h3 class="font-black text-gray-900 text-lg mt-2">Download Started!</h3>
-                <p class="text-xs text-gray-500 mt-1">Your APK is being downloaded from GitHub</p>
+                <p class="text-xs text-gray-500 mt-1">Your APK is being downloaded</p>
             </div>
             
             <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2">
                 <div class="flex items-center gap-2 text-[11px] text-gray-600">
                     <span>📁</span>
-                    <span>Check your <b>Downloads</b> folder or notification bar</span>
+                    <span>Check your <b>Downloads</b> folder</span>
                 </div>
                 <div class="flex items-center gap-2 text-[11px] text-gray-600">
                     <span>📱</span>
@@ -328,7 +390,7 @@
                 </div>
                 <div class="flex items-center gap-2 text-[11px] text-amber-600 bg-amber-50 p-2 rounded-lg">
                     <span>⚙️</span>
-                    <span>If asked, allow <b>"Install from unknown sources"</b></span>
+                    <span>Allow <b>"Install from unknown sources"</b> if asked</span>
                 </div>
             </div>
             
@@ -342,71 +404,121 @@
 <script>
     (function() {
         const downloadBtn = document.getElementById('downloadBtn');
+        const openBtn = document.getElementById('openBtn');
         const modal = document.getElementById('downloadModal');
         const modalOk = document.getElementById('modalOkBtn');
         const progressBar = document.getElementById('progressBar');
         const downloadStatus = document.getElementById('downloadStatus');
+        const successCard = document.getElementById('successCard');
 
-        // Review
+        // Review elements
         const reviewInput = document.getElementById('reviewInput');
         const submitReview = document.getElementById('submitReviewBtn');
         const reviewSuccess = document.getElementById('reviewSuccess');
 
+        // The GitHub Release download URL
+        const APK_URL = 'https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.5/Rudraksh.1.apk';
+        const APK_NAME = 'Rudraksh.apk';
+
         let downloadStarted = false;
 
-        // Download handler
-        downloadBtn.addEventListener('click', function(e) {
+        // Function to trigger download
+        function startDownload() {
             if (downloadStarted) return;
             downloadStarted = true;
-            
-            // Show progress
-            downloadStatus.textContent = '⏳ Starting download from GitHub...';
-            progressBar.style.width = '20%';
-            
-            setTimeout(() => {
-                progressBar.style.width = '50%';
-                downloadStatus.textContent = '⬇️ Downloading APK...';
+
+            // Create hidden anchor to trigger download
+            const link = document.createElement('a');
+            link.href = APK_URL;
+            link.download = APK_NAME;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Update UI
+            downloadStatus.textContent = '⏳ Starting download...';
+            progressBar.style.width = '30%';
+            downloadBtn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Downloading...';
+            downloadBtn.disabled = true;
+            downloadBtn.style.opacity = '0.7';
+
+            // Simulate progress
+            let progress = 30;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 95) {
+                    progress = 95;
+                    clearInterval(interval);
+                }
+                progressBar.style.width = progress + '%';
+                if (progress > 60) {
+                    downloadStatus.textContent = '⬇️ Downloading... Almost done!';
+                }
             }, 500);
-            
-            setTimeout(() => {
-                progressBar.style.width = '80%';
-                downloadStatus.textContent = '⬇️ Almost done...';
-            }, 1500);
-            
+
             // Show modal after download starts
             setTimeout(() => {
                 modal.classList.remove('hidden');
+            }, 1000);
+
+            // After "download complete" (simulated)
+            setTimeout(() => {
+                clearInterval(interval);
                 progressBar.style.width = '100%';
-                downloadStatus.textContent = '✅ Download complete! Find the APK in your Downloads folder';
+                downloadStatus.textContent = '✅ Download complete!';
+                
+                // Show success card
+                successCard.classList.add('show');
+                
+                // Show Open button, hide Install button
+                downloadBtn.classList.add('hidden-btn');
+                openBtn.classList.remove('hidden-btn');
+                
+                // Reset download button
+                downloadBtn.innerHTML = '✅ Downloaded';
+                downloadBtn.disabled = false;
+                downloadBtn.style.opacity = '1';
+                
+                // Reset after some time
                 setTimeout(() => {
                     progressBar.style.width = '0%';
-                }, 2000);
-            }, 2500);
-            
-            // Change button text
-            const orig = downloadBtn.innerHTML;
-            downloadBtn.innerHTML = '<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Downloading...';
-            downloadBtn.style.opacity = '0.8';
-            downloadBtn.style.cursor = 'default';
-            
-            setTimeout(() => {
-                downloadBtn.innerHTML = orig;
-                downloadBtn.style.opacity = '1';
-                downloadBtn.style.cursor = 'pointer';
-                downloadStatus.textContent = '✅ Downloaded! Tap Install again if needed';
+                }, 3000);
+                
                 downloadStarted = false;
-            }, 8000);
+            }, 4000); // Simulate download time
+        }
+
+        // Open button - tries to open the downloaded APK
+        openBtn.addEventListener('click', function() {
+            // Try to open the APK using a direct link
+            // This will prompt the user to open with Package Installer
+            const link = document.createElement('a');
+            link.href = APK_URL;
+            link.download = APK_NAME;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show a helpful message
+            downloadStatus.textContent = '📱 Check your Downloads folder and tap the APK to install!';
+            
+            // Show modal with instructions
+            setTimeout(() => {
+                modal.classList.remove('hidden');
+            }, 500);
+        });
+
+        // Download button click
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            startDownload();
         });
 
         // Modal OK
         modalOk.addEventListener('click', function() {
             modal.classList.add('hidden');
-            // Reset download status after modal close
-            setTimeout(() => {
-                if (downloadStatus.textContent.includes('Download complete')) {
-                    downloadStatus.textContent = '✅ APK downloaded! Check your Downloads folder';
-                }
-            }, 500);
         });
 
         // Close modal on backdrop click
@@ -433,11 +545,11 @@
             }
         });
 
-        // Auto-detect if download already happened
-        window.addEventListener('load', function() {
-            // Check if there's a downloaded file (browser may remember)
-            console.log('Page loaded. Ready to download Rudraksh APK from GitHub Releases');
-        });
+        // Check if user is on Android
+        const isAndroid = /android/i.test(navigator.userAgent);
+        if (!isAndroid) {
+            downloadStatus.textContent = '💻 This app is for Android devices';
+        }
 
     })();
 </script>
