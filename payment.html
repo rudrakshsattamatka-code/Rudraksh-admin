@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+        .app-container { width: 100%; max-width: 450px; height: 100vh; max-height: 850px; background: #ffffff; display: flex; flex-direction: column; overflow-y: auto; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .app-container::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="bg-green-600 text-white px-4 py-4 flex items-center justify-between shadow-md">
+        <h3 class="font-black text-sm uppercase tracking-wider">UPI Payment Gateway</h3>
+        <button onclick="abortPayment()" class="text-xs bg-white/20 px-3 py-1.5 rounded-lg font-bold">Cancel</button>
+    </div>
+
+    <div class="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-6 bg-gray-50">
+        <div>
+            <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Amount Due Safely</p>
+            <p id="pay-amount" class="text-4xl font-black text-gray-800 mt-1">₹0.00</p>
+        </div>
+
+        <div class="bg-white p-5 border border-gray-200 rounded-3xl shadow-inner">
+            <img id="payment-qr" src="" class="w-56 h-56 object-contain" alt="Merchant QR">
+        </div>
+
+        <div class="bg-amber-50 border border-amber-200 p-4 rounded-2xl max-w-sm text-left space-y-1">
+            <p class="text-[11px] text-amber-900 font-bold uppercase">📌 Auto-Filled Payment Notes:</p>
+            <p id="pay-note-preview" class="text-xs font-mono bg-white p-2 rounded-lg border border-amber-200/60 text-gray-700 font-bold"></p>
+        </div>
+
+        <div class="w-full max-w-xs space-y-3">
+            <button onclick="promptPaymentConfirmation()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl shadow-md uppercase text-xs tracking-widest transition-transform active:scale-95">
+                ✅ I Have Paid Successfully
+            </button>
+            <button onclick="abortPayment()" class="w-full bg-gray-200 text-gray-500 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Go Back</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDVxg4EZHm4D2zMrz_ndLzcqx3wkhdPdVc",
+        authDomain: "rudraksh-d74c3.firebaseapp.com",
+        databaseURL: "https://rudraksh-d74c3-default-rtdb.firebaseio.com",
+        projectId: "rudraksh-d74c3",
+        storageBucket: "rudraksh-d74c3.firebasestorage.app",
+        messagingSenderId: "270620722307",
+        appId: "1:270620722307:web:5a6454b69e12c201f6c7b6",
+        measurementId: "G-406NQEK3XV"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const savedMobile = localStorage.getItem('app_user_mobile');
+    const selectedPlan = localStorage.getItem('selected_pay_plan');
+
+    if(!savedMobile || !selectedPlan) { window.location.href = 'dashboard.html'; }
+
+    window.addEventListener('DOMContentLoaded', initializePaymentPage);
+
+    async function initializePaymentPage() {
+        const settingsSnap = await getDoc(doc(db, "system_config", "settings"));
+        let upi = "rudraksh@upi";
+        let amt = "1100";
+
+        if(settingsSnap.exists()) {
+            const data = settingsSnap.data();
+            upi = data.upi_address || "rudraksh@upi";
+            amt = (selectedPlan === 'day') ? (data.price_day || "1100") : (data.price_week || "5100");
+        }
+
+        const txNote = `Mobile-${savedMobile}`;
+        document.getElementById('pay-amount').innerText = `₹${amt}`;
+        document.getElementById('pay-note-preview').innerText = txNote;
+
+        const upiUrl = `upi://pay?pa=${upi}&pn=Rudraksh%20Console&am=${amt}&tn=${encodeURIComponent(txNote)}&cu=INR`;
+        document.getElementById('payment-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiUrl)}`;
+        
+        localStorage.setItem('computed_pay_amt', amt);
+    }
+
+    window.promptPaymentConfirmation = async function() {
+        const firstCheck = confirm("Did you complete the payment transfer inside your UPI application?");
+        if (!firstCheck) return;
+
+        const secondCheck = confirm("Are you absolutely sure? Providing false declarations might cause account termination.");
+        if (!secondCheck) return;
+
+        const amt = localStorage.getItem('computed_pay_amt') || "0";
+        
+        // Fetch User profile metadata names for admin records logs sync tracking
+        const userSnap = await getDoc(doc(db, "users", savedMobile));
+        let profileName = "Ganesh";
+        if(userSnap.exists()) { profileName = userSnap.data().name || "Ganesh"; }
+
+        await setDoc(doc(db, "deposits", savedMobile), {
+            userMobile: savedMobile,
+            userName: profileName,
+            amount: amt,
+            note: `Mobile-${savedMobile}`,
+            status: "pending",
+            timestamp: Date.now()
+        });
+
+        localStorage.removeItem('selected_pay_plan');
+        localStorage.removeItem('computed_pay_amt');
+        alert("Verification request submitted successfully. The dashboard will unlock automatically upon admin confirmation.");
+        window.location.href = 'dashboard.html';
+    }
+
+    window.abortPayment = function() {
+        localStorage.removeItem('selected_pay_plan');
+        localStorage.removeItem('computed_pay_amt');
+        window.location.href = 'dashboard.html';
+    }
+</script>
+</body>
+</html>
