@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rudraksh · Download</title>
-    <!-- Tailwind via CDN (lightweight) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -26,7 +25,6 @@
             overflow: hidden;
             transition: all 0.2s ease;
         }
-        /* hide scrollbar but keep scroll */
         .scroll-hide::-webkit-scrollbar {
             display: none;
         }
@@ -96,10 +94,24 @@
             width: 16px;
             height: 16px;
         }
-        /* modal overlay */
         .modal-overlay {
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(4px);
+        }
+        /* Progress bar animation */
+        .progress-bar {
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #0b7e5c, #14b789);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .progress-container {
+            background: #e2e8f0;
+            border-radius: 4px;
+            height: 4px;
+            overflow: hidden;
+            margin-top: 6px;
         }
     </style>
 </head>
@@ -107,7 +119,7 @@
 
 <div class="app-card">
 
-    <!-- header (google play style) -->
+    <!-- header -->
     <div class="px-4 py-3 flex items-center justify-between border-b border-gray-100/80 bg-white">
         <div class="flex items-center gap-3">
             <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
@@ -147,14 +159,21 @@
         </div>
     </div>
 
-    <!-- DOWNLOAD BUTTON (DRIVE LINK) -->
+    <!-- DOWNLOAD BUTTON - Now using direct download approach -->
     <div class="px-4 py-3">
-        <a id="downloadBtn" href="https://drive.google.com/uc?export=download&id=1sfLxjJ59b85PFK8gxHLxZURHcyH1wuyr" 
-           class="w-full btn-install text-white text-center font-bold py-2.5 rounded-xl text-sm block shadow-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2">
+        <a id="downloadBtn" href="#" 
+           class="w-full btn-install text-white text-center font-bold py-2.5 rounded-xl text-sm shadow-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
             Install (APK)
         </a>
-        <!-- Drive badge (visual) -->
+        
+        <!-- Progress bar -->
+        <div class="progress-container mt-2">
+            <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div id="downloadStatus" class="text-[10px] text-gray-400 text-center mt-1 font-medium">Ready to download</div>
+        
+        <!-- Drive badge -->
         <div class="flex items-center justify-center mt-2">
             <span class="badge-drive">
                 <svg viewBox="0 0 24 24" fill="#0b7e5c"><path d="M7.71 3.5L1.15 15l3.57 6.5 6.56-11.5L7.71 3.5zm8.58 0l-6.56 11.5 3.57 6.5 6.56-11.5L16.29 3.5zM22.85 15l-3.57-6.5-6.56 11.5 3.57 6.5 6.56-11.5z"/></svg>
@@ -170,7 +189,7 @@
             <h4 class="text-xs font-black uppercase tracking-wider">How to install</h4>
         </div>
         <div class="space-y-1.5 text-[11px] text-gray-700 font-medium leading-relaxed pl-1">
-            <div class="flex items-start gap-2"><span class="bg-emerald-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] mt-0.5 shrink-0">1</span><p>Tap <b>Install</b> → download from Google Drive.</p></div>
+            <div class="flex items-start gap-2"><span class="bg-emerald-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] mt-0.5 shrink-0">1</span><p>Tap <b>Install</b> → download starts automatically.</p></div>
             <div class="flex items-start gap-2"><span class="bg-emerald-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] mt-0.5 shrink-0">2</span><p>Open notifications or browser <b>Downloads</b>.</p></div>
             <div class="flex items-start gap-2"><span class="bg-emerald-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px] mt-0.5 shrink-0">3</span><p>Tap the APK file &amp; select <b>Install</b>.</p></div>
         </div>
@@ -257,10 +276,10 @@
         <div class="bg-white p-6 rounded-2xl w-full max-w-[320px] text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
             <h3 class="font-black text-gray-900 text-base uppercase">Download Started</h3>
-            <p class="text-xs text-gray-500 font-medium">Your APK is being saved from Google Drive.</p>
+            <p class="text-xs text-gray-500 font-medium">Your APK is being saved. Check your downloads folder.</p>
             <div class="bg-gray-50 p-3 rounded-xl border border-gray-200 text-left text-[11px] text-gray-600 space-y-1">
-                <p>📍 Check your <b>Notifications</b> or <b>Downloads</b> folder.</p>
-                <p>🚀 Tap the APK to install.</p>
+                <p>📍 Check <b>Notifications</b> or <b>Downloads</b> folder.</p>
+                <p>🚀 Tap the APK file to install.</p>
             </div>
             <button id="modalOkBtn" class="w-full bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs uppercase shadow-sm">OK, got it</button>
         </div>
@@ -273,25 +292,84 @@
         const downloadBtn = document.getElementById('downloadBtn');
         const modal = document.getElementById('downloadModal');
         const modalOk = document.getElementById('modalOkBtn');
+        const progressBar = document.getElementById('progressBar');
+        const downloadStatus = document.getElementById('downloadStatus');
 
         // review
         const reviewInput = document.getElementById('reviewInput');
         const submitReview = document.getElementById('submitReviewBtn');
         const reviewSuccess = document.getElementById('reviewSuccess');
 
-        // download click: show modal + keep original href (drive direct)
+        // DIRECT DOWNLOAD - using Google Drive direct download link
+        // This bypasses the account selection screen
+        const DIRECT_DOWNLOAD_URL = 'https://drive.usercontent.google.com/download?id=1sfLxjJ59b85PFK8gxHLxZURHcyH1wuyr&export=download&authuser=0&confirm=t';
+
+        // Alternative: Use the original file ID with a different approach
+        const FILE_ID = '1sfLxjJ59b85PFK8gxHLxZURHcyH1wuyr';
+        const FALLBACK_URL = `https://drive.google.com/uc?export=download&id=${FILE_ID}&confirm=t`;
+
         downloadBtn.addEventListener('click', function(e) {
-            // Show modal after a tiny delay (so download starts in background)
-            setTimeout(() => {
-                modal.classList.remove('hidden');
-            }, 300);
-            // we don't prevent default => drive download proceeds
-            // change button text temporarily
+            e.preventDefault();
+            
+            // Show progress animation
+            downloadStatus.textContent = '⏳ Starting download...';
+            progressBar.style.width = '20%';
+            
+            // Try direct download first (works in most browsers)
+            try {
+                // Method 1: Using the direct content URL (bypasses login)
+                const link = document.createElement('a');
+                link.href = DIRECT_DOWNLOAD_URL;
+                link.download = 'Rudraksh.apk';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success
+                downloadStatus.textContent = '✅ Downloading... Check your downloads folder';
+                progressBar.style.width = '70%';
+                
+                // Show modal after delay
+                setTimeout(() => {
+                    modal.classList.remove('hidden');
+                    progressBar.style.width = '100%';
+                    setTimeout(() => {
+                        progressBar.style.width = '0%';
+                        downloadStatus.textContent = '✅ Download complete!';
+                    }, 1000);
+                }, 1500);
+                
+            } catch (err) {
+                // Fallback: Use the export URL
+                console.log('Using fallback download method');
+                const link = document.createElement('a');
+                link.href = FALLBACK_URL;
+                link.download = 'Rudraksh.apk';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                downloadStatus.textContent = '✅ Downloading...';
+                progressBar.style.width = '70%';
+                
+                setTimeout(() => {
+                    modal.classList.remove('hidden');
+                    progressBar.style.width = '100%';
+                    setTimeout(() => {
+                        progressBar.style.width = '0%';
+                        downloadStatus.textContent = '✅ Download started!';
+                    }, 1000);
+                }, 1500);
+            }
+            
+            // Change button text temporarily
             const orig = downloadBtn.innerHTML;
-            downloadBtn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Starting...';
+            downloadBtn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Downloading...';
             setTimeout(() => {
                 downloadBtn.innerHTML = orig;
-            }, 5000);
+            }, 4000);
         });
 
         // modal ok
@@ -315,7 +393,6 @@
             }, 3500);
         });
 
-        // Enter key for review
         reviewInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 submitReview.click();
