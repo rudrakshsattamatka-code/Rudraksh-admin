@@ -27,7 +27,7 @@
             <p id="pay-amount" class="text-4xl font-black text-gray-800 mt-1">₹0.00</p>
         </div>
 
-        <!-- STATIC DISPLAY IMAGE CONTAINER (No link redirections) -->
+        <!-- STATIC DISPLAY IMAGE CONTAINER -->
         <div class="bg-white p-5 border-2 border-dashed border-gray-200 rounded-3xl shadow-inner">
             <img id="payment-qr" src="" class="w-56 h-56 object-contain mx-auto" alt="Merchant QR">
             <p class="text-[10px] text-gray-500 font-extrabold uppercase mt-2">Scan QR code using PhonePe / GPay</p>
@@ -41,10 +41,46 @@
         </div>
 
         <div class="w-full max-w-xs space-y-3">
-            <button onclick="promptPaymentConfirmation()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl shadow-md uppercase text-xs tracking-widest transition-transform active:scale-95">
+            <button onclick="showCustomConfirm1()" class="w-full bg-green-600 text-white font-black py-4 rounded-xl shadow-md uppercase text-xs tracking-widest transition-transform active:scale-95">
                 ✅ I Have Paid Successfully
             </button>
             <button onclick="abortPayment()" class="w-full bg-gray-200 text-gray-500 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Go Back</button>
+        </div>
+    </div>
+
+    <!-- WEBVIEW-SAFE CUSTOM CONFIRMATION MODAL 1 -->
+    <div id="custom-confirm-1" class="absolute inset-0 bg-gray-950/80 z-50 flex items-center justify-center p-6 hidden">
+        <div class="bg-white p-6 rounded-3xl w-full max-w-[320px] text-center space-y-4 shadow-2xl scale-100">
+            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto text-3xl">🤔</div>
+            <h3 class="font-black text-gray-800 text-lg">Did you pay?</h3>
+            <p class="text-xs text-gray-500 font-semibold leading-relaxed">Did you finish sending the money inside your UPI payment application?</p>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="hideCustomConfirm1()" class="bg-gray-100 text-gray-600 font-bold py-3 rounded-xl text-xs uppercase">No, Cancel</button>
+                <button onclick="showCustomConfirm2()" class="bg-blue-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md">Yes, I Did</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEBVIEW-SAFE CUSTOM CONFIRMATION MODAL 2 -->
+    <div id="custom-confirm-2" class="absolute inset-0 bg-gray-950/80 z-50 flex items-center justify-center p-6 hidden">
+        <div class="bg-white p-6 rounded-3xl w-full max-w-[320px] text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto text-3xl">⚠️</div>
+            <h3 class="font-black text-gray-800 text-lg">Are you sure?</h3>
+            <p class="text-xs text-gray-500 font-semibold leading-relaxed">Are you absolutely sure the payment went through successfully?</p>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="hideCustomConfirm2()" class="bg-gray-100 text-gray-600 font-bold py-3 rounded-xl text-xs uppercase">No, Go Back</button>
+                <button onclick="executeFinalPaymentSubmit()" class="bg-orange-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md">Yes, Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEBVIEW-SAFE CUSTOM ALERT MODAL -->
+    <div id="custom-alert-modal" class="absolute inset-0 bg-gray-950/80 z-50 flex items-center justify-center p-6 hidden">
+        <div class="bg-white p-6 rounded-3xl w-full max-w-[320px] text-center space-y-4 shadow-2xl">
+            <div id="alert-icon" class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-3xl">✅</div>
+            <h3 id="alert-title" class="font-black text-gray-800 text-lg">Notice</h3>
+            <p id="alert-message" class="text-xs text-gray-500 font-semibold leading-relaxed"></p>
+            <button onclick="closeCustomAlert()" id="alert-btn" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2">OK</button>
         </div>
     </div>
 
@@ -85,6 +121,7 @@
 
     let countdownInterval = null;
     let requestUnsubscribe = null;
+    let postAlertAction = null; // Used to handle redirects after alert is closed
 
     if(!savedMobile || !selectedPlan) { window.location.href = 'dashboard.html'; }
 
@@ -105,21 +142,51 @@
         document.getElementById('pay-amount').innerText = `₹${amt}`;
         document.getElementById('pay-note-preview').innerText = txNote;
 
-        // Structured UPI code generation sequence incorporating transaction note payload parameters
         const rawUpiUrl = `upi://pay?pa=${upi}&pn=Rudraksh%20Console&am=${amt}&tn=${encodeURIComponent(txNote)}&cu=INR`;
-        
-        // Generate QR Code purely for display scanning
         document.getElementById('payment-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(rawUpiUrl)}`;
         
         localStorage.setItem('computed_pay_amt', amt);
     }
 
-    window.promptPaymentConfirmation = async function() {
-        const firstCheck = confirm("Did you finish sending the money inside your UPI payment application?");
-        if (!firstCheck) return;
+    // WEBVIEW-SAFE MODAL CONTROLS
+    window.showCustomConfirm1 = function() { document.getElementById('custom-confirm-1').classList.remove('hidden'); }
+    window.hideCustomConfirm1 = function() { document.getElementById('custom-confirm-1').classList.add('hidden'); }
+    
+    window.showCustomConfirm2 = function() {
+        hideCustomConfirm1();
+        document.getElementById('custom-confirm-2').classList.remove('hidden');
+    }
+    window.hideCustomConfirm2 = function() { document.getElementById('custom-confirm-2').classList.add('hidden'); }
 
-        const secondCheck = confirm("Are you absolutely sure the payment went through successfully?");
-        if (!secondCheck) return;
+    window.showCustomAlert = function(title, message, type, callback) {
+        document.getElementById('alert-title').innerText = title;
+        document.getElementById('alert-message').innerText = message;
+        
+        const iconDiv = document.getElementById('alert-icon');
+        const btn = document.getElementById('alert-btn');
+        
+        if (type === 'success') {
+            iconDiv.innerText = "✅";
+            iconDiv.className = "w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-3xl";
+            btn.className = "w-full bg-green-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2";
+        } else {
+            iconDiv.innerText = "❌";
+            iconDiv.className = "w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-3xl";
+            btn.className = "w-full bg-red-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2";
+        }
+
+        postAlertAction = callback;
+        document.getElementById('custom-alert-modal').classList.remove('hidden');
+    }
+
+    window.closeCustomAlert = function() {
+        document.getElementById('custom-alert-modal').classList.add('hidden');
+        if (postAlertAction) postAlertAction();
+    }
+
+    // MAIN SUBMIT EXECUTION
+    window.executeFinalPaymentSubmit = async function() {
+        hideCustomConfirm2();
 
         const amt = localStorage.getItem('computed_pay_amt') || "0";
         const userSnap = await getDoc(doc(db, "users", savedMobile));
@@ -166,8 +233,9 @@
                 if (depositData.status === "approved") {
                     clearInterval(countdownInterval);
                     if(requestUnsubscribe) requestUnsubscribe();
-                    alert("✅ Your payment was verified successfully by the admin! Premium features unlocked.");
-                    window.location.href = 'dashboard.html';
+                    showCustomAlert("Success!", "Your payment was verified successfully by the admin! Premium features unlocked.", "success", () => {
+                        window.location.href = 'dashboard.html';
+                    });
                 } 
                 else if (depositData.status === "rejected") {
                     clearInterval(countdownInterval);
@@ -182,11 +250,14 @@
         try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
         
         if(reason === "rejected") {
-            alert("❌ Your payment validation request was rejected by the admin.");
+            showCustomAlert("Rejected", "Your payment validation request was rejected by the admin.", "error", () => {
+                window.location.href = 'dashboard.html';
+            });
         } else {
-            alert("⏱️ Verification timed out. Please contact customer support via WhatsApp.");
+            showCustomAlert("Timed Out", "Verification timed out. Please contact customer support via WhatsApp.", "error", () => {
+                window.location.href = 'dashboard.html';
+            });
         }
-        window.location.href = 'dashboard.html';
     }
 
     window.abortPayment = function() {
