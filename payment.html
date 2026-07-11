@@ -79,7 +79,7 @@
         <div class="bg-white p-6 rounded-3xl w-full max-w-[320px] text-center space-y-4 shadow-2xl">
             <div id="alert-icon" class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-3xl">✅</div>
             <h3 id="alert-title" class="font-black text-gray-800 text-lg">Notice</h3>
-            <p id="alert-message" class="text-xs text-gray-500 font-semibold leading-relaxed"></p>
+            <p id="alert-message" class="text-xs text-gray-500 font-semibold leading-relaxed text-center px-2"></p>
             <button id="btn-alert-ok" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2">OK</button>
         </div>
     </div>
@@ -98,6 +98,7 @@
     </div>
 </div>
 
+<!-- PART 1: CORE APP WORKFLOW AND FIREBASE HOOKS -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -121,22 +122,8 @@
 
     let countdownInterval = null;
     let requestUnsubscribe = null;
-    let postAlertAction = null; 
 
     if(!savedMobile || !selectedPlan) { window.location.href = 'dashboard.html'; }
-
-    // SECURE INTERFACE HOOK BINDINGS (Bypasses WebView onclick blocks completely)
-    document.getElementById('btn-submit-paid').addEventListener('click', showCustomConfirm1);
-    document.getElementById('btn-header-cancel').addEventListener('click', abortPayment);
-    document.getElementById('btn-bottom-back').addEventListener('click', abortPayment);
-    
-    document.getElementById('btn-confirm1-no').addEventListener('click', hideCustomConfirm1);
-    document.getElementById('btn-confirm1-yes').addEventListener('click', showCustomConfirm2);
-    
-    document.getElementById('btn-confirm2-no').addEventListener('click', hideCustomConfirm2);
-    document.getElementById('btn-confirm2-yes').addEventListener('click', executeFinalPaymentSubmit);
-    
-    document.getElementById('btn-alert-ok').addEventListener('click', closeCustomAlert);
 
     window.addEventListener('DOMContentLoaded', initializePaymentPage);
 
@@ -161,43 +148,8 @@
         localStorage.setItem('computed_pay_amt', amt);
     }
 
-    function showCustomConfirm1() { document.getElementById('custom-confirm-1').classList.remove('hidden'); }
-    function hideCustomConfirm1() { document.getElementById('custom-confirm-1').classList.add('hidden'); }
-    
-    function showCustomConfirm2() {
-        hideCustomConfirm1();
-        document.getElementById('custom-confirm-2').classList.remove('hidden');
-    }
-    function hideCustomConfirm2() { document.getElementById('custom-confirm-2').classList.add('hidden'); }
-
-    function showCustomAlert(title, message, type, callback) {
-        document.getElementById('alert-title').innerText = title;
-        document.getElementById('alert-message').innerText = message;
-        
-        const iconDiv = document.getElementById('alert-icon');
-        const btn = document.getElementById('btn-alert-ok');
-        
-        if (type === 'success') {
-            iconDiv.innerText = "✅";
-            iconDiv.className = "w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-3xl";
-            btn.className = "w-full bg-green-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2";
-        } else {
-            iconDiv.innerText = "❌";
-            iconDiv.className = "w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-3xl";
-            btn.className = "w-full bg-red-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2";
-        }
-
-        postAlertAction = callback;
-        document.getElementById('custom-alert-modal').classList.remove('hidden');
-    }
-
-    function closeCustomAlert() {
-        document.getElementById('custom-alert-modal').classList.add('hidden');
-        if (postAlertAction) postAlertAction();
-    }
-
-    async function executeFinalPaymentSubmit() {
-        hideCustomConfirm2();
+    window.executeFinalPaymentSubmit = async function() {
+        document.getElementById('custom-confirm-2').classList.add('hidden');
 
         const amt = localStorage.getItem('computed_pay_amt') || "0";
         const userSnap = await getDoc(doc(db, "users", savedMobile));
@@ -237,6 +189,7 @@
             }
         }, 1000);
 
+        // INSTANT DECISION ENGINE: Watches the document for direct state modifications live
         requestUnsubscribe = onSnapshot(doc(db, "deposits", savedMobile), (snap) => {
             if (snap.exists()) {
                 const depositData = snap.data();
@@ -244,7 +197,9 @@
                 if (depositData.status === "approved") {
                     clearInterval(countdownInterval);
                     if(requestUnsubscribe) requestUnsubscribe();
-                    showCustomAlert("Success!", "Your payment was verified successfully by the admin! Premium features unlocked.", "success", () => {
+                    
+                    // Fire WebView safe modal instead of simple alert
+                    window.showCustomAlert("✅ Approved!", "Your payment was successfully verified by the admin! Premium access has been unlocked.", "success", () => {
                         window.location.href = 'dashboard.html';
                     });
                 } 
@@ -252,6 +207,13 @@
                     clearInterval(countdownInterval);
                     cancelDepositLockdownWipe("rejected");
                 }
+            } else {
+                // If admin cleanly wipes/deletes the approved document request from queue directly
+                clearInterval(countdownInterval);
+                if(requestUnsubscribe) requestUnsubscribe();
+                window.showCustomAlert("✅ Profile Active!", "Your verification session is complete. Returning to your dashboard dashboard area now.", "success", () => {
+                    window.location.href = 'dashboard.html';
+                });
             }
         });
     }
@@ -261,21 +223,79 @@
         try { await deleteDoc(doc(db, "deposits", savedMobile)); } catch(e) {}
         
         if(reason === "rejected") {
-            showCustomAlert("Rejected", "Your payment validation request was rejected by the admin.", "error", () => {
+            window.showCustomAlert("❌ Request Rejected", "Your payment verification statement was rejected by the admin. Please verify data parameters or double check your transfer statement.", "error", () => {
                 window.location.href = 'dashboard.html';
             });
         } else {
-            showCustomAlert("Timed Out", "Verification timed out. Please contact customer support via WhatsApp.", "error", () => {
+            window.showCustomAlert("⏱️ Session Timed Out", "Verification clock timed out. Please link up directly with customer support desk on WhatsApp.", "error", () => {
                 window.location.href = 'dashboard.html';
             });
         }
     }
+</script>
 
-    function abortPayment() {
-        localStorage.removeItem('selected_pay_plan');
-        localStorage.removeItem('computed_pay_amt');
-        window.location.href = 'dashboard.html';
-    }
+<!-- PART 2: GLOBAL ACTIONS INTERCEPTOR -->
+<script>
+    (function() {
+        var postAlertAction = null;
+
+        window.showCustomConfirm1 = function() { document.getElementById('custom-confirm-1').classList.remove('hidden'); };
+        window.hideCustomConfirm1 = function() { document.getElementById('custom-confirm-1').classList.add('hidden'); };
+        
+        window.showCustomConfirm2 = function() {
+            window.hideCustomConfirm1();
+            document.getElementById('custom-confirm-2').classList.remove('hidden');
+        };
+        window.hideCustomConfirm2 = function() { document.getElementById('custom-confirm-2').classList.add('hidden'); };
+
+        window.showCustomAlert = function(title, message, type, callback) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            var iconDiv = document.getElementById('alert-icon');
+            var btn = document.getElementById('btn-alert-ok');
+            
+            if (type === 'success') {
+                iconDiv.innerText = "✅";
+                iconDiv.className = "w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-3xl";
+                btn.className = "w-full bg-green-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2";
+            } else {
+                iconDiv.innerText = "❌";
+                iconDiv.className = "w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-3xl";
+                btn.className = "w-full bg-red-600 text-white font-bold py-3 rounded-xl text-xs uppercase shadow-md mt-2";
+            }
+            postAlertAction = callback;
+            document.getElementById('custom-alert-modal').classList.remove('hidden');
+        };
+
+        window.closeCustomAlert = function() {
+            document.getElementById('custom-alert-modal').classList.add('hidden');
+            if (postAlertAction) postAlertAction();
+        };
+
+        window.abortPayment = function() {
+            localStorage.removeItem('selected_pay_plan');
+            localStorage.removeItem('computed_pay_amt');
+            window.location.href = 'dashboard.html';
+        };
+
+        window.onload = function() {
+            document.getElementById('btn-submit-paid').onclick = window.showCustomConfirm1;
+            document.getElementById('btn-header-cancel').onclick = window.abortPayment;
+            document.getElementById('btn-bottom-back').onclick = window.abortPayment;
+            
+            document.getElementById('btn-confirm1-no').onclick = window.hideCustomConfirm1;
+            document.getElementById('btn-confirm1-yes').onclick = window.showCustomConfirm2;
+            
+            document.getElementById('btn-confirm2-no').onclick = window.hideCustomConfirm2;
+            document.getElementById('btn-confirm2-yes').onclick = function() {
+                if (typeof window.executeFinalPaymentSubmit === 'function') {
+                    window.executeFinalPaymentSubmit();
+                }
+            };
+            
+            document.getElementById('btn-alert-ok').onclick = window.closeCustomAlert;
+        };
+    })();
 </script>
 </body>
 </html>
