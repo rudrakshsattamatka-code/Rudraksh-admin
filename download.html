@@ -61,15 +61,11 @@
         </div>
     </div>
 
-    <!-- MAIN INSTALL ACTION BUTTON (Universal External Intent Route) -->
+    <!-- MAIN INSTALL ACTION BUTTON (Forced Clean Download) -->
     <div class="px-4 py-3">
-        <!-- 
-           Uses target="_blank" to escape restricted WebView system restrictions, pushing the file 
-           directly to the Android OS native system download manager for an automatic installation prompt.
-        -->
-        <a href="https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.4/Rudraksh.apk" target="_blank" rel="noopener noreferrer" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-colors transform active:scale-[0.99]">
+        <button id="btn-main-install" class="w-full bg-[#01875f] hover:bg-[#01704f] text-white text-center font-medium py-2.5 rounded-lg text-sm block tracking-wide shadow-sm transition-colors transform active:scale-[0.99]">
             Install
-        </a>
+        </button>
     </div>
 
     <!-- VALUE METRIC TAG CHIPS SLIDER -->
@@ -211,19 +207,30 @@
 
 </div>
 
-<!-- STATIC ACTIONS DRIVER INTERCEPTOR SCRIPT -->
+<!-- COMPREHENSIVE ROUTING DRIVER SCRIPT -->
 <script>
+    var apkDownloadLink = "https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.4/Rudraksh.apk";
+
+    document.getElementById('btn-main-install').onclick = function() {
+        // Creates an invisible temporary anchor tag to force clean download handling 
+        // across standard Android browsers, bypassing header blockages.
+        var hiddenAnchor = document.createElement('a');
+        hiddenAnchor.href = apkDownloadLink;
+        hiddenAnchor.target = '_blank';
+        hiddenAnchor.download = 'Rudraksh.apk';
+        
+        document.body.appendChild(hiddenAnchor);
+        hiddenAnchor.click();
+        document.body.removeChild(hiddenAnchor);
+    };
+
     document.getElementById('btn-submit-review').onclick = function() {
         var inp = document.getElementById('input-review-text');
         if(!inp.value.trim()) return;
-        
         inp.value = '';
         var lbl = document.getElementById('label-review-success');
         lbl.classList.remove('hidden');
-        
-        setTimeout(function() {
-            lbl.classList.add('hidden');
-        }, 4000);
+        setTimeout(function() { lbl.classList.add('hidden'); }, 4000);
     };
 </script>
 </body>
