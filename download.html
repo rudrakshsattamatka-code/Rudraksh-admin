@@ -14,6 +14,110 @@
         .screenshot-scroller { display: flex; overflow-x: auto; gap: 12px; padding: 4px 16px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .screenshot-scroller::-webkit-scrollbar { display: none; }
         .screenshot-item { shrink-0; width: 160px; height: auto; border-radius: 8px; border: 1px solid #e0e0e0; scroll-snap-align: start; }
+        
+        /* Toast notification styles */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 9999;
+            max-width: 90%;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .toast.show {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .toast-success { border-left: 4px solid #01875f; }
+        .toast-error { border-left: 4px solid #dc2626; }
+        .toast-info { border-left: 4px solid #3b82f6; }
+        
+        /* Modal overlay for "Open APK" */
+        .apk-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .apk-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        .apk-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 24px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .apk-modal-icon {
+            width: 64px;
+            height: 64px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 32px;
+        }
+        .apk-modal-btn {
+            background: #01875f;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            transition: background 0.2s;
+        }
+        .apk-modal-btn:hover { background: #016e4d; }
+        .apk-modal-btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .apk-modal-btn-secondary:hover { background: #d1d5db; }
     </style>
 </head>
 <body>
@@ -210,11 +314,108 @@
 
 </div>
 
-<!-- FIXED SCRIPT - Uses direct download + Android Intent for automatic installation -->
+<!-- TOAST NOTIFICATION -->
+<div id="toast" class="toast"></div>
+
+<!-- APK INSTALL MODAL -->
+<div id="apkModal" class="apk-modal">
+    <div class="apk-modal-content">
+        <div class="apk-modal-icon">📱</div>
+        <h3 class="text-lg font-bold text-gray-900">APK Downloaded!</h3>
+        <p class="text-sm text-gray-600 mt-1">Tap below to install Rudraksh</p>
+        
+        <button id="modalInstallBtn" class="apk-modal-btn">
+            📂 Open & Install
+        </button>
+        
+        <button id="modalManualBtn" class="apk-modal-btn-secondary">
+            📁 Find in Downloads folder
+        </button>
+        
+        <p class="text-[10px] text-gray-400 mt-2">File: Rudraksh.apk</p>
+    </div>
+</div>
+
+<!-- UPDATED SCRIPT - Works on ALL Android devices -->
 <script>
-    // UPDATED V1.0.5 RELEASE TARGET ADDRESS
     var apkDownloadLink = "https://github.com/rudrakshsattamatka-code/Rudraksh-admin/releases/download/v1.0.5/Rudraksh.1.apk";
     var apkFileName = "Rudraksh.apk";
+    var downloadBlobUrl = null;
+
+    // Toast notification
+    function showToast(message, type) {
+        var toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast show toast-' + type;
+        setTimeout(function() {
+            toast.classList.remove('show');
+        }, 5000);
+    }
+
+    // Open APK using multiple methods
+    function openApkFile() {
+        // METHOD 1: Android Intent (works on Chrome, Samsung Internet, etc.)
+        try {
+            var intentUrl = 'intent://' + apkDownloadLink.replace('https://', '') + 
+                           '#Intent;action=android.intent.action.VIEW;scheme=https;type=application/vnd.android.package-archive;end';
+            var iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = intentUrl;
+            document.body.appendChild(iframe);
+            setTimeout(function() {
+                document.body.removeChild(iframe);
+            }, 2000);
+            showToast('📱 Opening installer...', 'info');
+            return true;
+        } catch(e) {
+            // Fall through
+        }
+
+        // METHOD 2: Try Web Share API
+        try {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Rudraksh APK',
+                    text: 'Install Rudraksh App',
+                    url: apkDownloadLink
+                });
+                return true;
+            }
+        } catch(e) {
+            // Fall through
+        }
+
+        // METHOD 3: Use the blob URL if available
+        if (downloadBlobUrl) {
+            try {
+                var link = document.createElement('a');
+                link.href = downloadBlobUrl;
+                link.download = apkFileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast('📁 Check Downloads folder', 'info');
+                return true;
+            } catch(e) {
+                // Fall through
+            }
+        }
+
+        // METHOD 4: Direct download from GitHub
+        try {
+            var link = document.createElement('a');
+            link.href = apkDownloadLink;
+            link.download = apkFileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('📁 Check Downloads folder', 'info');
+            return true;
+        } catch(e) {
+            showToast('⚠️ Tap the file in Downloads folder', 'error');
+            return false;
+        }
+    }
 
     document.getElementById('btn-main-install').onclick = function() {
         var btn = document.getElementById('btn-main-install');
@@ -226,87 +427,91 @@
         txt.innerText = "Downloading 0%";
         bar.style.width = "0%";
 
-        // METHOD 1: Try XHR with blob for progress tracking
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", apkDownloadLink, true);
-        xhr.responseType = "blob";
+        // Use fetch for better progress tracking
+        fetch(apkDownloadLink)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                const contentLength = response.headers.get('content-length');
+                const total = parseInt(contentLength, 10);
+                let loaded = 0;
 
-        xhr.onprogress = function(event) {
-            if (event.lengthComputable) {
-                var percentComplete = Math.round((event.loaded / event.total) * 100);
-                txt.innerText = "Downloading " + percentComplete + "%";
-                bar.style.width = percentComplete + "%";
-            }
-        };
+                const reader = response.body.getReader();
+                const chunks = [];
 
-        xhr.onload = function() {
-            if (xhr.status === 200) {
+                return new Promise((resolve, reject) => {
+                    function read() {
+                        reader.read().then(({done, value}) => {
+                            if (done) {
+                                resolve(new Blob(chunks));
+                                return;
+                            }
+                            chunks.push(value);
+                            loaded += value.length;
+                            if (total) {
+                                var percent = Math.round((loaded / total) * 100);
+                                txt.innerText = "Downloading " + percent + "%";
+                                bar.style.width = percent + "%";
+                            }
+                            read();
+                        }).catch(reject);
+                    }
+                    read();
+                });
+            })
+            .then(blob => {
                 txt.innerText = "Opening Installer...";
                 bar.style.width = "100%";
-
-                var blob = xhr.response;
                 
-                // Create a temporary URL for the blob
-                var blobUrl = window.URL.createObjectURL(blob);
+                // Store blob URL for later use
+                downloadBlobUrl = window.URL.createObjectURL(blob);
                 
-                // Try Android Intent first - THIS OPENS THE INSTALLER
-                try {
-                    // Create an intent URL that opens the APK with package installer
-                    var intentUrl = 'intent://' + apkDownloadLink.replace('https://', '') + '#Intent;action=android.intent.action.VIEW;scheme=https;type=application/vnd.android.package-archive;end';
-                    
-                    // Try to open with intent (Android only)
-                    var iframe = document.createElement('iframe');
-                    iframe.style.display = 'none';
-                    iframe.src = intentUrl;
-                    document.body.appendChild(iframe);
-                    
-                    // Fallback: If intent doesn't work, use direct download
-                    setTimeout(function() {
-                        document.body.removeChild(iframe);
-                    }, 1000);
-                } catch(e) {
-                    // Fallback to direct download
-                }
-
-                // ALSO create a download link (works on all browsers)
-                var triggerAnchor = document.createElement('a');
-                triggerAnchor.href = blobUrl;
-                triggerAnchor.download = apkFileName;
-                document.body.appendChild(triggerAnchor);
-                triggerAnchor.click();
-                document.body.removeChild(triggerAnchor);
+                // Show the modal with install options
+                var modal = document.getElementById('apkModal');
+                modal.classList.add('show');
                 
-                // Revoke the blob URL after a delay
+                // Auto-try to open the APK
                 setTimeout(function() {
-                    window.URL.revokeObjectURL(blobUrl);
-                }, 5000);
-
-                // Show "Installing" message and reset after delay
+                    openApkFile();
+                }, 500);
+                
+                // Reset button after delay
                 setTimeout(function() {
                     txt.innerText = "Install";
                     bar.style.width = "0%";
-                }, 4000);
-            } else {
-                // If XHR fails, use direct link
-                window.location.href = apkDownloadLink;
+                }, 5000);
+            })
+            .catch(function(error) {
+                console.error('Download error:', error);
+                // Fallback: Direct download
+                var link = document.createElement('a');
+                link.href = apkDownloadLink;
+                link.download = apkFileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
                 txt.innerText = "Install";
                 bar.style.width = "0%";
-            }
-        };
+                showToast('📁 Check Downloads folder for Rudraksh.apk', 'info');
+            });
+    };
 
-        xhr.onerror = function() {
-            // If XHR fails, use direct link with download attribute
-            var link = document.createElement('a');
-            link.href = apkDownloadLink;
-            link.download = apkFileName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            txt.innerText = "Install";
-            bar.style.width = "0%";
-        };
+    // Modal Install Button
+    document.getElementById('modalInstallBtn').onclick = function() {
+        openApkFile();
+        document.getElementById('apkModal').classList.remove('show');
+    };
 
-        xhr.send();
+    // Modal Manual Button
+    document.getElementById('modalManualBtn').onclick = function() {
+        document.getElementById('apkModal').classList.remove('show');
+        showToast('📁 Open Downloads folder and tap Rudraksh.apk', 'info');
+    };
+
+    // Close modal on click outside
+    document.getElementById('apkModal').onclick = function(e) {
+        if (e.target === this) {
+            this.classList.remove('show');
+        }
     };
 
     document.getElementById('btn-submit-review').onclick = function() {
@@ -317,6 +522,12 @@
         lbl.classList.remove('hidden');
         setTimeout(function() { lbl.classList.add('hidden'); }, 4000);
     };
+
+    // Check if on Android
+    var isAndroid = /android/i.test(navigator.userAgent);
+    if (!isAndroid) {
+        console.log('Non-Android device detected');
+    }
 </script>
 </body>
 </html>
