@@ -82,6 +82,24 @@
                 <button onclick="saveSystemConfig()" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider">Save Parameters</button>
             </div>
 
+            <!-- DYNAMIC EXTERNAL LINKS / APP REDIRECTS CONSOLE PANEL -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">🔗 App Shortcuts / Video Links Manager</h3>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Clickable Link Headline</label>
+                    <input type="text" id="link-headline" placeholder="e.g., Watch Free Video Guide on YouTube" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-semibold focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-gray-400 font-bold mb-1">Redirect Destination URL Link</label>
+                    <input type="text" id="link-target-url" placeholder="https://youtube.com/..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-xs font-mono text-gray-600">
+                </div>
+                <button onclick="publishAppShortcutLink()" class="w-full bg-red-600 text-white font-black py-2.5 rounded-xl text-xs uppercase tracking-wider">🚀 Publish Redirect Link</button>
+                <div class="border-t border-gray-100 pt-3">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Active Launch URLs</p>
+                    <div id="admin-links-list" class="space-y-2"></div>
+                </div>
+            </div>
+
             <!-- VOICE NOTES RECORDER HUB -->
             <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
                 <h3 class="font-black text-xs text-orange-500 uppercase tracking-wider">🎙️ Voice Notes Control Console</h3>
@@ -169,7 +187,6 @@
         <div id="tab-users" class="space-y-4 hidden">
             <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col space-y-2">
                 <input type="text" id="user-search-bar" oninput="triggerUserFilterDisplay()" placeholder="🔍 Search user by name or phone number..." class="w-full bg-gray-50 border border-gray-200 rounded-xl p-2.5 text-xs text-gray-800 font-semibold focus:outline-none focus:border-orange-500">
-                <!-- DYNAMIC TOTAL USERS COUNT BANNER -->
                 <div class="bg-orange-500/10 rounded-lg px-2.5 py-1.5 flex justify-between items-center text-[11px] font-bold text-orange-700 border border-orange-500/20">
                     <span>Total Subscribed Users Matrix:</span>
                     <span id="label-total-users" class="bg-orange-600 text-white px-2 py-0.5 rounded font-black font-mono">0</span>
@@ -259,6 +276,26 @@
         });
         document.getElementById('tab-'+tabId).classList.remove('hidden');
         document.getElementById('nav-'+tabId).className = "py-3 border-t-2 border-orange-500 text-orange-500";
+    }
+
+    // App Dynamic Shortcuts Publisher Function
+    window.publishAppShortcutLink = async function() {
+        const headline = document.getElementById('link-headline').value.trim();
+        const targetUrl = document.getElementById('link-target-url').value.trim();
+        
+        if(!headline || !targetUrl) return alert("Please specify both a link headline and a destination URL.");
+        
+        try {
+            const idString = "link_" + Date.now();
+            await setDoc(doc(db, "app_links", idString), { headline: headline, url: targetUrl, timestamp: Date.now() });
+            document.getElementById('link-headline').value = '';
+            document.getElementById('link-target-url').value = '';
+            alert("App shortcut link channel updated live instantly!");
+        } catch(e) { alert("Link broadcast failed."); }
+    }
+
+    window.deleteAppShortcutLink = async function(id) {
+        if(confirm("Wipe this interactive redirect shortcut link?")) { await deleteDoc(doc(db, "app_links", id)); }
     }
 
     window.initiateMicrophoneRecording = async function() {
@@ -397,6 +434,23 @@
             }
         });
 
+        // App Redirect URL Hook Synchronizer
+        onSnapshot(collection(db, "app_links"), (querySnapshot) => {
+            const container = document.getElementById('admin-links-list');
+            container.innerHTML = '';
+            querySnapshot.forEach((lDoc) => {
+                const linkObj = lDoc.data();
+                container.innerHTML += `
+                    <div class="bg-gray-50 border border-gray-200 p-2 rounded-xl flex items-center justify-between text-xs">
+                        <div class="overflow-hidden mr-2">
+                            <p class="font-bold text-gray-800 truncate">${linkObj.headline || 'App Shortcut'}</p>
+                            <p class="text-[9px] text-gray-400 font-mono truncate">${linkObj.url}</p>
+                        </div>
+                        <button onclick="deleteAppShortcutLink('${lDoc.id}')" class="bg-red-100 text-red-600 font-bold text-[10px] px-2.5 py-1 rounded-lg shrink-0">Wipe</button>
+                    </div>`;
+            });
+        });
+
         onSnapshot(collection(db, "voicenotes"), (querySnapshot) => {
             const container = document.getElementById('admin-voice-list');
             container.innerHTML = '';
@@ -431,16 +485,22 @@
             cachedUsersList = [];
             querySnapshot.forEach(uDoc => { cachedUsersList.push({ id: uDoc.id, ...uDoc.data() }); });
             
+            // COMPLEX CRITERIA MULTI-SORT RULE ENGINE: Active First, Then Newest Joined First
             cachedUsersList.sort((a, b) => {
                 const aAct = a.subscription === "active" ? 1 : 0;
                 const bAct = b.subscription === "active" ? 1 : 0;
-                return bAct - aAct;
+                
+                if (bAct !== aAct) {
+                    return bAct - aAct; // Pulls Active status groups to top tier
+                }
+                
+                // If status matching, sorts by Registration Timestamp descending (Newest First)
+                const aTime = Number(a.joinedAt) || 0;
+                const bTime = Number(b.joinedAt) || 0;
+                return bTime - aTime;
             });
 
-            // Update Total Count Label Interface dynamically
             document.getElementById('label-total-users').innerText = cachedUsersList.length;
-
-            // Render execution respects current user text input string
             triggerUserFilterDisplay();
         });
 
@@ -454,7 +514,6 @@
                 const d = dDoc.data();
                 if(d.status !== "pending") return;
 
-                // Read deposit date time parameters safely
                 let parsedDepositTime = "--";
                 if(d.timestamp) {
                     const depDate = new Date(d.timestamp);
@@ -506,7 +565,6 @@
                 lastSeenStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             }
 
-            // JOIN DATE-TIME CONVERSION PARSER ENGINE LINK HOOK
             let joinedStr = "Unknown";
             if(u.joinedAt) {
                 const joinedObj = new Date(u.joinedAt);
