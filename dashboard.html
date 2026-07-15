@@ -176,12 +176,17 @@
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
-    // Normalization layer intercepts direct application protocol strings (like tg:) 
-    window.processAndRedirectSecureLink = function(targetUrl) {
-        if(!targetUrl) return;
+    // Completely isolates and stops navigation bubbles inside Android systems
+    window.processAndRedirectSecureLink = function(event, targetUrl) {
+        if(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        if(!targetUrl) return false;
+        
         let finalCleanUrl = targetUrl.trim();
         
-        // Formats raw application schemes to standard HTTPS web patterns to bypass internal WebView errors
+        // Formats raw deep app links immediately to target URL parameters
         if (finalCleanUrl.includes("tg:resolve") || finalCleanUrl.startsWith("tg://")) {
             const rawQueryString = finalCleanUrl.substring(finalCleanUrl.indexOf('?'));
             const queryParameters = new URLSearchParams(rawQueryString);
@@ -191,8 +196,8 @@
             }
         }
         
-        // Triggers standard window navigation link patterns, matching your operational WhatsApp configurations
         window.location.href = finalCleanUrl;
+        return false;
     }
 
     async function beginLiveEngine() {
@@ -237,7 +242,7 @@
             snapshot.forEach((lDoc) => {
                 const linkData = lDoc.data();
                 linkTarget.innerHTML += `
-                    <button onclick="processAndRedirectSecureLink('${linkData.url}')" class="w-full text-left flex items-center justify-between bg-gradient-to-r from-red-600 to-red-700 text-white font-black px-4 py-3.5 rounded-xl text-xs uppercase shadow-sm tracking-wide transition-transform active:scale-[0.99]">
+                    <button onclick="processAndRedirectSecureLink(event, '${linkData.url}')" class="w-full text-left flex items-center justify-between bg-gradient-to-r from-red-600 to-red-700 text-white font-black px-4 py-3.5 rounded-xl text-xs uppercase shadow-sm tracking-wide transition-transform active:scale-[0.99]">
                         <div class="flex items-center space-x-2">
                             <span class="text-base">▶</span>
                             <span>${linkData.headline || 'Open External Resource'}</span>
