@@ -176,12 +176,23 @@
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
-    // Dynamic clean Android escape dispatcher hook 
+    // Advanced dynamic layout intent normalization filter hook
     window.forceAndroidNativeOpen = function(targetUrl) {
         if(!targetUrl) return;
+        let cleanUrl = targetUrl.trim();
+        
+        // Converts raw app scheme bugs (like tg:resolve?domain=xyz) directly into safe system browser URLs
+        if (cleanUrl.startsWith("tg:resolve") || cleanUrl.startsWith("tg://")) {
+            const urlParams = new URLSearchParams(cleanUrl.replace("tg:resolve", "").replace("tg://resolve", ""));
+            const targetDomain = urlParams.get("domain");
+            if(targetDomain) {
+                cleanUrl = "https://t.me/" + targetDomain;
+            }
+        }
+        
+        // Simulates a system drop link, forcing the Android OS to route it cleanly into YouTube/Telegram/Browsers
         const hiddenLink = document.createElement('a');
-        hiddenLink.href = targetUrl;
-        // Bypasses internal Webview loading limits completely by simulating a generic link drop request
+        hiddenLink.href = cleanUrl;
         hiddenLink.setAttribute('download', '');
         document.body.appendChild(hiddenLink);
         hiddenLink.click();
