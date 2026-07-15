@@ -185,7 +185,7 @@
         
         let urlString = targetUrl.trim();
         
-        // Clean Telegram custom links back to standard web layout strings
+        // Clean Telegram custom patterns back to normal domains
         if (urlString.includes("tg:resolve") || urlString.includes("tg://")) {
             const indexQuery = urlString.indexOf('?');
             if(indexQuery !== -1) {
@@ -195,12 +195,14 @@
             }
         }
         
-        // Strip the standard protocol tags to prep for intent processing
-        let rawCleanLinkPath = urlString.replace("https://", "").replace("http://", "");
+        // CRITICAL FILTER: YouTube and WhatsApp are handled cleanly by your WebView natively
+        if (urlString.includes("youtube.com") || urlString.includes("youtu.be") || urlString.includes("wa.me") || urlString.includes("whatsapp")) {
+            window.location.href = urlString;
+            return false;
+        }
         
-        // This is a universal Android Intent that forces the WebView to hand the action
-        // directly to the phone's native Chrome/Default browser. Once it launches in the browser,
-        // it automatically wakes up Telegram, Threads, or Facebook cleanly.
+        // Third-party applications get routed safely into standard phone browser intents
+        let rawCleanLinkPath = urlString.replace("https://", "").replace("http://", "");
         let browserIntentURI = "intent://" + rawCleanLinkPath + "#Intent;scheme=https;action=android.intent.action.VIEW;end;";
         
         window.location.href = browserIntentURI;
