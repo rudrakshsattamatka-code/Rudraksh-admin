@@ -176,7 +176,6 @@
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
-    // Dynamic Intent Router hooks deep app URLs out of internal WebView limitations
     window.processAndRedirectSecureLink = function(event, targetUrl) {
         if(event) {
             event.preventDefault();
@@ -186,8 +185,8 @@
         
         let urlString = targetUrl.trim();
         
-        // Normalize Telegram layout schemes into native web links
-        if (urlString.includes("tg:resolve") || urlString.startsWith("tg://")) {
+        // Clean Telegram custom links back to standard web layout strings
+        if (urlString.includes("tg:resolve") || urlString.includes("tg://")) {
             const indexQuery = urlString.indexOf('?');
             if(indexQuery !== -1) {
                 const queryParameters = new URLSearchParams(urlString.substring(indexQuery));
@@ -196,22 +195,15 @@
             }
         }
         
-        // Detects if the current platform running this is an Android WebView environment
-        const isAndroidAppWebView = /Android.*Version\/[0-9.]+/i.test(navigator.userAgent) || 
-                                    (window.chrome && urlString.includes("threads") || urlString.includes("facebook") || urlString.includes("t.me"));
-
-        if (isAndroidAppWebView) {
-            // Extracts domain strings to isolate destination flags
-            let pureLinkWithoutProtocol = urlString.replace("https://", "").replace("http://", "");
-            
-            // Forces Android OS to use Intent Parsing to throw links directly to external target apps
-            const intentFallbackUrl = "intent://" + pureLinkWithoutProtocol + "#Intent;scheme=https;action=android.intent.action.VIEW;end;";
-            
-            window.location.href = intentFallbackUrl;
-        } else {
-            // Standard backup window redirect for fallback environments
-            window.location.href = urlString;
-        }
+        // Strip the standard protocol tags to prep for intent processing
+        let rawCleanLinkPath = urlString.replace("https://", "").replace("http://", "");
+        
+        // This is a universal Android Intent that forces the WebView to hand the action
+        // directly to the phone's native Chrome/Default browser. Once it launches in the browser,
+        // it automatically wakes up Telegram, Threads, or Facebook cleanly.
+        let browserIntentURI = "intent://" + rawCleanLinkPath + "#Intent;scheme=https;action=android.intent.action.VIEW;end;";
+        
+        window.location.href = browserIntentURI;
         return false;
     }
 
