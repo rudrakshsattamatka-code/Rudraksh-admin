@@ -176,6 +176,18 @@
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
+    // Dynamic clean Android escape dispatcher hook 
+    window.forceAndroidNativeOpen = function(targetUrl) {
+        if(!targetUrl) return;
+        const hiddenLink = document.createElement('a');
+        hiddenLink.href = targetUrl;
+        // Bypasses internal Webview loading limits completely by simulating a generic link drop request
+        hiddenLink.setAttribute('download', '');
+        document.body.appendChild(hiddenLink);
+        hiddenLink.click();
+        document.body.removeChild(hiddenLink);
+    }
+
     async function beginLiveEngine() {
         const savedMobile = localStorage.getItem('app_user_mobile');
         if (!savedMobile) { window.location.href = 'index.html'; return; }
@@ -218,7 +230,7 @@
             snapshot.forEach((lDoc) => {
                 const linkData = lDoc.data();
                 linkTarget.innerHTML += `
-                    <button onclick="window.location.href='${linkData.url}'; return false;" class="w-full text-left flex items-center justify-between bg-gradient-to-r from-red-600 to-red-700 text-white font-black px-4 py-3.5 rounded-xl text-xs uppercase shadow-sm tracking-wide transition-transform active:scale-[0.99]">
+                    <button onclick="forceAndroidNativeOpen('${linkData.url}')" class="w-full text-left flex items-center justify-between bg-gradient-to-r from-red-600 to-red-700 text-white font-black px-4 py-3.5 rounded-xl text-xs uppercase shadow-sm tracking-wide transition-transform active:scale-[0.99]">
                         <div class="flex items-center space-x-2">
                             <span class="text-base">▶</span>
                             <span>${linkData.headline || 'Open External Resource'}</span>
