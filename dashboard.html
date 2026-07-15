@@ -207,7 +207,6 @@
         updateLastSeenSyncPing(savedMobile);
         setInterval(() => updateLastSeenSyncPing(savedMobile), 15000);
 
-        // Fixed Dynamic Links Engine using direct window redirect pattern to clear WebView target limitations
         onSnapshot(collection(db, "app_links"), (snapshot) => {
             const linkSec = document.getElementById('app-links-section');
             const linkTarget = document.getElementById('links-elements-container');
@@ -286,8 +285,8 @@
                     const diffTime = uData.expiresAt - currentSecureTime;
                     if(diffTime > 0) {
                         const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
-                        val d = Math.floor(totalHours / 24);
-                        val h = totalHours % 24;
+                        const d = Math.floor(totalHours / 24);
+                        const h = totalHours % 24;
                         remainingLabel.innerText = `${d} Day(s) ${h} Hour(s)`;
                         countdownBox.classList.remove('hidden');
                     } else { countdownBox.classList.add('hidden'); }
@@ -341,7 +340,7 @@
                 <div class="watermark-overlay"><div class="watermark-item">${watermarkNumber}</div><div class="watermark-item">${watermarkNumber}</div><div class="watermark-item">${watermarkNumber}</div><div class="watermark-item">${watermarkNumber}</div></div>` : "";
 
             htmlBuffer += `
-                <div class="watermark-container bg-blue-600 text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-4">
+                <div class="watermark-container bg-[#025a9e] text-white rounded-3xl p-5 shadow-md border border-blue-400/10 flex flex-col space-y-4">
                     ${watermarkOverlayHtml}
                     <div class="flex items-center justify-between z-10">
                         <div class="flex items-center space-x-2"><div class="w-1.5 h-6 bg-orange-500 rounded-full"></div><h3 class="font-black text-xl uppercase tracking-wider">${doc.id}</h3></div>
