@@ -176,7 +176,7 @@
 
     window.addEventListener('DOMContentLoaded', beginLiveEngine);
 
-    // Completely isolates and stops navigation bubbles inside Android systems
+    // Dynamic Intent Router hooks deep app URLs out of internal WebView limitations
     window.processAndRedirectSecureLink = function(event, targetUrl) {
         if(event) {
             event.preventDefault();
@@ -184,19 +184,34 @@
         }
         if(!targetUrl) return false;
         
-        let finalCleanUrl = targetUrl.trim();
+        let urlString = targetUrl.trim();
         
-        // Formats raw deep app links immediately to target URL parameters
-        if (finalCleanUrl.includes("tg:resolve") || finalCleanUrl.startsWith("tg://")) {
-            const rawQueryString = finalCleanUrl.substring(finalCleanUrl.indexOf('?'));
-            const queryParameters = new URLSearchParams(rawQueryString);
-            const channelUsername = queryParameters.get("domain");
-            if(channelUsername) {
-                finalCleanUrl = "https://t.me/" + channelUsername;
+        // Normalize Telegram layout schemes into native web links
+        if (urlString.includes("tg:resolve") || urlString.startsWith("tg://")) {
+            const indexQuery = urlString.indexOf('?');
+            if(indexQuery !== -1) {
+                const queryParameters = new URLSearchParams(urlString.substring(indexQuery));
+                const channelUsername = queryParameters.get("domain");
+                if(channelUsername) urlString = "https://t.me/" + channelUsername;
             }
         }
         
-        window.location.href = finalCleanUrl;
+        // Detects if the current platform running this is an Android WebView environment
+        const isAndroidAppWebView = /Android.*Version\/[0-9.]+/i.test(navigator.userAgent) || 
+                                    (window.chrome && urlString.includes("threads") || urlString.includes("facebook") || urlString.includes("t.me"));
+
+        if (isAndroidAppWebView) {
+            // Extracts domain strings to isolate destination flags
+            let pureLinkWithoutProtocol = urlString.replace("https://", "").replace("http://", "");
+            
+            // Forces Android OS to use Intent Parsing to throw links directly to external target apps
+            const intentFallbackUrl = "intent://" + pureLinkWithoutProtocol + "#Intent;scheme=https;action=android.intent.action.VIEW;end;";
+            
+            window.location.href = intentFallbackUrl;
+        } else {
+            // Standard backup window redirect for fallback environments
+            window.location.href = urlString;
+        }
         return false;
     }
 
